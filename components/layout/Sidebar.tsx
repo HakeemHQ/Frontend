@@ -13,7 +13,9 @@ export function Sidebar() {
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sm font-black text-sky-900">
             H
           </div>
-          <span className="text-xl font-bold tracking-tight text-slate-900">Hakeem</span>
+          <span className="text-xl font-bold tracking-tight text-slate-900">
+            Hakeem
+          </span>
         </div>
 
         <nav className="mt-8 flex-1 px-4">

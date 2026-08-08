@@ -3,7 +3,10 @@ import { PageHeader } from "@/components/layout/PageHeader";
 export default function UploadPage() {
   return (
     <section className="space-y-6">
-      <PageHeader title="Upload" description="Bring in your medical documents" />
+      <PageHeader
+        title="Upload"
+        description="Bring in your medical documents"
+      />
       <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
         <div className="text-lg font-bold text-slate-900">Upload documents</div>
         <p className="mt-2 text-sm text-slate-500">

@@ -3,7 +3,10 @@ import { PageHeader } from "@/components/layout/PageHeader";
 export default function HomePage() {
   return (
     <section className="space-y-6">
-      <PageHeader title="Home" description="Overview of your medical workspace" />
+      <PageHeader
+        title="Home"
+        description="Overview of your medical workspace"
+      />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="text-sm font-medium text-slate-500">Documents</div>
