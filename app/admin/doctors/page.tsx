@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
@@ -57,10 +58,10 @@ const statusOptions = [
 export default function DoctorsListPage() {
   const [specialtyFilter, setSpecialtyFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const router = useRouter();
 
   return (
     <div className="space-y-6 pb-8">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">
           Doctors
@@ -82,7 +83,6 @@ export default function DoctorsListPage() {
         </div>
       </div>
 
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <div className="space-y-1.5 w-full sm:w-48 z-20">
           <label className="text-sm font-medium text-slate-700">Specialty</label>
@@ -102,7 +102,6 @@ export default function DoctorsListPage() {
         </div>
       </div>
 
-      {/* Table */}
       <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-slate-600">
@@ -117,7 +116,11 @@ export default function DoctorsListPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {doctors.map((doctor) => (
-                <tr key={doctor.id} className="transition-colors hover:bg-slate-50/50">
+                <tr 
+                  key={doctor.id} 
+                  onClick={() => router.push(`/admin/doctors/${doctor.id}`)}
+                  className="transition-colors hover:bg-slate-50 cursor-pointer"
+                >
                   <td className="whitespace-nowrap px-6 py-4 font-medium text-slate-900">
                     {doctor.name}
                   </td>
@@ -142,7 +145,6 @@ export default function DoctorsListPage() {
         </div>
       </div>
 
-      {/* Pagination */}
       <div className="flex items-center justify-center gap-1 pt-4">
         <button className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">
           <ChevronLeftIcon />

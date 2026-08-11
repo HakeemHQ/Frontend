@@ -48,13 +48,11 @@ export default function AddDoctorPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate API call and redirect
     router.push("/admin/doctors");
   };
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 pb-8">
-      {/* Breadcrumbs */}
       <nav className="flex items-center gap-2 text-sm font-medium text-slate-500">
         <Link href="/admin/doctors" className="flex items-center gap-1 transition hover:text-slate-900">
           <ChevronLeftIcon className="h-4 w-4" />
@@ -64,7 +62,6 @@ export default function AddDoctorPage() {
         <span className="text-blue-600">Add Doctor</span>
       </nav>
 
-      {/* Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">
           Add Doctor
@@ -74,7 +71,6 @@ export default function AddDoctorPage() {
         </p>
       </div>
 
-      {/* Form Card */}
       <div className="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm">
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-1.5">
