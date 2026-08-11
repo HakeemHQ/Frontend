@@ -1,23 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
 
 const SearchIcon = ({ className }: { className?: string }) => (
   <svg className={className} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="11" cy="11" r="8" />
     <path d="m21 21-4.3-4.3" />
-  </svg>
-);
-
-const PlusIcon = ({ className }: { className?: string }) => (
-  <svg className={className} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M5 12h14" />
-    <path d="M12 5v14" />
   </svg>
 );
 
@@ -33,20 +23,27 @@ const ChevronRightIcon = () => (
   </svg>
 );
 
-const doctors = [
-  { id: 1, name: "Dr. Ahmed Hassan", specialty: "Cardiology", license: "EG-12345", status: "Active", createdAt: "Aug 10, 2026" },
-  { id: 2, name: "Dr. Sara Ali", specialty: "Neurology", license: "EG-67890", status: "Active", createdAt: "Aug 9, 2026" },
-  { id: 3, name: "Dr. Mohamed Farouk", specialty: "Internal Medicine", license: "EG-33445", status: "Active", createdAt: "Aug 8, 2026" },
-  { id: 4, name: "Dr. Lina Fawzi", specialty: "Pediatrics", license: "EG-44166", status: "Suspended", createdAt: "Aug 7, 2026" },
-  { id: 5, name: "Dr. Omar Khaled", specialty: "Orthopedics", license: "EG-56667", status: "Active", createdAt: "Aug 6, 2026" },
+const MoreIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="1" />
+    <circle cx="19" cy="12" r="1" />
+    <circle cx="5" cy="12" r="1" />
+  </svg>
+);
+
+const users = [
+  { id: 1, name: "Omar Khaled", role: "Patient", status: "Active", lastLogin: "Aug 10, 2026, 10:30 AM" },
+  { id: 2, name: "Sara Ali", role: "Admin", status: "Active", lastLogin: "Aug 10, 2026, 09:15 AM" },
+  { id: 3, name: "Ahmed Hassan", role: "Doctor", status: "Suspended", lastLogin: "Aug 9, 2026, 14:20 PM" },
+  { id: 4, name: "Youssef Nabil", role: "Patient", status: "Active", lastLogin: "Aug 9, 2026, 11:10 AM" },
+  { id: 5, name: "Lina Fawzi", role: "Doctor", status: "Active", lastLogin: "Aug 8, 2026, 16:45 PM" },
 ];
 
-const specialtyOptions = [
+const roleOptions = [
   { value: "all", label: "All" },
-  { value: "cardiology", label: "Cardiology" },
-  { value: "neurology", label: "Neurology" },
-  { value: "pediatrics", label: "Pediatrics" },
-  { value: "orthopedics", label: "Orthopedics" },
+  { value: "patient", label: "Patient" },
+  { value: "doctor", label: "Doctor" },
+  { value: "admin", label: "Admin" },
 ];
 
 const statusOptions = [
@@ -55,42 +52,34 @@ const statusOptions = [
   { value: "suspended", label: "Suspended" },
 ];
 
-export default function DoctorsListPage() {
-  const [specialtyFilter, setSpecialtyFilter] = useState("all");
+export default function UsersListPage() {
+  const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
-  const router = useRouter();
 
   return (
     <div className="space-y-6 pb-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-          Doctors
+          Users
         </h1>
-        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-          <Link href="/admin/doctors/add" className="w-full sm:w-auto">
-            <Button className="w-full gap-2">
-              <PlusIcon />
-              Add Doctor
-            </Button>
-          </Link>
-        </div>
+        
       </div>
 
       <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4">
         <div className="space-y-1.5 w-full flex-1 z-30">
           <label className="text-sm font-medium text-slate-700">Search</label>
           <Input
-            placeholder="Search by name, email or license"
+            placeholder="Search users..."
             iconLeft={<SearchIcon className="h-4 w-4" />}
             className="bg-white"
           />
         </div>
         <div className="space-y-1.5 w-full sm:w-48 z-20">
-          <label className="text-sm font-medium text-slate-700">Specialty</label>
+          <label className="text-sm font-medium text-slate-700">Role</label>
           <Select 
-            options={specialtyOptions}
-            value={specialtyFilter}
-            onChange={setSpecialtyFilter}
+            options={roleOptions}
+            value={roleFilter}
+            onChange={setRoleFilter}
           />
         </div>
         <div className="space-y-1.5 w-full sm:w-48 z-10">
@@ -108,37 +97,45 @@ export default function DoctorsListPage() {
           <table className="w-full text-left text-sm text-slate-600">
             <thead className="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-500">
               <tr>
-                <th className="px-6 py-4">Doctor</th>
-                <th className="px-6 py-4">Specialty</th>
-                <th className="px-6 py-4">License Number</th>
+                <th className="px-6 py-4">User</th>
+                <th className="px-6 py-4">Role</th>
                 <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Created At</th>
+                <th className="px-6 py-4">Last Login</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {doctors.map((doctor) => (
-                <tr 
-                  key={doctor.id} 
-                  onClick={() => router.push(`/admin/doctors/${doctor.id}`)}
-                  className="transition-colors hover:bg-slate-50 cursor-pointer"
-                >
+              {users.map((user) => (
+                <tr key={user.id} className="transition-colors hover:bg-slate-50">
                   <td className="whitespace-nowrap px-6 py-4 font-medium text-slate-900">
-                    {doctor.name}
+                    {user.name}
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4">{doctor.specialty}</td>
-                  <td className="whitespace-nowrap px-6 py-4">{doctor.license}</td>
+                  <td className="whitespace-nowrap px-6 py-4">
+                    <span className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-semibold ${
+                      user.role === 'Admin' ? 'bg-purple-50 text-purple-600' :
+                      user.role === 'Doctor' ? 'bg-blue-50 text-blue-600' :
+                      'bg-slate-100 text-slate-600'
+                    }`}>
+                      {user.role}
+                    </span>
+                  </td>
                   <td className="whitespace-nowrap px-6 py-4">
                     <span
                       className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-semibold ${
-                        doctor.status === "Active"
+                        user.status === "Active"
                           ? "bg-emerald-50 text-emerald-600"
                           : "bg-red-50 text-red-600"
                       }`}
                     >
-                      {doctor.status}
+                      {user.status}
                     </span>
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4">{doctor.createdAt}</td>
+                  <td className="whitespace-nowrap px-6 py-4 text-slate-500">{user.lastLogin}</td>
+                  <td className="whitespace-nowrap px-6 py-4 text-right">
+                    <button className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600">
+                      <MoreIcon />
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
