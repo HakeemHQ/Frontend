@@ -1,0 +1,12 @@
+{
+  "users": [
+    {
+      "role": "admin",
+      "email": "admin@example.com"
+    },
+    {
+      "role": "doctor",
+      "email": "doctor@hakeem.test"
+    }
+  ]
+}

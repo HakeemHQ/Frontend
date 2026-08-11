@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
@@ -62,6 +63,17 @@ const HistoryIcon = ({ className }: { className?: string }) => (
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const router = useRouter();
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.toLowerCase().includes("doctor")) {
+      router.push("/doctor/patients");
+    } else {
+      router.push("/admin/dashboard");
+    }
+  };
 
   return (
     <main className="flex min-h-screen w-full bg-white text-gray-900 font-sans">
@@ -121,7 +133,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-5" onSubmit={handleLogin}>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-gray-700" htmlFor="email">
                 Email
@@ -130,6 +142,8 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 iconLeft={<MailIcon className="h-5 w-5" />}
               />
             </div>
