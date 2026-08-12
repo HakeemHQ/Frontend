@@ -18,31 +18,52 @@ import {
 export default function AddDocumentPage() {
   const router = useRouter();
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<{ id: string; file: File } | null>(null);
+
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const uploadMethods = [
     {
-      id: "photo",
-      title: "Take a photo",
-      description: "Use your device camera to scan a physical document.",
-      icon: Camera01Icon,
-    },
-    {
-      id: "library",
-      title: "Choose from library",
+      id: "images",
+      title: "Upload Image",
       description: "Select an image from your device's photo gallery.",
       icon: Image01Icon,
+      accept: "image/*"
     },
     {
-      id: "files",
-      title: "Browse files",
-      description: "Select PDF, DOCX, or other files from your device.",
+      id: "pdfs",
+      title: "Upload PDF",
+      description: "Select PDF documents from your device.",
       icon: Folder01Icon,
+      accept: "application/pdf"
     },
   ];
+
+  const handleCardClick = (method: any) => {
+    setSelectedMethod(method.id);
+    if (fileInputRef.current) {
+      fileInputRef.current.accept = method.accept;
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0 && selectedMethod) {
+      setSelectedFile({ id: selectedMethod, file: e.target.files[0] });
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto pt-8 pb-16 animate-in fade-in duration-300">
       
+      {/* Hidden File Input */}
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        onChange={handleFileChange} 
+        className="hidden" 
+      />
+
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 md:p-12">
         {/* Header Section */}
         <div className="flex flex-col items-center text-center mb-12">
@@ -54,26 +75,31 @@ export default function AddDocumentPage() {
         </div>
 
         {/* Upload Methods Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          {uploadMethods.map((method) => (
-            <div 
-              key={method.id}
-              onClick={() => setSelectedMethod(method.id)}
-              className={`flex flex-col items-center text-center p-8 rounded-xl border-2 transition cursor-pointer ${
-                selectedMethod === method.id
-                  ? "border-primary-600 bg-primary-50/30"
-                  : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
-              }`}
-            >
-              <div className="w-14 h-14 rounded-full bg-primary-50 text-slate-700 flex items-center justify-center mb-6">
-                <HugeiconsIcon icon={method.icon} className="w-6 h-6" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+          {uploadMethods.map((method) => {
+            const isSelected = selectedMethod === method.id;
+            const hasFile = selectedFile?.id === method.id;
+            
+            return (
+              <div 
+                key={method.id}
+                onClick={() => handleCardClick(method)}
+                className={`flex flex-col items-center text-center p-8 rounded-xl border-2 transition cursor-pointer ${
+                  isSelected
+                    ? "border-primary-600 bg-primary-50/30"
+                    : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                }`}
+              >
+                <div className="w-14 h-14 rounded-full bg-primary-50 text-slate-700 flex items-center justify-center mb-6">
+                  <HugeiconsIcon icon={method.icon} className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 font-heading mb-3">{method.title}</h3>
+                <p className={`text-sm leading-relaxed ${hasFile ? "text-primary-600 font-semibold truncate w-full max-w-[200px]" : "text-slate-500"}`}>
+                  {hasFile ? selectedFile.file.name : method.description}
+                </p>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 font-heading mb-3">{method.title}</h3>
-              <p className="text-sm text-slate-500 leading-relaxed">
-                {method.description}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Divider */}
