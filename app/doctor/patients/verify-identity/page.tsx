@@ -4,50 +4,30 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-
-const ArrowLeftIcon = ({ className }: { className?: string }) => (
-  <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M19 12H5M12 19l-7-7 7-7" />
-  </svg>
-);
-
-const SearchIcon = ({ className }: { className?: string }) => (
-  <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="11" cy="11" r="8" />
-    <path d="m21 21-4.3-4.3" />
-  </svg>
-);
-
-const IdCardIcon = ({ className }: { className?: string }) => (
-  <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="5" width="20" height="14" rx="2" />
-    <path d="M7 15h10M7 11h4" />
-    <circle cx="16" cy="11" r="2" />
-  </svg>
-);
-
-const CheckCircleFilledIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-  </svg>
-);
-
-const CloseIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 6L6 18M6 6l12 12" />
-  </svg>
-);
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowLeft01Icon,
+  Search01Icon,
+  UserIdVerificationIcon,
+  CheckmarkCircle02Icon,
+  Cancel01Icon,
+  Alert01Icon
+} from "@hugeicons/core-free-icons";
 
 export default function VerifyIdentityPage() {
   const [patientCode, setPatientCode] = useState("");
   const [nationalId, setNationalId] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
-  const [errorToast, setErrorToast] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "warning" } | null>(null);
+
+  const showToast = (message: string, type: "success" | "error" | "warning") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
+  };
 
   const handleVerify = () => {
     if (!patientCode || !nationalId) {
-      setErrorToast("Please enter both patient code and national ID.");
-      setTimeout(() => setErrorToast(null), 4000);
+      showToast("Please enter both patient code and national ID.", "warning");
       return;
     }
 
@@ -55,34 +35,51 @@ export default function VerifyIdentityPage() {
     
     // Simulate API call
     setTimeout(() => {
-      // Dummy logic for error state
       if (patientCode.toLowerCase() === "error") {
         setStatus("idle");
-        setErrorToast("Failed to verify patient identity. The provided code or ID does not match our records.");
-        setTimeout(() => setErrorToast(null), 5000);
+        showToast("Failed to verify patient identity. The provided code or ID does not match our records.", "error");
       } else {
         setStatus("success");
+        showToast("Patient identity successfully verified.", "success");
       }
     }, 800);
   };
 
   return (
     <div className="max-w-2xl mx-auto pt-4 pb-8 space-y-6 relative">
-      {/* Toast Notification */}
-      {errorToast && (
+      {/* Generic Toast Notification */}
+      {toast && (
         <div className="fixed top-4 right-4 z-50 animate-in fade-in slide-in-from-top-4 duration-300">
-          <div className="bg-red-50 border border-red-200 text-red-800 rounded-xl p-4 shadow-lg flex items-start gap-3 max-w-md">
+          <div className={`border rounded-xl p-4 shadow-lg flex items-start gap-3 max-w-md ${
+            toast.type === "error" ? "bg-red-50 border-red-200 text-red-800" :
+            toast.type === "success" ? "bg-green-50 border-green-200 text-green-800" :
+            "bg-amber-50 border-amber-200 text-amber-900"
+          }`}>
             <div className="mt-0.5">
-              <svg className="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              {toast.type === "error" && <HugeiconsIcon icon={Cancel01Icon} className="w-5 h-5 text-red-600" />}
+              {toast.type === "success" && <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-5 h-5 text-green-600" />}
+              {toast.type === "warning" && <HugeiconsIcon icon={Alert01Icon} className="w-5 h-5 text-amber-600" />}
             </div>
             <div className="flex-1">
-              <h3 className="text-sm font-semibold text-red-800">Verification Failed</h3>
-              <p className="text-sm text-red-700 mt-1">{errorToast}</p>
+              <h3 className={`text-sm font-semibold ${
+                toast.type === "error" ? "text-red-800" :
+                toast.type === "success" ? "text-green-800" :
+                "text-amber-900"
+              }`}>
+                {toast.type === "error" ? "Verification Failed" : toast.type === "success" ? "Verification Successful" : "Warning"}
+              </h3>
+              <p className={`text-sm mt-1 ${
+                toast.type === "error" ? "text-red-700" :
+                toast.type === "success" ? "text-green-700" :
+                "text-amber-800"
+              }`}>{toast.message}</p>
             </div>
-            <button onClick={() => setErrorToast(null)} className="text-red-500 hover:text-red-700 transition">
-              <CloseIcon className="w-4 h-4" />
+            <button onClick={() => setToast(null)} className={`transition ${
+              toast.type === "error" ? "text-red-500 hover:text-red-700" :
+              toast.type === "success" ? "text-green-500 hover:text-green-700" :
+              "text-amber-500 hover:text-amber-700"
+            }`}>
+              <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -90,7 +87,7 @@ export default function VerifyIdentityPage() {
 
       <div className="flex items-center text-sm text-slate-500 mb-6">
         <Link href="/doctor/patients" className="flex items-center hover:text-slate-800 transition">
-          <ArrowLeftIcon className="w-4 h-4 mr-1" />
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 mr-1" />
           <span>Patients</span>
         </Link>
         <span className="mx-2">&gt;</span>
@@ -99,7 +96,7 @@ export default function VerifyIdentityPage() {
 
       {status === "success" ? (
         <div className="flex flex-col items-center max-w-lg mt-12 mx-auto animate-in fade-in zoom-in-95 duration-500">
-          <CheckCircleFilledIcon className="w-16 h-16 text-[#008060] mb-4" />
+          <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-16 h-16 text-[#008060] mb-4" />
           <h1 className="text-2xl font-bold tracking-tight text-[#008060] mb-2">
             Identity Verified
           </h1>
@@ -152,7 +149,7 @@ export default function VerifyIdentityPage() {
               </label>
               <Input
                 placeholder="H89K-27P"
-                iconLeft={<SearchIcon className="h-5 w-5 text-slate-400" />}
+                iconLeft={<HugeiconsIcon icon={Search01Icon} className="h-5 w-5 text-slate-400" />}
                 id="p-code"
                 value={patientCode}
                 onChange={(e) => setPatientCode(e.target.value)}
@@ -165,7 +162,7 @@ export default function VerifyIdentityPage() {
               </label>
               <Input
                 placeholder="3000512X00000X"
-                iconLeft={<IdCardIcon className="h-5 w-5 text-slate-400" />}
+                iconLeft={<HugeiconsIcon icon={UserIdVerificationIcon} className="h-5 w-5 text-slate-400" />}
                 id="n-id"
                 value={nationalId}
                 onChange={(e) => setNationalId(e.target.value)}
