@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use } from "react";
+import { use } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -14,7 +14,7 @@ import {
   AiMagicIcon,
   UserIcon,
   Delete01Icon,
-  CheckmarkIcon,
+  Checkmark,
   Edit01Icon
 } from "@hugeicons/core-free-icons";
 
@@ -140,7 +140,7 @@ export default function ReviewDataPage({ params }: { params: Promise<{ code: str
                   Reject
                 </Button>
                 <Button className="bg-primary-600 hover:bg-primary-700 text-white px-6 flex items-center gap-2">
-                  <HugeiconsIcon icon={CheckmarkIcon} className="w-4 h-4" />
+                  <HugeiconsIcon icon={Checkmark} className="w-4 h-4" />
                   Approve & Save
                 </Button>
               </div>
@@ -179,7 +179,7 @@ export default function ReviewDataPage({ params }: { params: Promise<{ code: str
                 
                 <div className="flex items-center gap-2">
                   <Button className="bg-primary-600 hover:bg-primary-700 text-white flex-1 sm:flex-none flex items-center justify-center gap-2">
-                    <HugeiconsIcon icon={CheckmarkIcon} className="w-4 h-4" />
+                    <HugeiconsIcon icon={Checkmark} className="w-4 h-4" />
                     Approve & Save
                   </Button>
                   <Button variant="outline" className="border-red-500 text-red-600 hover:bg-red-50 flex items-center justify-center gap-2 px-4">
