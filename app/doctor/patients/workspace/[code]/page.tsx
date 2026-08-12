@@ -63,20 +63,22 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
         <div className="p-6 md:p-8 border-b border-slate-100">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="flex items-center gap-5">
-              <div className="w-16 h-16 rounded-full bg-transparent flex items-center justify-center border border-slate-800 overflow-hidden shrink-0">
-                <HugeiconsIcon icon={UserIcon} className="w-8 h-8 text-slate-800" />
+              <div className="w-20 h-20 rounded-full bg-primary-50 flex items-center justify-center border border-primary-100 overflow-hidden shrink-0">
+                <HugeiconsIcon icon={UserIcon} className="w-10 h-10 text-primary-500" />
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-slate-900 font-heading mb-1">Mazen Mohamed</h2>
                 <div className="flex items-center gap-4 text-sm">
                   <span className="text-slate-500">Code: {code}</span>
-                  <span className="font-semibold text-slate-800">Active Access</span>
+                  <div className="flex items-center gap-2 px-3 py-1 bg-primary-50 text-primary-700 rounded-md font-medium text-xs">
+                    Active Access
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="text-sm font-medium text-slate-500 mt-4 sm:mt-0">
-              Expires in <span className="text-slate-800 font-bold ml-1 tabular-nums">01:23:45</span>
+            <div className="text-sm font-medium text-slate-500">
+              Expires in <span className="text-primary-600 font-bold ml-1 tabular-nums">01:23:45</span>
             </div>
           </div>
         </div>
@@ -110,10 +112,9 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
               key={index}
               className="flex flex-col items-center justify-center text-center p-8 bg-surface border border-slate-100 rounded-2xl shadow-sm hover:shadow-md hover:border-slate-200 transition cursor-pointer group"
             >
-              <HugeiconsIcon 
-                icon={action.icon} 
-                className="w-6 h-6 text-slate-800 mb-4 group-hover:-translate-y-1 transition duration-300" 
-              />
+              <div className="w-12 h-12 bg-primary-50 text-primary-600 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-primary-100 transition duration-300">
+                <HugeiconsIcon icon={action.icon} className="w-6 h-6" />
+              </div>
               <h4 className="font-bold text-slate-900 mb-2 font-heading leading-tight">{action.title}</h4>
               <p className="text-xs text-slate-500 leading-relaxed max-w-[140px]">{action.description}</p>
             </div>
