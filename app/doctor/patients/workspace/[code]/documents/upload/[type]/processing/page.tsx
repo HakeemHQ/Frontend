@@ -46,7 +46,8 @@ export default function ProcessingPage({ params }: { params: Promise<{ code: str
     const t5 = setTimeout(() => setCurrentStep(5), 8000); // 5: Done
     
     const t6 = setTimeout(() => {
-      router.push(`/doctor/patients/workspace/${code}/documents/1`);
+      // Navigate to the review page under the current [type] route
+      router.push(window.location.pathname.replace('/processing', '/review'));
     }, 8500);
 
     return () => {
