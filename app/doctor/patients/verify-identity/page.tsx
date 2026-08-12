@@ -96,7 +96,7 @@ export default function VerifyIdentityPage() {
             </div>
           </div>
 
-          <Link href="/doctor/patients/request-access" className="w-full">
+          <Link href={`/doctor/patients/request-access/${patientCode || "H89K-27P"}`} className="w-full">
             <Button fullWidth className="bg-[#008060] hover:bg-[#006e52] text-white border-0 py-4 text-base font-semibold shadow-sm transition">
               Request Access
             </Button>

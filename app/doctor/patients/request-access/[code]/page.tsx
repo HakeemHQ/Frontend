@@ -11,7 +11,7 @@ import {
   UserIcon
 } from "@hugeicons/core-free-icons";
 
-export default function RequestAccessPage() {
+export default function RequestAccessPage({ params }: { params: { code: string } }) {
   const [isSending, setIsSending] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "warning" } | null>(null);
 
@@ -68,7 +68,7 @@ export default function RequestAccessPage() {
             </div>
             <div>
               <h3 className="text-lg font-semibold text-slate-900">Mazen Mohamed</h3>
-              <p className="text-slate-500 text-sm">Patient Code: H89K-27P</p>
+              <p className="text-slate-500 text-sm">Patient Code: {params.code}</p>
             </div>
           </div>
 
