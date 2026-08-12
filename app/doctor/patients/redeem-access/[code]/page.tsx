@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, use } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Toast } from "@/components/ui/Toast";
@@ -12,6 +13,7 @@ import {
 } from "@hugeicons/core-free-icons";
 
 export default function RedeemAccessPage({ params }: { params: Promise<{ code: string }> }) {
+  const router = useRouter();
   const { code } = use(params);
   const [oneTimeCode, setOneTimeCode] = useState("");
   const [isRedeeming, setIsRedeeming] = useState(false);
@@ -40,10 +42,7 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
       if (oneTimeCode === "000000") {
         setToast({ message: "Invalid or expired code.", type: "error" });
       } else {
-        setToast({ 
-          message: "Access successfully redeemed! You can now view the patient's data.", 
-          type: "success" 
-        });
+        router.push(`/doctor/patients/access-granted/${code}`);
       }
     }, 1200);
   };
