@@ -12,18 +12,19 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          50: "#EFF6FF",
-          900: "#1E3A8A",
+          DEFAULT: "#1A56DB",
+          500: "#1A56DB",
         },
+        secondary: {
+          DEFAULT: "#10B981",
+        },
+        background: "#F9FAFB",
         surface: "#FFFFFF",
         border: "#E5E7EB",
-        text2: {
-          500: "#64748B",
-        },
       },
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "Arial", "sans-serif"],
-        mono: ["var(--font-geist-mono)", "monospace"],
+        heading: ["var(--font-heading)", "sans-serif"],
+        sans: ["var(--font-sans)", "sans-serif"],
       },
     },
   },
