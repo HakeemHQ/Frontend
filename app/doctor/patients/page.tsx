@@ -77,7 +77,7 @@ export default function ActivePatientsPage() {
         />
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-4 flex flex-col gap-2">
         {patients.map((patient) => (
           <Link key={patient.id} href={`/doctor/patients/workspace/${patient.code}`}>
             <div 

@@ -63,14 +63,14 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
         <div className="p-6 md:p-8 border-b border-slate-100">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="flex items-center gap-5">
-              <div className="w-20 h-20 rounded-full bg-background flex items-center justify-center border border-slate-100 overflow-hidden shrink-0">
-                <HugeiconsIcon icon={UserIcon} className="w-10 h-10 text-slate-400" />
+              <div className="w-20 h-20 rounded-full bg-primary-50 flex items-center justify-center border border-primary-100 overflow-hidden shrink-0">
+                <HugeiconsIcon icon={UserIcon} className="w-10 h-10 text-primary-500" />
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-slate-900 font-heading mb-1">Mazen Mohamed</h2>
                 <div className="flex items-center gap-4 text-sm">
                   <span className="text-slate-500">Code: {code}</span>
-                  <div className="flex items-center gap-2 px-3 py-1 bg-secondary-50 text-secondary-700 rounded-md font-medium text-xs">
+                  <div className="flex items-center gap-2 px-3 py-1 bg-primary-50 text-primary-700 rounded-md font-medium text-xs">
                     Active Access
                   </div>
                 </div>
@@ -78,7 +78,7 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
             </div>
 
             <div className="text-sm font-medium text-slate-500">
-              Expires in <span className="text-secondary-600 font-bold ml-1 tabular-nums">01:23:45</span>
+              Expires in <span className="text-primary-600 font-bold ml-1 tabular-nums">01:23:45</span>
             </div>
           </div>
         </div>
