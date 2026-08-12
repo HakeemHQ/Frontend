@@ -12,39 +12,43 @@ import {
   AiChat02Icon
 } from "@hugeicons/core-free-icons";
 
-const tabs = [
-  { name: "Overview", active: true },
-  { name: "Documents", active: false },
-  { name: "Medical Records", active: false },
-  { name: "Medical CV", active: false },
-  { name: "AI Assistant", active: false },
-];
-
-const quickActions = [
-  {
-    title: "Upload Document",
-    description: "Upload new medical document",
-    icon: FileUploadIcon,
-  },
-  {
-    title: "View Documents",
-    description: "See all uploaded documents",
-    icon: DocumentValidationIcon,
-  },
-  {
-    title: "New Medical CV",
-    description: "Generate new medical CV",
-    icon: FileAddIcon,
-  },
-  {
-    title: "Ask AI Assistant",
-    description: "Ask questions about patient data",
-    icon: AiChat02Icon,
-  },
-];
-
 export default function WorkspacePage({ params }: { params: Promise<{ code: string }> }) {
   const { code } = use(params);
+
+  const tabs = [
+    { name: "Overview", active: true, href: `/doctor/patients/workspace/${code}` },
+    { name: "Documents", active: false, href: `/doctor/patients/workspace/${code}/documents` },
+    { name: "Medical Records", active: false, href: `/doctor/patients/workspace/${code}/medical-records` },
+    { name: "Medical CV", active: false, href: `/doctor/patients/workspace/${code}/medical-cv` },
+    { name: "AI Assistant", active: false, href: `/doctor/patients/workspace/${code}/ai-assistant` },
+  ];
+
+  const quickActions = [
+    {
+      title: "Upload Document",
+      description: "Upload new medical document",
+      icon: FileUploadIcon,
+      href: `/doctor/patients/workspace/${code}/documents`
+    },
+    {
+      title: "View Documents",
+      description: "See all uploaded documents",
+      icon: DocumentValidationIcon,
+      href: `/doctor/patients/workspace/${code}/documents`
+    },
+    {
+      title: "New Medical CV",
+      description: "Generate new medical CV",
+      icon: FileAddIcon,
+      href: `/doctor/patients/workspace/${code}/medical-cv`
+    },
+    {
+      title: "Ask AI Assistant",
+      description: "Ask questions about patient data",
+      icon: AiChat02Icon,
+      href: `/doctor/patients/workspace/${code}/ai-assistant`
+    },
+  ];
 
   return (
     <div className="max-w-4xl mx-auto pt-4 pb-12 space-y-8 animate-in fade-in duration-300">
@@ -87,8 +91,9 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
         <div className="px-6 md:px-8 bg-surface">
           <nav className="flex space-x-8 overflow-x-auto hide-scrollbar">
             {tabs.map((tab) => (
-              <button
+              <Link
                 key={tab.name}
+                href={tab.href}
                 className={`py-4 px-1 border-b-2 text-sm font-medium whitespace-nowrap transition ${
                   tab.active
                     ? "border-primary-600 text-primary-600"
@@ -96,7 +101,7 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
                 }`}
               >
                 {tab.name}
-              </button>
+              </Link>
             ))}
           </nav>
         </div>
@@ -108,16 +113,17 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           {quickActions.map((action, index) => (
-            <div 
-              key={index}
-              className="flex flex-col items-center justify-center text-center p-8 bg-surface border border-slate-100 rounded-2xl shadow-sm hover:shadow-md hover:border-slate-200 transition cursor-pointer group"
-            >
-              <div className="w-12 h-12 bg-primary-50 text-primary-600 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-primary-100 transition duration-300">
-                <HugeiconsIcon icon={action.icon} className="w-6 h-6" />
+            <Link key={index} href={action.href}>
+              <div 
+                className="flex flex-col h-full items-center justify-center text-center p-8 bg-surface border border-slate-100 rounded-2xl shadow-sm hover:shadow-md hover:border-slate-200 transition cursor-pointer group"
+              >
+                <div className="w-12 h-12 bg-primary-50 text-primary-600 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-primary-100 transition duration-300">
+                  <HugeiconsIcon icon={action.icon} className="w-6 h-6" />
+                </div>
+                <h4 className="font-bold text-slate-900 mb-2 font-heading leading-tight">{action.title}</h4>
+                <p className="text-xs text-slate-500 leading-relaxed max-w-[140px]">{action.description}</p>
               </div>
-              <h4 className="font-bold text-slate-900 mb-2 font-heading leading-tight">{action.title}</h4>
-              <p className="text-xs text-slate-500 leading-relaxed max-w-[140px]">{action.description}</p>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
