@@ -84,10 +84,10 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
       </div>
 
       <div className="max-w-lg mt-8">
-        <div className="w-full border border-slate-100 rounded-2xl p-6 bg-white shadow-sm mb-6 transition-all hover:shadow-md">
+        <div className="w-full border border-slate-100 rounded-2xl p-6 bg-surface shadow-sm mb-6 transition-all hover:shadow-md">
           {/* Patient Details */}
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 overflow-hidden shrink-0">
+            <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center border border-slate-100 overflow-hidden shrink-0">
               {/* Fallback avatar */}
               <HugeiconsIcon icon={UserIcon} className="w-8 h-8 text-slate-400" />
             </div>

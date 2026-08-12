@@ -59,10 +59,10 @@ export default function RequestAccessPage({ params }: { params: Promise<{ code: 
       </div>
 
       <div className="max-w-lg mt-8">
-        <div className="w-full border border-slate-100 rounded-2xl p-6 bg-white shadow-sm mb-6 transition-all hover:shadow-md">
+        <div className="w-full border border-slate-100 rounded-2xl p-6 bg-surface shadow-sm mb-6 transition-all hover:shadow-md">
           {/* Patient Details */}
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 overflow-hidden shrink-0">
+            <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center border border-slate-100 overflow-hidden shrink-0">
               {/* Fallback avatar since we don't have the explicit image asset */}
               <HugeiconsIcon icon={UserIcon} className="w-8 h-8 text-slate-400" />
             </div>
@@ -73,7 +73,7 @@ export default function RequestAccessPage({ params }: { params: Promise<{ code: 
           </div>
 
           {/* Info Alert Box */}
-          <div className="mt-6 flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+          <div className="mt-6 flex items-start gap-3 p-4 bg-background rounded-xl border border-slate-100">
             <HugeiconsIcon icon={InformationCircleIcon} className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
             <p className="text-sm text-slate-700">
               The patient will receive a request on their mobile app.

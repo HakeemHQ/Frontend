@@ -81,7 +81,7 @@ export default function ActivePatientsPage() {
         {patients.map((patient) => (
           <div 
             key={patient.id} 
-            className="flex items-center justify-between p-5 rounded-2xl border border-slate-100 bg-white shadow-sm transition hover:shadow-md hover:border-slate-200 cursor-pointer"
+            className="flex items-center justify-between p-5 rounded-2xl border border-slate-100 bg-surface shadow-sm transition hover:shadow-md hover:border-slate-200 cursor-pointer"
           >
             <div className="flex items-center gap-4">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-400">

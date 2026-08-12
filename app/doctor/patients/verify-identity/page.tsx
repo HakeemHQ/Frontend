@@ -73,7 +73,7 @@ export default function VerifyIdentityPage() {
             The patient identity has been successfully verified.
           </p>
 
-          <div className="w-full border border-slate-100 rounded-2xl p-6 bg-white shadow-sm mb-8">
+          <div className="w-full border border-slate-100 rounded-2xl p-6 bg-surface shadow-sm mb-8">
             <div className="grid grid-cols-2 gap-y-6 gap-x-4">
               <div>
                 <p className="text-xs text-slate-500 mb-1">Patient Code</p>
