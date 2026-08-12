@@ -140,6 +140,10 @@ export default function AddDocumentPage() {
           </Button>
           <Button 
             className="w-full sm:w-auto bg-primary-600 hover:bg-primary-700 text-white font-semibold px-8 flex items-center justify-center gap-2"
+            onClick={() => {
+              // Get the current path which ends in /[type] and append /processing
+              router.push(`${window.location.pathname}/processing`);
+            }}
           >
             Upload Document
             <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4" />

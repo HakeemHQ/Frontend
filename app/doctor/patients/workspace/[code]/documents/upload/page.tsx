@@ -85,7 +85,7 @@ export default function UploadDocumentPage({ params }: { params: Promise<{ code:
                 {/* Checkmark Badge */}
                 {isSelected && (
                   <div className="absolute top-4 right-4 text-primary-600 bg-white rounded-full">
-                    <HugeiconsIcon icon={CheckmarkCircle02Icon} variant="solid" className="w-6 h-6" />
+                    <HugeiconsIcon icon={CheckmarkCircle02Icon}  fontVariant="solid" className="w-6 h-6" />
                   </div>
                 )}
                 
