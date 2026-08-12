@@ -38,8 +38,15 @@ const LogoutIcon = () => (
   </svg>
 );
 
+const ChatIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+  </svg>
+);
+
 const navItems = [
   { label: "Patients", href: "/doctor/patients", icon: <PatientsIcon /> },
+  { label: "Ask AI", href: "/doctor/ask-ai", icon: <ChatIcon /> },
   { label: "My Profile", href: "/doctor/profile", icon: <ProfileIcon /> },
   { label: "Upload Record", href: "/doctor/upload", icon: <UploadIcon /> },
 ];
@@ -51,8 +58,13 @@ export function DoctorSidebar() {
     <aside className="fixed left-0 top-0 hidden h-screen w-[260px] border-r border-slate-100 bg-white md:block">
       <div className="flex h-full flex-col">
         <div className="flex items-center gap-3 px-6 py-8">
-          <div className="flex h-8 w-8 items-center justify-center rounded bg-blue-50 text-xl font-bold text-blue-600">
-            H
+          <div className="flex h-8 w-8 items-center justify-center shrink-0">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+              <rect x="3" y="2" width="9" height="28" fill="#2563eb" />
+              <rect x="12" y="11" width="8" height="10" fill="#2563eb" />
+              <path d="M20 2H29V21L20 30V2Z" fill="#2563eb" />
+              <path d="M29 21V30H20L29 21Z" fill="#10b981" />
+            </svg>
           </div>
           <div>
             <div className="text-lg font-bold tracking-tight text-blue-600">

@@ -20,7 +20,7 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
     { name: "Documents", active: false, href: `/doctor/patients/workspace/${code}/documents` },
     { name: "Medical Records", active: false, href: `/doctor/patients/workspace/${code}/medical-records` },
     { name: "Medical CV", active: false, href: `/doctor/patients/workspace/${code}/medical-cv` },
-    { name: "AI Assistant", active: false, href: `/doctor/patients/workspace/${code}/ai-assistant` },
+    { name: "AI Assistant", active: false, href: `/doctor/ask-ai` },
   ];
 
   const quickActions = [
@@ -46,7 +46,7 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
       title: "Ask AI Assistant",
       description: "Ask questions about patient data",
       icon: AiChat02Icon,
-      href: `/doctor/patients/workspace/${code}/ai-assistant`
+      href: `/doctor/ask-ai`
     },
   ];
 

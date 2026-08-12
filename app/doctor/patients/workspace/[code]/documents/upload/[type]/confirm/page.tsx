@@ -8,7 +8,7 @@ import {
   CheckmarkBadge01Icon,
   DocumentAttachmentIcon,
   Calendar01Icon,
-  CheckmarkIcon,
+  Checkmark,
   Edit01Icon,
 } from "@hugeicons/core-free-icons";
 
@@ -136,7 +136,7 @@ export default function ConfirmDetailsPage() {
               className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-6 text-lg flex items-center justify-center gap-2"
               onClick={handleUpload}
             >
-              <HugeiconsIcon icon={CheckmarkIcon} className="w-5 h-5" />
+              <HugeiconsIcon icon={Checkmark} className="w-5 h-5" />
               Upload Document
             </Button>
             <Button 

@@ -10,8 +10,13 @@ export function Sidebar() {
     <aside className="fixed left-0 top-0 hidden h-screen w-[240px] border-r border-slate-200 bg-white md:block">
       <div className="flex h-full flex-col">
         <div className="flex items-center gap-3 px-5 py-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sm font-black text-sky-900">
-            H
+          <div className="flex h-10 w-10 items-center justify-center shrink-0">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+              <rect x="3" y="2" width="9" height="28" fill="#2563eb" />
+              <rect x="12" y="11" width="8" height="10" fill="#2563eb" />
+              <path d="M20 2H29V21L20 30V2Z" fill="#2563eb" />
+              <path d="M29 21V30H20L29 21Z" fill="#10b981" />
+            </svg>
           </div>
           <span className="text-xl font-bold tracking-tight text-slate-900">
             Hakeem

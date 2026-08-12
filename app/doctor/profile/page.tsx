@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 
 const UserIcon = ({ className }: { className?: string }) => (
@@ -12,6 +13,8 @@ const UserIcon = ({ className }: { className?: string }) => (
 );
 
 export default function DoctorProfilePage() {
+  const router = useRouter();
+  
   return (
     <div className="space-y-8 pb-8 max-w-3xl mx-auto">
       <div>
@@ -61,7 +64,10 @@ export default function DoctorProfilePage() {
         </div>
 
         <div className="mt-10">
-          <Button className="w-full sm:w-auto px-8">
+          <Button 
+            className="w-full sm:w-auto px-8"
+            onClick={() => router.push('/doctor/profile/change-password')}
+          >
             Change Password
           </Button>
         </div>
