@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { use } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft01Icon,
   Search01Icon,
@@ -47,14 +48,15 @@ const documentsData = [
   },
 ];
 
-export default function DocumentsPage({ params }: { params: { code: string } }) {
-  // Using generic code parameter just for routing
+export default function DocumentsPage({ params }: { params: Promise<{ code: string }> }) {
+  const router = useRouter();
+  const { code } = use(params);
   
   return (
     <div className="max-w-5xl mx-auto pt-4 pb-12 space-y-6 animate-in fade-in duration-300">
       {/* Breadcrumbs */}
       <div className="flex items-center text-sm text-slate-500 mb-2">
-        <Link href="/doctor/patients" className="flex items-center hover:text-slate-800 transition">
+        <Link href={`/doctor/patients/workspace/${code}`} className="flex items-center hover:text-slate-800 transition">
           <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 mr-1" />
           <span>Patients</span>
         </Link>
@@ -119,7 +121,11 @@ export default function DocumentsPage({ params }: { params: { code: string } }) 
             </thead>
             <tbody className="divide-y divide-slate-100">
               {documentsData.map((doc) => (
-                <tr key={doc.id} className="bg-white hover:bg-slate-50 transition">
+                <tr 
+                  key={doc.id} 
+                  className="bg-white hover:bg-slate-50 transition cursor-pointer"
+                  onClick={() => router.push(`/doctor/patients/workspace/${code}/documents/${doc.id}`)}
+                >
                   <td className="px-6 py-5 font-semibold text-slate-900">{doc.name}</td>
                   <td className="px-6 py-5">{doc.type}</td>
                   <td className="px-6 py-5">{doc.date}</td>
