@@ -4,14 +4,13 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { Toast } from "@/components/ui/Toast";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowLeft01Icon,
   Search01Icon,
   UserIdVerificationIcon,
-  CheckmarkCircle02Icon,
-  Cancel01Icon,
-  Alert01Icon
+  CheckmarkCircle02Icon
 } from "@hugeicons/core-free-icons";
 
 export default function VerifyIdentityPage() {
@@ -22,7 +21,6 @@ export default function VerifyIdentityPage() {
 
   const showToast = (message: string, type: "success" | "error" | "warning") => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 4000);
   };
 
   const handleVerify = () => {
@@ -49,40 +47,11 @@ export default function VerifyIdentityPage() {
     <div className="max-w-2xl mx-auto pt-4 pb-8 space-y-6 relative">
       {/* Generic Toast Notification */}
       {toast && (
-        <div className="fixed top-4 right-4 z-50 animate-in fade-in slide-in-from-top-4 duration-300">
-          <div className={`border rounded-xl p-4 shadow-lg flex items-start gap-3 max-w-md ${
-            toast.type === "error" ? "bg-red-50 border-red-200 text-red-800" :
-            toast.type === "success" ? "bg-green-50 border-green-200 text-green-800" :
-            "bg-amber-50 border-amber-200 text-amber-900"
-          }`}>
-            <div className="mt-0.5">
-              {toast.type === "error" && <HugeiconsIcon icon={Cancel01Icon} className="w-5 h-5 text-red-600" />}
-              {toast.type === "success" && <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-5 h-5 text-green-600" />}
-              {toast.type === "warning" && <HugeiconsIcon icon={Alert01Icon} className="w-5 h-5 text-amber-600" />}
-            </div>
-            <div className="flex-1">
-              <h3 className={`text-sm font-semibold ${
-                toast.type === "error" ? "text-red-800" :
-                toast.type === "success" ? "text-green-800" :
-                "text-amber-900"
-              }`}>
-                {toast.type === "error" ? "Verification Failed" : toast.type === "success" ? "Verification Successful" : "Warning"}
-              </h3>
-              <p className={`text-sm mt-1 ${
-                toast.type === "error" ? "text-red-700" :
-                toast.type === "success" ? "text-green-700" :
-                "text-amber-800"
-              }`}>{toast.message}</p>
-            </div>
-            <button onClick={() => setToast(null)} className={`transition ${
-              toast.type === "error" ? "text-red-500 hover:text-red-700" :
-              toast.type === "success" ? "text-green-500 hover:text-green-700" :
-              "text-amber-500 hover:text-amber-700"
-            }`}>
-              <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast(null)} 
+        />
       )}
 
       <div className="flex items-center text-sm text-slate-500 mb-6">
