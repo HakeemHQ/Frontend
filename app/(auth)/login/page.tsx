@@ -1,10 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { useAuth } from "@/hooks/useAuth";
+import { Toast } from "@/components/ui/Toast";
+import { AnimatePresence } from "framer-motion";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const loginSchema = z.object({
+  email: z.string().min(1, "Email is required").email("Invalid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
 
 const MailIcon = ({ className }: { className?: string }) => (
   <svg className={className} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -63,20 +76,46 @@ const HistoryIcon = ({ className }: { className?: string }) => (
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const router = useRouter();
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "warning" } | null>(null);
+  const { login, loading, error } = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email.toLowerCase().includes("doctor")) {
-      router.push("/doctor/patients");
-    } else {
-      router.push("/admin/dashboard");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  useEffect(() => {
+    if (error) {
+      setToast({ message: error, type: "error" });
+    }
+  }, [error]);
+
+  const onSubmit = async (data: LoginFormValues) => {
+    setToast(null);
+    const success = await login(data);
+    if (success) {
+      setToast({ message: "Login successful! Redirecting...", type: "success" });
     }
   };
 
   return (
     <main className="flex min-h-screen w-full bg-white text-gray-900 font-sans">
+      <AnimatePresence>
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        )}
+      </AnimatePresence>
       <section className="hidden lg:flex relative w-1/2 flex-col justify-center bg-gradient-to-br from-[#c6d7f9] to-[#e8effc] px-16 xl:px-24 overflow-hidden">
         <div className="absolute right-0 top-0 h-full w-[1px] bg-gradient-to-b from-transparent via-blue-200 to-transparent"></div>
 
@@ -133,7 +172,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <form className="space-y-5" onSubmit={handleLogin}>
+          <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-gray-700" htmlFor="email">
                 Email
@@ -142,8 +181,8 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                {...register("email")}
+                error={errors.email?.message}
                 iconLeft={<MailIcon className="h-5 w-5" />}
               />
             </div>
@@ -155,7 +194,9 @@ export default function LoginPage() {
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="At least 8 characters"
+                placeholder="Enter your password"
+                {...register("password")}
+                error={errors.password?.message}
                 iconLeft={<LockIcon className="h-5 w-5" />}
                 iconRight={
                   <button
@@ -183,8 +224,8 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            <Button type="submit" fullWidth className="py-3.5 text-base shadow-sm hover:shadow-md">
-              Continue
+            <Button type="submit" fullWidth className="py-3.5 text-base shadow-sm hover:shadow-md" disabled={loading}>
+              {loading ? "Signing in..." : "Login"}
             </Button>
           </form>
 
@@ -194,15 +235,7 @@ export default function LoginPage() {
               <span>256-bit encrypted. Your data is never sold or shared.</span>
             </div>
 
-            <p className="text-center text-sm text-gray-600">
-              Don&apos;t have account?{" "}
-              <Link
-                href="/register"
-                className="font-semibold text-blue-600 hover:text-blue-500 hover:underline"
-              >
-                Sign up free
-              </Link>
-            </p>
+            
           </div>
         </div>
       </section>
