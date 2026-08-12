@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, use } from "react";
+import React, { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -15,7 +15,16 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
   const { code } = use(params);
   const [oneTimeCode, setOneTimeCode] = useState("");
   const [isRedeeming, setIsRedeeming] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(30);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "warning" } | null>(null);
+
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+    const timer = setInterval(() => {
+      setTimeLeft(prev => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft]);
 
   const handleRedeem = () => {
     if (!oneTimeCode || oneTimeCode.length < 6) {
@@ -37,6 +46,11 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
         });
       }
     }, 1200);
+  };
+
+  const handleResend = () => {
+    setToast({ message: "A new one-time code has been sent to the patient.", type: "success" });
+    setTimeLeft(30);
   };
 
   return (
@@ -98,15 +112,31 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
           </div>
         </div>
 
-        {/* Submit Button */}
-        <Button 
-          onClick={handleRedeem}
-          disabled={isRedeeming}
-          fullWidth 
-          className="bg-[#008060] hover:bg-[#006e52] text-white border-0 py-4 text-base font-semibold shadow-sm transition"
-        >
-          {isRedeeming ? "Redeeming Code..." : "Redeem Code"}
-        </Button>
+        {/* Action Buttons */}
+        <div className="space-y-3">
+          <Button 
+            onClick={handleRedeem}
+            disabled={isRedeeming}
+            fullWidth 
+            className="bg-[#008060] hover:bg-[#006e52] text-white border-0 py-4 text-base font-semibold shadow-sm transition"
+          >
+            {isRedeeming ? "Redeeming Code..." : "Redeem Code"}
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={handleResend}
+            disabled={timeLeft > 0 || isRedeeming}
+            fullWidth
+            className={`py-4 text-base font-semibold transition ${
+              timeLeft > 0 || isRedeeming
+                ? "border-slate-200 text-slate-400 bg-slate-50"
+                : "border-[#008060] text-[#008060] hover:bg-[#008060]/5 bg-transparent"
+            }`}
+          >
+            {timeLeft > 0 ? `Resend Code in ${timeLeft}s` : "Resend Code"}
+          </Button>
+        </div>
       </div>
     </div>
   );
