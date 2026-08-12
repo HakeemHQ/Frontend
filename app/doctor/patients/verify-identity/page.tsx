@@ -96,9 +96,11 @@ export default function VerifyIdentityPage() {
             </div>
           </div>
 
-          <Button fullWidth className="bg-[#008060] hover:bg-[#006e52] text-white border-0 py-4 text-base font-semibold shadow-sm">
-            Request Access
-          </Button>
+          <Link href="/doctor/patients/request-access" className="w-full">
+            <Button fullWidth className="bg-[#008060] hover:bg-[#006e52] text-white border-0 py-4 text-base font-semibold shadow-sm transition">
+              Request Access
+            </Button>
+          </Link>
         </div>
       ) : (
         <div className="animate-in fade-in duration-300">
