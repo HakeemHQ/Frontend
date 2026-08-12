@@ -128,10 +128,10 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
             onClick={handleResend}
             disabled={timeLeft > 0 || isRedeeming}
             fullWidth
-            className={`py-4 text-base font-semibold transition ${
+            className={`py-4 text-base font-semibold transition border-[#008060] ${
               timeLeft > 0 || isRedeeming
-                ? "border-slate-200 text-slate-400 bg-slate-50"
-                : "border-[#008060] text-[#008060] hover:bg-[#008060]/5 bg-transparent"
+                ? "text-[#008060]/60 bg-[#008060]/5 cursor-not-allowed"
+                : "text-[#008060] hover:bg-[#008060]/10 bg-transparent"
             }`}
           >
             {timeLeft > 0 ? `Resend Code in ${timeLeft}s` : "Resend Code"}
