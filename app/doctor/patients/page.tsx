@@ -3,7 +3,8 @@
 import React from "react";
 import Image from "next/image";
 import { Input } from "@/components/ui/Input";
-
+import { Button } from "@/components/ui/Button";
+import Link from "next/link";
 const SearchIcon = ({ className }: { className?: string }) => (
   <svg className={className} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="11" cy="11" r="8" />
@@ -51,14 +52,21 @@ const patients = [
 export default function ActivePatientsPage() {
   return (
     <div className="space-y-8 pb-8 max-w-4xl">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-2">
-          Active Patients
-        </h1>
-        <p className="text-slate-500 text-sm">
-          These are the patients you have active access to.<br/>
-          Access is temporary and expires.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-2">
+            Active Patients
+          </h1>
+          <p className="text-slate-500 text-sm">
+            These are the patients you have active access to.<br/>
+            Access is temporary and expires.
+          </p>
+        </div>
+        <Link href="/doctor/patients/verify-identity">
+          <Button className="bg-emerald-600 hover:bg-emerald-700 text-white whitespace-nowrap">
+            Verify Patient
+          </Button>
+        </Link>
       </div>
 
       <div className="w-full">
