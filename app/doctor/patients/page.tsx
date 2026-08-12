@@ -79,28 +79,29 @@ export default function ActivePatientsPage() {
 
       <div className="space-y-4">
         {patients.map((patient) => (
-          <div 
-            key={patient.id} 
-            className="flex items-center justify-between p-5 rounded-2xl border border-slate-100 bg-surface shadow-sm transition hover:shadow-md hover:border-slate-200 cursor-pointer"
-          >
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-                <UserIcon />
+          <Link key={patient.id} href={`/doctor/patients/workspace/${patient.code}`}>
+            <div 
+              className="flex items-center justify-between p-5 rounded-2xl border border-slate-100 bg-surface shadow-sm transition hover:shadow-md hover:border-slate-200 cursor-pointer"
+            >
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                  <UserIcon />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900">{patient.name}</h3>
+                  <p className="text-sm text-slate-500">Code: {patient.code}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-slate-900">{patient.name}</h3>
-                <p className="text-sm text-slate-500">Code: {patient.code}</p>
+              <div className="text-right">
+                <p className={`text-xs font-medium ${patient.statusColor}`}>
+                  {patient.status}
+                </p>
+                <p className={`text-xl font-bold tabular-nums ${patient.timeColor}`}>
+                  {patient.time}
+                </p>
               </div>
             </div>
-            <div className="text-right">
-              <p className={`text-xs font-medium ${patient.statusColor}`}>
-                {patient.status}
-              </p>
-              <p className={`text-xl font-bold tabular-nums ${patient.timeColor}`}>
-                {patient.time}
-              </p>
-            </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

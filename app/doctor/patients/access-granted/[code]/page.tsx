@@ -75,12 +75,14 @@ export default function AccessGrantedPage({ params }: { params: Promise<{ code: 
         </div>
 
         {/* Action Button */}
-        <Button 
-          fullWidth 
-          className="bg-[#008060] hover:bg-[#006e52] text-white border-0 py-4 text-base font-semibold shadow-sm transition"
-        >
-          Go to Patient Workspace
-        </Button>
+        <Link href={`/doctor/patients/workspace/${code}`} className="block w-full">
+          <Button 
+            fullWidth 
+            className="bg-[#008060] hover:bg-[#006e52] text-white border-0 py-4 text-base font-semibold shadow-sm transition"
+          >
+            Go to Patient Workspace
+          </Button>
+        </Link>
       </div>
     </div>
   );
