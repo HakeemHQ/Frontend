@@ -69,10 +69,12 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <h1 className="text-2xl font-bold text-slate-900 font-heading">Documents</h1>
-          <Button className="bg-primary-600 hover:bg-primary-700 text-white font-medium flex items-center gap-2">
-            <HugeiconsIcon icon={FileUploadIcon} className="w-4 h-4" />
-            Upload Document
-          </Button>
+          <Link href={`/doctor/patients/workspace/${code}/documents/upload`}>
+            <Button className="bg-primary-600 hover:bg-primary-700 text-white font-medium flex items-center gap-2">
+              <HugeiconsIcon icon={FileUploadIcon} className="w-4 h-4" />
+              Upload Document
+            </Button>
+          </Link>
         </div>
 
         {/* Filters */}

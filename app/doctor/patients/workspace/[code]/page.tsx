@@ -28,7 +28,7 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
       title: "Upload Document",
       description: "Upload new medical document",
       icon: FileUploadIcon,
-      href: `/doctor/patients/workspace/${code}/documents`
+      href: `/doctor/patients/workspace/${code}/documents/upload`
     },
     {
       title: "View Documents",
