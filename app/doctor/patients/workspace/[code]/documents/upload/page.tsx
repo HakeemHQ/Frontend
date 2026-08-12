@@ -109,8 +109,7 @@ export default function UploadDocumentPage({ params }: { params: Promise<{ code:
           <Button 
             className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-2.5 rounded-lg font-medium"
             onClick={() => {
-              // Later this will proceed to the actual file upload step
-              console.log("Proceeding with type:", selectedType);
+              router.push(`/doctor/patients/workspace/${code}/documents/upload/${selectedType}`);
             }}
           >
             Continue
