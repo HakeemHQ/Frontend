@@ -2,6 +2,7 @@
 
 import React, { useState, use } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Toast } from "@/components/ui/Toast";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -12,6 +13,7 @@ import {
 } from "@hugeicons/core-free-icons";
 
 export default function RequestAccessPage({ params }: { params: Promise<{ code: string }> }) {
+  const router = useRouter();
   const { code } = use(params);
   const [isSending, setIsSending] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "warning" } | null>(null);
@@ -22,10 +24,7 @@ export default function RequestAccessPage({ params }: { params: Promise<{ code: 
     // Simulate API request
     setTimeout(() => {
       setIsSending(false);
-      setToast({ 
-        message: "Request successfully sent to the patient's mobile app.", 
-        type: "success" 
-      });
+      router.push(`/doctor/patients/redeem-access/${code}`);
     }, 1200);
   };
 
