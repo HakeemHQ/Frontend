@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 
 
@@ -45,16 +45,33 @@ const ChatIcon = () => (
   </svg>
 );
 
-const navItems = [
-  { label: "Patients", href: "/doctor/patients", icon: <PatientsIcon /> },
-  { label: "Ask AI", href: "/doctor/ask-ai", icon: <ChatIcon /> },
-  { label: "My Profile", href: "/doctor/profile", icon: <ProfileIcon /> },
-  { label: "Upload Record", href: "/doctor/upload", icon: <UploadIcon /> },
-];
+const CVsIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="16" x2="8" y1="13" y2="13" />
+    <line x1="16" x2="8" y1="17" y2="17" />
+    <polyline points="10 9 9 9 8 9" />
+  </svg>
+);
 
 export function DoctorSidebar() {
   const pathname = usePathname();
+  const params = useParams();
   const { logout } = useAuth();
+  
+  const code = params?.code as string | undefined;
+
+  const navItems = [
+    { label: "Patients", href: "/doctor/patients", icon: <PatientsIcon /> },
+    { label: "All CVs", href: "/doctor/medical-cvs", icon: <CVsIcon /> },
+    { label: "My Profile", href: "/doctor/profile", icon: <ProfileIcon /> },
+    { 
+      label: "Upload Record", 
+      href: code ? `/doctor/patients/workspace/${code}/documents/upload` : "/doctor/upload", 
+      icon: <UploadIcon /> 
+    },
+  ];
 
   return (
     <aside className="fixed left-0 top-0 hidden h-screen w-[260px] border-r border-slate-100 bg-white md:block">
@@ -81,18 +98,25 @@ export function DoctorSidebar() {
         <nav className="mt-4 flex-1 px-4">
           <div className="space-y-1">
             {navItems.map((item) => {
-              const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/');
+              const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/' && item.href !== '/doctor/patients');
+              
+              // Special case for Patients tab to keep it active inside workspace
+              const isPatientsTab = item.label === "Patients";
+              const isPatientsActive = isPatientsTab && pathname.startsWith('/doctor/patients');
+              
+              const finalIsActive = isPatientsActive || isActive;
+
               return (
                 <Link
                   key={item.label}
                   href={item.href}
                   className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
-                    isActive
+                    finalIsActive
                       ? "bg-blue-50 text-blue-600"
                       : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
                   }`}
                 >
-                  <span className={isActive ? "text-blue-600" : "text-slate-400"}>
+                  <span className={finalIsActive ? "text-blue-600" : "text-slate-400"}>
                     {item.icon}
                   </span>
                   <span>{item.label}</span>

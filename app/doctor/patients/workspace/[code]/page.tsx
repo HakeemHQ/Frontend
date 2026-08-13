@@ -18,9 +18,8 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
   const tabs = [
     { name: "Overview", active: true, href: `/doctor/patients/workspace/${code}` },
     { name: "Documents", active: false, href: `/doctor/patients/workspace/${code}/documents` },
-    { name: "Medical Records", active: false, href: `/doctor/patients/workspace/${code}/medical-records` },
     { name: "Medical CV", active: false, href: `/doctor/patients/workspace/${code}/medical-cv` },
-    { name: "AI Assistant", active: false, href: `/doctor/ask-ai` },
+    { name: "AI Assistant", active: false, href: `/doctor/patients/workspace/${code}/ask-ai` },
   ];
 
   const quickActions = [
@@ -40,13 +39,13 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
       title: "New Medical CV",
       description: "Generate new medical CV",
       icon: FileAddIcon,
-      href: `/doctor/patients/workspace/${code}/medical-cv`
+      href: `/doctor/patients/workspace/${code}/medical-cv/new`
     },
     {
       title: "Ask AI Assistant",
       description: "Ask questions about patient data",
       icon: AiChat02Icon,
-      href: `/doctor/ask-ai`
+      href: `/doctor/patients/workspace/${code}/ask-ai`
     },
   ];
 

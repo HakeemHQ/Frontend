@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, use } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   AiMagicIcon,
@@ -16,7 +16,8 @@ type Message = {
   timestamp: Date;
 };
 
-export default function AskAIPage() {
+export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code: string }> }) {
+  const { code } = use(params);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -48,8 +49,8 @@ export default function AskAIPage() {
     // Simulate AI response
     setTimeout(() => {
       const botResponses = [
-        "I can certainly help you analyze that lab report. Could you specify which values you're concerned about?",
-        "Based on the patient's history, that seems like a normal variance, but I recommend checking their previous HbA1c levels for a better baseline.",
+        `I can certainly help you analyze that lab report for patient ${code}. Could you specify which values you're concerned about?`,
+        `Based on patient ${code}'s history, that seems like a normal variance.`,
         "I've found 3 recent clinical guidelines regarding this treatment protocol. Would you like me to summarize them?",
         "The interaction between those two medications is generally mild, but you should monitor for potential liver enzyme elevation."
       ];
@@ -58,7 +59,7 @@ export default function AskAIPage() {
       const newBotMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: "bot",
-        text: messages.length === 0 ? "Hello there Dr. Ahmed, how can I help you today?" : randomResponse,
+        text: messages.length === 0 ? `Hello there! I'm ready to assist you with patient ${code}'s records. What would you like to know?` : randomResponse,
         timestamp: new Date(),
       };
       
@@ -87,7 +88,7 @@ export default function AskAIPage() {
             <h1 className="font-bold text-slate-900 leading-tight">H-bot AI Assistant</h1>
             <p className="text-xs font-medium text-emerald-600 flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              Online & Ready
+              Patient Context: {code}
             </p>
           </div>
         </div>
@@ -101,9 +102,9 @@ export default function AskAIPage() {
               <div className="absolute inset-0 bg-blue-100/50 rounded-full animate-ping opacity-75 duration-1000"></div>
               <HugeiconsIcon icon={Chemistry01Icon} className="w-10 h-10 text-blue-600 relative z-10" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-2 font-heading">How can I assist you today?</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mb-2 font-heading">How can I assist you with this patient?</h2>
             <p className="text-slate-500 max-w-md mx-auto mb-8">
-              I can help you analyze medical records, check for drug interactions, or summarize patient histories securely.
+              I have access to patient {code}&apos;s medical history. I can help analyze records, check for drug interactions, or summarize their case.
             </p>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
@@ -112,8 +113,6 @@ export default function AskAIPage() {
                   key={i}
                   onClick={() => {
                     setInputValue(prompt);
-                    // Slight delay to allow state update before sending if we wanted to auto-send, 
-                    // but we'll just populate the input for the user to edit or send.
                   }}
                   className="px-4 py-3 bg-white border border-slate-200 hover:border-blue-300 hover:shadow-sm hover:bg-blue-50/50 rounded-xl text-sm font-medium text-slate-700 transition-all text-left flex items-center gap-2"
                 >
@@ -184,7 +183,7 @@ export default function AskAIPage() {
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Ask H-bot anything about your patients or medical records..."
+            placeholder={`Ask H-bot anything about patient ${code}...`}
             className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-base rounded-full pl-6 pr-14 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
           />
           <button
