@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use } from "react";
+import React, { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -11,9 +11,61 @@ import {
   FileAddIcon,
   AiChat02Icon
 } from "@hugeicons/core-free-icons";
+import { motion } from "framer-motion";
 
 export default function WorkspacePage({ params }: { params: Promise<{ code: string }> }) {
   const { code } = use(params);
+  
+  const [accessData, setAccessData] = useState<any>(null);
+  const [timeLeft, setTimeLeft] = useState<string>("");
+  const [isExpired, setIsExpired] = useState<boolean>(false);
+
+  useEffect(() => {
+    const data = sessionStorage.getItem(`access_${code}`);
+    if (data) {
+      try {
+        setAccessData(JSON.parse(data));
+      } catch (e) {
+        console.error("Failed to parse access data");
+      }
+    }
+  }, [code]);
+
+  useEffect(() => {
+    if (!accessData?.expiresAt) {
+      setTimeLeft("--:--:--");
+      return;
+    }
+
+    const updateTimer = () => {
+      let expiryString = accessData.expiresAt;
+      if (typeof expiryString === 'string' && !expiryString.endsWith('Z')) {
+        expiryString += 'Z';
+      }
+      const now = new Date().getTime();
+      const expires = new Date(expiryString).getTime();
+      const distance = expires - now;
+
+      if (distance <= 0) {
+        setTimeLeft("00:00:00");
+        setIsExpired(true);
+        return;
+      }
+
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      setTimeLeft(
+        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+      );
+      setIsExpired(false);
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [accessData?.expiresAt]);
 
   const tabs = [
     { name: "Overview", active: true, href: `/doctor/patients/workspace/${code}` },
@@ -49,54 +101,65 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
     },
   ];
 
+  const patientName = accessData?.patient?.fullName || accessData?.fullName || "Patient";
+
   return (
-    <div className="max-w-4xl mx-auto pt-4 pb-12 space-y-8 animate-in fade-in duration-300">
+    <div className="max-w-5xl mx-auto pt-4 pb-12 space-y-8">
       {/* Breadcrumbs */}
-      <div className="flex items-center text-sm text-slate-500">
-        <Link href="/doctor/patients" className="flex items-center hover:text-slate-800 transition">
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 mr-1" />
+      <div className="flex items-center text-sm font-medium text-slate-500 mb-6">
+        <Link href="/doctor/patients" className="flex items-center hover:text-slate-900 transition-colors">
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 mr-1.5" />
           <span>Patients</span>
         </Link>
-        <span className="mx-2">&gt;</span>
-        <span className="font-medium text-primary-600">Workspace</span>
+        <span className="mx-3 text-slate-300">/</span>
+        <span className="text-slate-900 font-semibold">Workspace</span>
       </div>
 
-      <div className="w-full border border-slate-100 rounded-2xl bg-surface shadow-sm overflow-hidden">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full border border-slate-100/80 rounded-3xl bg-white/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden"
+      >
         {/* Profile Section */}
-        <div className="p-6 md:p-8 border-b border-slate-100">
+        <div className="p-8 md:p-10 border-b border-slate-100/80 bg-gradient-to-br from-white to-slate-50/50">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-            <div className="flex items-center gap-5">
-              <div className="w-20 h-20 rounded-full bg-primary-50 flex items-center justify-center border border-primary-100 overflow-hidden shrink-0">
-                <HugeiconsIcon icon={UserIcon} className="w-10 h-10 text-primary-500" />
+            <div className="flex items-center gap-6">
+              <div className="w-24 h-24 rounded-3xl bg-emerald-50 flex items-center justify-center border border-emerald-100 overflow-hidden shrink-0 shadow-sm">
+                <HugeiconsIcon icon={UserIcon} className="w-12 h-12 text-emerald-600" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 font-heading mb-1">Mazen Mohamed</h2>
-                <div className="flex items-center gap-4 text-sm">
-                  <span className="text-slate-500">Code: {code}</span>
-                  <div className="flex items-center gap-2 px-3 py-1 bg-primary-50 text-primary-700 rounded-md font-medium text-xs">
-                    Active Access
+                <h2 className="text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">{patientName}</h2>
+                <div className="flex items-center gap-4 text-sm font-medium">
+                  <span className="text-slate-500 bg-slate-100/80 px-3 py-1 rounded-lg">Code: {code}</span>
+                  <div className={`flex items-center gap-2 px-3 py-1 rounded-lg text-xs tracking-wide font-bold uppercase ${isExpired ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                    {isExpired ? 'Access Expired' : 'Active Access'}
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="text-sm font-medium text-slate-500">
-              Expires in <span className="text-primary-600 font-bold ml-1 tabular-nums">01:23:45</span>
+            <div className="text-sm font-semibold text-slate-500 bg-white px-5 py-3 rounded-2xl shadow-sm border border-slate-100">
+              {isExpired ? (
+                <span className="text-rose-600 font-bold ml-1 uppercase tracking-wide">Expired</span>
+              ) : (
+                <>Expires in <span className="text-emerald-600 font-bold ml-2 text-lg tabular-nums">{timeLeft}</span></>
+              )}
             </div>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="px-6 md:px-8 bg-surface">
+        <div className="px-8 bg-white/50 backdrop-blur-sm">
           <nav className="flex space-x-8 overflow-x-auto hide-scrollbar">
             {tabs.map((tab) => (
               <Link
                 key={tab.name}
                 href={tab.href}
-                className={`py-4 px-1 border-b-2 text-sm font-medium whitespace-nowrap transition ${
+                className={`py-5 px-1 border-b-2 text-sm font-bold whitespace-nowrap transition-all duration-300 ${
                   tab.active
-                    ? "border-primary-600 text-primary-600"
-                    : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+                    ? "border-emerald-600 text-emerald-600"
+                    : "border-transparent text-slate-500 hover:text-slate-900 hover:border-slate-300"
                 }`}
               >
                 {tab.name}
@@ -104,28 +167,32 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
             ))}
           </nav>
         </div>
-      </div>
+      </motion.div>
 
       {/* Quick Actions */}
-      <div>
-        <h3 className="text-lg font-bold text-slate-900 font-heading mb-6">Quick Actions</h3>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+      >
+        <h3 className="text-xl font-extrabold text-slate-900 mb-6 tracking-tight px-1">Quick Actions</h3>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {quickActions.map((action, index) => (
             <Link key={index} href={action.href}>
               <div 
-                className="flex flex-col h-full items-center justify-center text-center p-8 bg-surface border border-slate-100 rounded-2xl shadow-sm hover:shadow-md hover:border-slate-200 transition cursor-pointer group"
+                className="flex flex-col h-full items-center justify-center text-center p-8 bg-white/80 backdrop-blur-xl border border-slate-100/80 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 hover:border-slate-200 transition-all duration-300 cursor-pointer group"
               >
-                <div className="w-12 h-12 bg-primary-50 text-primary-600 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-primary-100 transition duration-300">
-                  <HugeiconsIcon icon={action.icon} className="w-6 h-6" />
+                <div className="w-16 h-16 bg-slate-50 text-slate-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-all duration-300 shadow-sm border border-slate-100/50">
+                  <HugeiconsIcon icon={action.icon} className="w-8 h-8" />
                 </div>
-                <h4 className="font-bold text-slate-900 mb-2 font-heading leading-tight">{action.title}</h4>
-                <p className="text-xs text-slate-500 leading-relaxed max-w-[140px]">{action.description}</p>
+                <h4 className="font-bold text-slate-900 mb-2 leading-tight">{action.title}</h4>
+                <p className="text-sm font-medium text-slate-500 leading-relaxed max-w-[140px] group-hover:text-slate-600 transition-colors">{action.description}</p>
               </div>
             </Link>
           ))}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

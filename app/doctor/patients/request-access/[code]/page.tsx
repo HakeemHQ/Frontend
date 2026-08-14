@@ -6,11 +6,13 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Toast } from "@/components/ui/Toast";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { requestPatientAccess } from "@/lib/api/patients";
 import {
   ArrowLeft01Icon,
   InformationCircleIcon,
   UserIcon
 } from "@hugeicons/core-free-icons";
+import { AnimatePresence } from "framer-motion";
 
 export default function RequestAccessPage({ params }: { params: Promise<{ code: string }> }) {
   const router = useRouter();
@@ -18,26 +20,50 @@ export default function RequestAccessPage({ params }: { params: Promise<{ code: 
   const [isSending, setIsSending] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "warning" } | null>(null);
 
-  const handleRequestAccess = () => {
+  const handleRequestAccess = async () => {
     setIsSending(true);
+    setToast(null);
     
-    // Simulate API request
-    setTimeout(() => {
+    try {
+      await requestPatientAccess({ patientCode: code });
+      // The API returns 201 Created on success
+      setToast({ message: "Access request sent successfully.", type: "success" });
+      
+      // Delay navigation slightly so user can see success toast
+      setTimeout(() => {
+        router.push(`/doctor/patients/redeem-access/${code}`);
+      }, 1000);
+    } catch (err: any) {
+      let errorMessage = "Failed to request access.";
+      
+      const statusCode = err.response?.status;
+      if (statusCode === 404) {
+        errorMessage = "Patient not found.";
+      } else if (statusCode === 409) {
+        errorMessage = "An access request is already pending or active.";
+      } else if (statusCode === 422) {
+        errorMessage = "Invalid patient code format.";
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      }
+      
+      setToast({ message: errorMessage, type: "error" });
       setIsSending(false);
-      router.push(`/doctor/patients/redeem-access/${code}`);
-    }, 1200);
+    }
   };
 
   return (
     <div className="max-w-2xl mx-auto pt-4 pb-8 space-y-6 relative animate-in fade-in duration-300">
-      {/* Toast Notification */}
-      {toast && (
-        <Toast 
-          message={toast.message} 
-          type={toast.type} 
-          onClose={() => setToast(null)} 
-        />
-      )}
+      <AnimatePresence>
+        {/* Toast Notification */}
+        {toast && (
+          <Toast 
+            message={toast.message} 
+            type={toast.type} 
+            onClose={() => setToast(null)} 
+          />
+        )}
+      </AnimatePresence>
 
       {/* Header Breadcrumbs */}
       <div className="flex items-center text-sm text-slate-500 mb-6">
@@ -67,7 +93,7 @@ export default function RequestAccessPage({ params }: { params: Promise<{ code: 
               <HugeiconsIcon icon={UserIcon} className="w-8 h-8 text-slate-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-slate-900">Mazen Mohamed</h3>
+              <h3 className="text-lg font-semibold text-slate-900">Patient Data</h3>
               <p className="text-slate-500 text-sm">Patient Code: {code}</p>
             </div>
           </div>

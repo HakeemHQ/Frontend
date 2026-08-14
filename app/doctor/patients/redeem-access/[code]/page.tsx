@@ -1,67 +1,75 @@
 "use client";
 
-import React, { useState, useEffect, use } from "react";
+import React, { useState, use } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Toast } from "@/components/ui/Toast";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { redeemPatientAccess } from "@/lib/api/patients";
 import {
   ArrowLeft01Icon,
   UserIcon
 } from "@hugeicons/core-free-icons";
+import { AnimatePresence } from "framer-motion";
 
 export default function RedeemAccessPage({ params }: { params: Promise<{ code: string }> }) {
   const router = useRouter();
   const { code } = use(params);
   const [oneTimeCode, setOneTimeCode] = useState("");
   const [isRedeeming, setIsRedeeming] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(30);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "warning" } | null>(null);
 
-  useEffect(() => {
-    if (timeLeft <= 0) return;
-    const timer = setInterval(() => {
-      setTimeLeft(prev => prev - 1);
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [timeLeft]);
-
-  const handleRedeem = () => {
+  const handleRedeem = async () => {
     if (!oneTimeCode || oneTimeCode.length < 6) {
       setToast({ message: "Please enter a valid 6-digit one-time code.", type: "warning" });
       return;
     }
 
     setIsRedeeming(true);
+    setToast(null);
     
-    // Simulate API request
-    setTimeout(() => {
-      setIsRedeeming(false);
-      if (oneTimeCode === "000000") {
-        setToast({ message: "Invalid or expired code.", type: "error" });
-      } else {
+    try {
+      const res = await redeemPatientAccess({ patientCode: code, oneTimeCode });
+      const accessData = (res as any).data || res;
+      sessionStorage.setItem(`access_${code}`, JSON.stringify(accessData));
+      
+      setToast({ message: "Access successfully redeemed. Redirecting...", type: "success" });
+      setTimeout(() => {
         router.push(`/doctor/patients/access-granted/${code}`);
+      }, 1000);
+    } catch (err: any) {
+      let errorMessage = "Failed to redeem code.";
+      
+      const statusCode = err.response?.status;
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (statusCode === 401 || statusCode === 403) {
+        errorMessage = "Unauthorized to redeem this code.";
+      } else if (statusCode === 409) {
+        errorMessage = "Invalid or expired one-time code, or an active session already exists.";
+      } else if (statusCode === 422) {
+        errorMessage = "Invalid code format.";
       }
-    }, 1200);
-  };
-
-  const handleResend = () => {
-    setToast({ message: "A new one-time code has been sent to the patient.", type: "success" });
-    setTimeLeft(30);
+      
+      setToast({ message: errorMessage, type: "error" });
+      setIsRedeeming(false);
+    }
   };
 
   return (
     <div className="max-w-2xl mx-auto pt-4 pb-8 space-y-6 relative animate-in fade-in duration-300">
-      {/* Toast Notification */}
-      {toast && (
-        <Toast 
-          message={toast.message} 
-          type={toast.type} 
-          onClose={() => setToast(null)} 
-        />
-      )}
+      <AnimatePresence>
+        {/* Toast Notification */}
+        {toast && (
+          <Toast 
+            message={toast.message} 
+            type={toast.type} 
+            onClose={() => setToast(null)} 
+          />
+        )}
+      </AnimatePresence>
 
       {/* Header Breadcrumbs */}
       <div className="flex items-center text-sm text-slate-500 mb-6">
@@ -91,7 +99,7 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
               <HugeiconsIcon icon={UserIcon} className="w-8 h-8 text-slate-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-slate-900">Mazen Mohamed</h3>
+              <h3 className="text-lg font-semibold text-slate-900">Patient Data</h3>
               <p className="text-slate-500 text-sm">Patient Code: {code}</p>
             </div>
           </div>
@@ -120,20 +128,6 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
             className="bg-[#008060] hover:bg-[#006e52] text-white border-0 py-4 text-base font-semibold shadow-sm transition"
           >
             {isRedeeming ? "Redeeming Code..." : "Redeem Code"}
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={handleResend}
-            disabled={timeLeft > 0 || isRedeeming}
-            fullWidth
-            className={`py-4 text-base font-semibold transition border-[#008060] ${
-              timeLeft > 0 || isRedeeming
-                ? "text-[#008060]/60 bg-[#008060]/5 cursor-not-allowed"
-                : "text-[#008060] hover:bg-[#008060]/10 bg-transparent"
-            }`}
-          >
-            {timeLeft > 0 ? `Resend Code in ${timeLeft}s` : "Resend Code"}
           </Button>
         </div>
       </div>

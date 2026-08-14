@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use } from "react";
+import React, { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -12,14 +12,54 @@ import {
 
 export default function AccessGrantedPage({ params }: { params: Promise<{ code: string }> }) {
   const { code } = use(params);
+  const [accessData, setAccessData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Formatting dates to match the UI screenshot
-  const now = new Date();
-  const expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
+  useEffect(() => {
+    const data = sessionStorage.getItem(`access_${code}`);
+    if (data) {
+      try {
+        setAccessData(JSON.parse(data));
+      } catch (e) {
+        console.error("Failed to parse access data from session storage");
+      }
+    }
+    setIsLoading(false);
+  }, [code]);
 
-  const formatDate = (date: Date) => {
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "N/A";
+    let ds = dateString;
+    if (!ds.endsWith('Z')) ds += 'Z';
+    const date = new Date(ds);
     return `${date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}, ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
   };
+
+  const calculateTimeLimit = (granted?: string, expires?: string) => {
+    if (!granted || !expires) return "N/A";
+    let gStr = granted;
+    let eStr = expires;
+    if (!gStr.endsWith('Z')) gStr += 'Z';
+    if (!eStr.endsWith('Z')) eStr += 'Z';
+    const g = new Date(gStr).getTime();
+    const e = new Date(eStr).getTime();
+    const diffHours = Math.round((e - g) / (1000 * 60 * 60));
+    return `${diffHours} hour${diffHours !== 1 ? 's' : ''}`;
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#008060]"></div>
+      </div>
+    );
+  }
+
+  // Fallback to current time if no data (e.g. accessed directly without redeeming)
+  const grantedAtTime = accessData?.grantedAt || new Date().toISOString();
+  const expiresAtTime = accessData?.expiresAt || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+  const patientName = accessData?.patient?.fullName || "Patient";
+  const patientCode = accessData?.patient?.patientCode || code;
 
   return (
     <div className="max-w-2xl mx-auto pt-4 pb-8 space-y-6 relative animate-in fade-in duration-300">
@@ -51,25 +91,25 @@ export default function AccessGrantedPage({ params }: { params: Promise<{ code: 
               <HugeiconsIcon icon={UserIcon} className="w-8 h-8 text-slate-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-slate-900 font-heading">Mazen Mohamed</h3>
-              <p className="text-slate-500 text-sm">Patient Code: {code}</p>
+              <h3 className="text-lg font-semibold text-slate-900 font-heading">{patientName}</h3>
+              <p className="text-slate-500 text-sm">Patient Code: {patientCode}</p>
             </div>
           </div>
 
           <div className="space-y-0">
             <div className="flex items-center justify-between py-4 border-t border-slate-100 text-sm">
               <span className="font-semibold text-slate-700">Access Granted At</span>
-              <span className="text-slate-500">{formatDate(now)}</span>
+              <span className="text-slate-500">{formatDate(grantedAtTime)}</span>
             </div>
             
             <div className="flex items-center justify-between py-4 border-t border-slate-100 text-sm">
               <span className="font-semibold text-slate-700">Time limit</span>
-              <span className="text-slate-500">24 hours</span>
+              <span className="text-slate-500">{calculateTimeLimit(grantedAtTime, expiresAtTime)}</span>
             </div>
 
             <div className="flex items-center justify-between py-4 border-t border-slate-100 text-sm">
               <span className="font-semibold text-slate-700">Access Expires At</span>
-              <span className="text-slate-500">{formatDate(expiresAt)}</span>
+              <span className="text-slate-500">{formatDate(expiresAtTime)}</span>
             </div>
           </div>
         </div>
