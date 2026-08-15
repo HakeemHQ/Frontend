@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use } from "react";
+import React, { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -16,96 +16,117 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
-
-// Mock Data based on GET /medical-cvs schema
-const mockMedicalCvs = [
-  {
-    medicalCvId: "cv-123",
-    title: "Cardiology Medical CV",
-    latestVersionNumber: 2,
-    generationStatus: "Ready",
-    verificationStatus: "DoctorVerified",
-    date: "2023-10-15"
-  },
-  {
-    medicalCvId: "cv-124",
-    title: "My Diabetes CV",
-    latestVersionNumber: 1,
-    generationStatus: "Ready",
-    verificationStatus: "Unreviewed",
-    date: "2023-11-02"
-  },
-  {
-    medicalCvId: "cv-125",
-    title: "Orthopedic Surgery Summary",
-    latestVersionNumber: 1,
-    generationStatus: "Queued",
-    verificationStatus: "Unreviewed",
-    date: "2023-11-20"
-  }
-];
+import { motion, AnimatePresence } from "framer-motion";
+import { usePatientMedicalCvsStore } from "@/store/usePatientMedicalCvsStore";
+import { Toast } from "@/components/ui/Toast";
 
 export default function MedicalCVsPage({ params }: { params: Promise<{ code: string }> }) {
   const { code } = use(params);
+  const { cvs, isLoading, error, fetchCvs } = usePatientMedicalCvsStore();
   
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [verificationFilter, setVerificationFilter] = React.useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [verificationFilter, setVerificationFilter] = useState("All");
+  const [toastMessage, setToastMessage] = useState<{ message: string; type: 'success' | 'error' | 'warning' } | null>(null);
 
-  const filteredCVs = mockMedicalCvs.filter(cv => {
+  useEffect(() => {
+    const dataStr = sessionStorage.getItem(`access_${code}`);
+    if (dataStr) {
+      try {
+        const accessData = JSON.parse(dataStr);
+        const patientId = accessData?.patientId || accessData?.patient?.patientId;
+        if (patientId) {
+          fetchCvs(patientId);
+        } else {
+          setToastMessage({ message: "Could not find Patient ID for this workspace.", type: "error" });
+        }
+      } catch (e) {
+        console.error("Failed to parse access data");
+      }
+    }
+  }, [code, fetchCvs]);
+
+  useEffect(() => {
+    if (error) {
+      setToastMessage({ message: error, type: 'error' });
+    }
+  }, [error]);
+
+  const filteredCVs = cvs.filter(cv => {
     const matchesSearch = cv.title.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesVerification = verificationFilter === "All" || cv.verificationStatus === verificationFilter;
+    
+    // Status mapping for filter: we map based on the first version's status or 'unknown'
+    const status = cv.versions?.[0]?.status || "unknown";
+    let matchesVerification = true;
+    if (verificationFilter === "Ready" && status.toLowerCase() !== "ready") matchesVerification = false;
+    if (verificationFilter === "Queued" && status.toLowerCase() !== "queued" && status.toLowerCase() !== "processing") matchesVerification = false;
+    
     return matchesSearch && matchesVerification;
   });
 
-  const getStatusBadge = (status: string, type: 'generation' | 'verification') => {
-    if (type === 'generation') {
-      switch (status) {
-        case 'Ready':
-          return (
-            <span className="flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-emerald-100">
-              <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5" />
-              Ready
-            </span>
-          );
-        case 'Queued':
-          return (
-            <span className="flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-amber-100">
-              <HugeiconsIcon icon={Time02Icon} className="w-3.5 h-3.5" />
-              Queued
-            </span>
-          );
-        default:
-          return (
-            <span className="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-slate-200">
-              {status}
-            </span>
-          );
-      }
-    } else {
-      switch (status) {
-        case 'DoctorVerified':
-          return (
-            <span className="flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-blue-100">
-              <HugeiconsIcon icon={DocumentValidationIcon} className="w-3.5 h-3.5" />
-              Verified
-            </span>
-          );
-        case 'Unreviewed':
-          return (
-            <span className="flex items-center gap-1 px-2.5 py-1 bg-slate-50 text-slate-500 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-slate-200">
-              Unreviewed
-            </span>
-          );
-        default:
-          return null;
-      }
+  const getStatusBadge = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'ready':
+        return (
+          <span className="flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-emerald-100">
+            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5" />
+            Ready
+          </span>
+        );
+      case 'queued':
+      case 'processing':
+        return (
+          <span className="flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-amber-100">
+            <HugeiconsIcon icon={Time02Icon} className="w-3.5 h-3.5" />
+            {status}
+          </span>
+        );
+      default:
+        return (
+          <span className="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-slate-200">
+            {status}
+          </span>
+        );
     }
   };
 
+  const renderSkeletons = () => (
+    <motion.div 
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm h-full animate-pulse">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-12 h-12 bg-slate-100 rounded-xl"></div>
+            <div className="w-5 h-5 bg-slate-100 rounded-full"></div>
+          </div>
+          <div className="flex-1 space-y-2 mb-4">
+            <div className="h-5 bg-slate-100 rounded-md w-3/4"></div>
+            <div className="h-3 bg-slate-100 rounded-md w-1/2"></div>
+          </div>
+          <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+            <div className="w-16 h-5 bg-slate-100 rounded-lg"></div>
+          </div>
+        </div>
+      ))}
+    </motion.div>
+  );
+
   return (
-    <div className="max-w-5xl mx-auto pt-4 pb-12 animate-in fade-in duration-300">
+    <div className="max-w-5xl mx-auto pt-4 pb-12 animate-in fade-in duration-300 relative">
+      <AnimatePresence>
+        {toastMessage && (
+          <Toast 
+            message={toastMessage.message} 
+            type={toastMessage.type} 
+            onClose={() => setToastMessage(null)} 
+          />
+        )}
+      </AnimatePresence>
+
       {/* Back Navigation */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <Link 
           href={`/doctor/patients/workspace/${code}`}
           className="flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 transition"
@@ -114,7 +135,7 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
           Back to Workspace
         </Link>
         <Link href={`/doctor/patients/workspace/${code}/medical-cv/new`}>
-          <Button className="flex items-center gap-2">
+          <Button className="flex items-center gap-2 rounded-xl">
             <HugeiconsIcon icon={FileAddIcon} className="w-4 h-4" />
             New Medical CV
           </Button>
@@ -147,8 +168,8 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
             <Select 
               options={[
                 { value: "All", label: "All Statuses" },
-                { value: "Unreviewed", label: "Unreviewed" },
-                { value: "DoctorVerified", label: "Verified" }
+                { value: "Queued", label: "Queued" },
+                { value: "Ready", label: "Ready" }
               ]}
               value={verificationFilter}
               onChange={setVerificationFilter}
@@ -157,47 +178,74 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
         </div>
       </div>
 
-      {filteredCVs.length > 0 ? (
+      {isLoading ? (
+        renderSkeletons()
+      ) : filteredCVs.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredCVs.map((cv) => (
-            <Link 
-              key={cv.medicalCvId} 
-              href={`/doctor/patients/workspace/${code}/medical-cv/${cv.medicalCvId}`}
-              className="block"
-            >
-              <div 
-                className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-blue-300 transition-all cursor-pointer group flex flex-col h-full"
-              >
-              <div className="flex justify-between items-start mb-4">
-                <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0 border border-blue-100 group-hover:scale-105 transition-transform">
-                  <HugeiconsIcon icon={DocumentValidationIcon} className="w-6 h-6" />
-                </div>
-                <button className="text-slate-400 hover:text-slate-600 p-1">
-                  <HugeiconsIcon icon={MoreVerticalIcon} className="w-5 h-5" />
-                </button>
-              </div>
-              
-              <div className="flex-1">
-                <h3 className="font-bold text-slate-900 text-lg mb-1 leading-tight group-hover:text-blue-600 transition-colors">
-                  {cv.title}
-                </h3>
-                <p className="text-xs font-medium text-slate-400 mb-4">
-                  Version {cv.latestVersionNumber} • {cv.date}
-                </p>
-              </div>
+          <AnimatePresence>
+            {filteredCVs.map((cv) => {
+              const latestVersion = cv.versions?.[0] || { versionNumber: 0, status: 'Unknown', createdAt: 'N/A' };
+              const dateObj = latestVersion.createdAt !== 'N/A' ? new Date(latestVersion.createdAt) : null;
+              const formattedDate = dateObj ? dateObj.toLocaleDateString() : 'N/A';
 
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap">
-                <div className="flex items-center gap-2">
-                  {getStatusBadge(cv.generationStatus, 'generation')}
-                  {getStatusBadge(cv.verificationStatus, 'verification')}
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
+              return (
+                <motion.div
+                  key={cv.medicalCvId}
+                  variants={{
+                    hidden: { opacity: 0, scale: 0.95 },
+                    visible: { opacity: 1, scale: 1 }
+                  }}
+                  initial="hidden"
+                  animate="visible"
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Link 
+                    href={`/doctor/patients/workspace/${code}/medical-cv/${cv.medicalCvId}`}
+                    className="block h-full"
+                  >
+                    <div 
+                      className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-emerald-300 transition-all cursor-pointer group flex flex-col h-full"
+                    >
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center shrink-0 border border-emerald-100 group-hover:scale-105 transition-transform">
+                          <HugeiconsIcon icon={DocumentValidationIcon} className="w-6 h-6" />
+                        </div>
+                        <button className="text-slate-400 hover:text-slate-600 p-1">
+                          <HugeiconsIcon icon={MoreVerticalIcon} className="w-5 h-5" />
+                        </button>
+                      </div>
+                      
+                      <div className="flex-1">
+                        <h3 className="font-bold text-slate-900 text-lg mb-1 leading-tight group-hover:text-emerald-600 transition-colors line-clamp-2">
+                          {cv.title || "Untitled CV"}
+                        </h3>
+                        <p className="text-xs font-semibold text-slate-500 mb-1 capitalize">
+                          {cv.scopeType} <span className="font-medium">({cv.focus || "General"})</span>
+                        </p>
+                        <p className="text-[11px] font-bold text-slate-400 mb-4 bg-slate-50 inline-block px-2 py-0.5 rounded">
+                          Version {latestVersion.versionNumber} • {formattedDate}
+                        </p>
+                      </div>
+
+                      <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap">
+                        <div className="flex items-center gap-2">
+                          {getStatusBadge(latestVersion.status)}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              )
+            })}
+          </AnimatePresence>
         </div>
       ) : (
-        <div className="bg-white border border-slate-200 rounded-3xl p-16 text-center shadow-sm">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="bg-white border border-slate-200 rounded-3xl p-16 text-center shadow-sm"
+        >
           <div className="w-20 h-20 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-5">
             <HugeiconsIcon icon={SearchIcon} className="w-10 h-10" />
           </div>
@@ -206,14 +254,14 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
             We couldn&apos;t find any Medical CVs matching your current filters.
           </p>
           <div className="flex items-center justify-center gap-4">
-            <Button onClick={() => { setSearchQuery(""); setVerificationFilter("All"); }} variant="outline">
+            <Button onClick={() => { setSearchQuery(""); setVerificationFilter("All"); }} variant="outline" className="rounded-xl">
               Clear Filters
             </Button>
             <Link href={`/doctor/patients/workspace/${code}/medical-cv/new`}>
-              <Button>Generate Medical CV</Button>
+              <Button className="rounded-xl">Generate Medical CV</Button>
             </Link>
           </div>
-        </div>
+        </motion.div>
       )}
     </div>
   );

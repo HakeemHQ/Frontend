@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, use } from "react";
+import React, { useState, use, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -14,6 +14,9 @@ import {
 } from "@hugeicons/core-free-icons";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { usePatientMedicalCvsStore } from "@/store/usePatientMedicalCvsStore";
+import { Toast } from "@/components/ui/Toast";
+import { AnimatePresence } from "framer-motion";
 
 export default function NewMedicalCVPage({ params }: { params: Promise<{ code: string }> }) {
   const router = useRouter();
@@ -22,12 +25,35 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
   const [title, setTitle] = useState("");
   const [scopeType, setScopeType] = useState<"Full" | "Focused">("Full");
   const [focus, setFocus] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { createCv, isCreating, error: storeError, clearError } = usePatientMedicalCvsStore();
   const [showSuccess, setShowSuccess] = useState(false);
+  const [toastMessage, setToastMessage] = useState<{ message: string; type: 'success' | 'error' | 'warning' } | null>(null);
 
-  const handleSubmit = (e: React.SubmitEvent) => {
+  useEffect(() => {
+    // Clear global store error when navigating away so it doesn't leak to other pages
+    return () => {
+      clearError();
+    };
+  }, [clearError]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setToastMessage(null);
+    
+    // Retrieve patientId from session storage
+    const dataStr = sessionStorage.getItem(`access_${code}`);
+    let patientId = "";
+    if (dataStr) {
+      try {
+        const accessData = JSON.parse(dataStr);
+        patientId = accessData?.patientId || accessData?.patient?.patientId;
+      } catch (err) {}
+    }
+
+    if (!patientId) {
+      setToastMessage({ message: "Patient session not found. Please re-authenticate.", type: "error" });
+      return;
+    }
 
     const payload = {
       title,
@@ -35,16 +61,29 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
       ...(scopeType === "Focused" && { focus })
     };
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Mock API Submission to /doctor/patients/{patientId}/medical-cvs:", payload);
-      setIsSubmitting(false);
+    // Use title only for testing
+    const success = await createCv(title, patientId);
+    
+    if (success) {
       setShowSuccess(true);
-    }, 1500);
+    } else {
+      // Use the global error from the store if available, otherwise a generic error
+      setToastMessage({ message: usePatientMedicalCvsStore.getState().error || "Failed to generate CV. Please try again.", type: "error" });
+    }
   };
 
   return (
-    <div className="max-w-3xl mx-auto pt-4 pb-12 animate-in fade-in duration-300">
+    <div className="max-w-3xl mx-auto pt-4 pb-12 animate-in fade-in duration-300 relative">
+      <AnimatePresence>
+        {toastMessage && (
+          <Toast 
+            message={toastMessage.message} 
+            type={toastMessage.type} 
+            onClose={() => setToastMessage(null)} 
+          />
+        )}
+      </AnimatePresence>
+
       {/* Back Navigation */}
       <div className="mb-8">
         <button 
@@ -215,17 +254,17 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
             )}
 
             {/* Submit Button */}
-            <div className="pt-4 border-t border-slate-100 flex justify-end">
+            <div className="pt-4 border-t border-slate-100 flex flex-col items-end gap-3">
               <Button
                 type="submit"
-                disabled={isSubmitting || !title || (scopeType === "Focused" && !focus)}
+                disabled={isCreating}
                 className="relative overflow-hidden group"
               >
-                <span className={`transition-opacity duration-300 ${isSubmitting ? "opacity-0" : "opacity-100"}`}>
+                <span className={`transition-opacity duration-300 ${isCreating ? "opacity-0" : "opacity-100"}`}>
                   Generate Medical CV
                 </span>
                 
-                {isSubmitting && (
+                {isCreating && (
                   <div className="absolute inset-0 flex items-center justify-center bg-blue-700">
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                     <span className="ml-2">Generating...</span>

@@ -67,6 +67,16 @@ export default function PatientsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, statusFilter]);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("expired") === "true") {
+        setError("You cannot access files for an expired patient. Please request access again.");
+        window.history.replaceState({}, '', '/doctor/patients');
+      }
+    }
+  }, [setError]);
+
   const filteredPatients = (patients || []).filter(
     (p) => 
       p.fullName?.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -178,7 +188,13 @@ export default function PatientsPage() {
                 >
                   <Link 
                     href={`/doctor/patients/workspace/${patient.patientCode}`}
-                    onClick={() => {
+                    onClick={(e) => {
+                      if (itemStatus === "Expired" || itemStatus === "Revoked") {
+                        e.preventDefault();
+                        setError(`You cannot access files for a${itemStatus === "Expired" ? "n expired" : " revoked"} patient. Please request access again.`);
+                        return;
+                      }
+                      
                       const sessionData = {
                         ...patient,
                         patient: {

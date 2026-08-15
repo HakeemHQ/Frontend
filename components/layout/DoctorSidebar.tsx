@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname, useParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import Image from "next/image";
 
 
 
@@ -49,10 +50,25 @@ const CVsIcon = () => (
   </svg>
 );
 
+import { useSidebarStore } from "@/store/useSidebarStore";
+
+const ChevronLeftIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="15 18 9 12 15 6" />
+  </svg>
+);
+
+const ChevronRightIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="9 18 15 12 9 6" />
+  </svg>
+);
+
 export function DoctorSidebar() {
   const pathname = usePathname();
   const params = useParams();
   const { logout } = useAuth();
+  const { isCollapsed, toggleCollapse } = useSidebarStore();
   
   const code = params?.code as string | undefined;
 
@@ -60,33 +76,44 @@ export function DoctorSidebar() {
     { label: "Patients", href: "/doctor/patients", icon: <PatientsIcon /> },
     { label: "All CVs", href: "/doctor/medical-cvs", icon: <CVsIcon /> },
     { label: "My Profile", href: "/doctor/profile", icon: <ProfileIcon /> },
-    { 
-      label: "Upload Record", 
-      href: code ? `/doctor/patients/workspace/${code}/documents/upload` : "/doctor/upload", 
-      icon: <UploadIcon /> 
-    },
   ];
 
   return (
-    <aside className="fixed left-0 top-0 hidden h-screen w-[260px] border-r border-slate-100 bg-white md:block">
-      <div className="flex h-full flex-col">
-        <div className="flex items-center gap-3 px-6 py-8">
-          <div className="flex h-8 w-8 items-center justify-center shrink-0">
-            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-              <rect x="3" y="2" width="9" height="28" fill="#2563eb" />
-              <rect x="12" y="11" width="8" height="10" fill="#2563eb" />
-              <path d="M20 2H29V21L20 30V2Z" fill="#2563eb" />
-              <path d="M29 21V30H20L29 21Z" fill="#10b981" />
-            </svg>
+    <aside 
+      className={`fixed left-0 top-0 block h-screen border-r border-slate-100 bg-white z-40 transition-all duration-300 ${
+        isCollapsed ? "w-[80px]" : "w-[80px] lg:w-[260px]"
+      }`}
+    >
+      <div className="flex h-full flex-col relative">
+        {/* Toggle Button */}
+        <button 
+          onClick={toggleCollapse}
+          className="absolute -right-3 top-10 hidden lg:flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm hover:text-blue-600 transition-colors z-50"
+        >
+          {isCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+        </button>
+
+        <div className={`flex items-center px-6 py-8 ${isCollapsed ? "justify-center px-0" : "gap-3"}`}>
+          <div className="flex h-10 w-10 items-center justify-center shrink-0 overflow-hidden rounded-xl">
+            <Image 
+              src="/icon.png" 
+              alt="Hakeem Logo" 
+              width={40} 
+              height={40} 
+              className="object-contain w-full h-full"
+              priority
+            />
           </div>
-          <div>
-            <div className="text-lg font-bold tracking-tight text-blue-600">
-              Hakeem
+          {!isCollapsed && (
+            <div className="hidden lg:block overflow-hidden whitespace-nowrap transition-opacity duration-300">
+              <div className="text-lg font-bold tracking-tight text-blue-600">
+                Hakeem
+              </div>
+              <div className="text-[10px] uppercase font-semibold text-slate-400">
+                Premium Medical SaaS
+              </div>
             </div>
-            <div className="text-[10px] uppercase font-semibold text-slate-400">
-              Premium Medical SaaS
-            </div>
-          </div>
+          )}
         </div>
 
         <nav className="mt-4 flex-1 px-4">
@@ -94,7 +121,6 @@ export function DoctorSidebar() {
             {navItems.map((item) => {
               const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/' && item.href !== '/doctor/patients');
               
-              // Special case for Patients tab to keep it active inside workspace
               const isPatientsTab = item.label === "Patients";
               const isPatientsActive = isPatientsTab && pathname.startsWith('/doctor/patients');
               
@@ -104,7 +130,10 @@ export function DoctorSidebar() {
                 <Link
                   key={item.label}
                   href={item.href}
-                  className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
+                  title={isCollapsed ? item.label : undefined}
+                  className={`flex items-center rounded-lg py-3 font-semibold transition-colors ${
+                    isCollapsed ? "justify-center px-0" : "gap-3 px-4 text-sm"
+                  } ${
                     finalIsActive
                       ? "bg-blue-50 text-blue-600"
                       : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
@@ -113,7 +142,7 @@ export function DoctorSidebar() {
                   <span className={finalIsActive ? "text-blue-600" : "text-slate-400"}>
                     {item.icon}
                   </span>
-                  <span>{item.label}</span>
+                  {!isCollapsed && <span className="hidden lg:block">{item.label}</span>}
                 </Link>
               );
             })}
@@ -123,10 +152,13 @@ export function DoctorSidebar() {
         <div className="px-4 py-6">
           <button 
             onClick={logout}
-            className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold text-red-500 transition-colors hover:bg-red-50"
+            title={isCollapsed ? "Logout" : undefined}
+            className={`flex w-full items-center rounded-lg py-3 font-semibold text-red-500 transition-colors hover:bg-red-50 ${
+              isCollapsed ? "justify-center px-0" : "gap-3 px-4 text-sm"
+            }`}
           >
             <LogoutIcon />
-            <span>Logout</span>
+            {!isCollapsed && <span className="hidden lg:block">Logout</span>}
           </button>
         </div>
       </div>
