@@ -17,24 +17,19 @@ export function useAuth() {
     setLoading(true);
     setError(null);
     try {
-      const response = await loginApi(params);
-      if (response.success && response.data) {
-        authStorage.setAccessToken(response.data.accessToken);
-        authStorage.setRefreshToken(response.data.refreshToken);
-        setAccessToken(response.data.accessToken);
-        
-        if (response.data.user.userType === 'Admin') {
-          router.push('/admin/dashboard');
-        } else if (response.data.user.userType === 'Doctor') {
-          router.push('/doctor/patients');
-        } else {
-           router.push('/home'); 
-        }
-        return true;
+      const result = await loginApi(params);
+      authStorage.setAccessToken(result.accessToken);
+      authStorage.setRefreshToken(result.refreshToken);
+      setAccessToken(result.accessToken);
+      
+      if (result.user.userType === 'Admin') {
+        router.push('/admin/dashboard');
+      } else if (result.user.userType === 'Doctor') {
+        router.push('/doctor/patients');
       } else {
-        setError(response.message || 'Login failed');
-        return false;
+         router.push('/home'); 
       }
+      return true;
     } catch (err: any) {
       setError(err?.response?.data?.message || err.message || 'An error occurred during login');
       return false;

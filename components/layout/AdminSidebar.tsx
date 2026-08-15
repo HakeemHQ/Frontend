@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/localization/LanguageContext";
 
 const DashboardIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -50,16 +51,17 @@ const LogoutIcon = () => (
   </svg>
 );
 
-const navItems = [
-  { label: "Dashboard", href: "/admin/dashboard", icon: <DashboardIcon /> },
-  { label: "Doctors", href: "/admin/doctors", icon: <DoctorsIcon /> },
-  { label: "Users", href: "/admin/users", icon: <UsersIcon /> },
-  { label: "Audit Logs", href: "/admin/logs", icon: <LogsIcon /> },
-];
-
 export function AdminSidebar() {
   const pathname = usePathname();
   const { logout } = useAuth();
+  const { t } = useLanguage();
+
+  const navItems = [
+    { label: t('nav.dashboard'), href: "/admin/dashboard", icon: <DashboardIcon /> },
+    { label: t('nav.doctors'), href: "/admin/doctors", icon: <DoctorsIcon /> },
+    { label: t('nav.users'), href: "/admin/users", icon: <UsersIcon /> },
+    { label: t('nav.auditLogs'), href: "/admin/audit-logs", icon: <LogsIcon /> },
+  ];
 
   return (
     <aside className="fixed left-0 top-0 hidden h-screen w-[260px] border-r border-slate-100 bg-white md:block">
@@ -75,10 +77,10 @@ export function AdminSidebar() {
           </div>
           <div>
             <div className="text-lg font-bold tracking-tight text-blue-600">
-              Hakeem
+              {t('common.appName')}
             </div>
             <div className="text-[10px] uppercase font-semibold text-slate-400">
-              Premium Medical SaaS
+              {t('common.brandTagline')}
             </div>
           </div>
         </div>
@@ -107,13 +109,14 @@ export function AdminSidebar() {
           </div>
         </nav>
 
-        <div className="px-4 py-6">
+        <div className="px-4 py-6 space-y-4">
+          
           <button 
             onClick={logout}
             className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold text-red-500 transition-colors hover:bg-red-50 cursor-pointer"
           >
             <LogoutIcon />
-            <span>Logout</span>
+            <span>{t('nav.logout')}</span>
           </button>
         </div>
       </div>

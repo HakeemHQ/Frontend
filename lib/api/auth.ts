@@ -5,31 +5,21 @@ export interface LoginParams {
   password?: string;
 }
 
-export interface AuthResponse {
-  success: boolean;
-  message: string;
-  data: {
-    accessToken: string;
-    refreshToken: string;
-    tokenType: string;
-    accessTokenExpiresAt: string;
-    refreshTokenExpiresAt: string;
-    user: {
-      userId: string;
-      email: string;
-      userType: string;
-    };
+export interface LoginResult {
+  accessToken: string;
+  refreshToken: string;
+  tokenType: string;
+  accessTokenExpiresAt: string;
+  refreshTokenExpiresAt: string;
+  user: {
+    userId: string;
+    email: string;
+    userType: string;
   };
-  errorList: {
-    propertyName: string;
-    message: string;
-    code: string;
-  }[];
-  globalErrorCode: string | null;
 }
 
-export async function login(params: LoginParams): Promise<AuthResponse> {
-  const { data } = await api.post<AuthResponse>("/auth/login", params);
+export async function login(params: LoginParams): Promise<LoginResult> {
+  const { data } = await api.post<LoginResult>("/auth/login", params);
   return data;
 }
 

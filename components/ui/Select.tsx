@@ -13,6 +13,7 @@ export interface SelectProps {
   onChange?: (value: string) => void;
   placeholder?: string;
   className?: string;
+  error?: string;
 }
 
 const ChevronDownIcon = ({ className }: { className?: string }) => (
@@ -27,7 +28,7 @@ const CheckIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export function Select({ options, value, onChange, placeholder = "Select...", className = "" }: SelectProps) {
+export function Select({ options, value, onChange, placeholder = "Select...", className = "", error }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -44,21 +45,26 @@ export function Select({ options, value, onChange, placeholder = "Select...", cl
   }, []);
 
   return (
-    <div className={`relative ${className}`} ref={containerRef}>
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className={`flex w-full items-center justify-between rounded-xl border bg-white px-4 py-3 text-sm transition outline-none focus:border-blue-500 focus:shadow-sm ${
-          isOpen ? "border-blue-500 shadow-sm" : "border-slate-200 hover:border-slate-300"
-        }`}
-      >
-        <span className={selectedOption ? "text-slate-900" : "text-slate-400"}>
-          {selectedOption ? selectedOption.label : placeholder}
-        </span>
-        <ChevronDownIcon className={`text-slate-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
-      </button>
+    <div className={`w-full flex flex-col gap-1.5 ${className}`}>
+      <div className="relative w-full" ref={containerRef}>
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-sm transition outline-none focus:shadow-sm ${
+            error 
+              ? 'border-red-300 focus:border-red-500 text-red-900 bg-red-50' 
+              : isOpen 
+                ? 'border-blue-500 shadow-sm bg-white' 
+                : 'border-slate-200 hover:border-slate-300 bg-white'
+          }`}
+        >
+          <span className={selectedOption ? (error ? "text-red-900" : "text-slate-900") : "text-slate-400"}>
+            {selectedOption ? selectedOption.label : placeholder}
+          </span>
+          <ChevronDownIcon className={`${error ? "text-red-400" : "text-slate-400"} transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+        </button>
 
-      {isOpen && (
+        {isOpen && (
         <div className="absolute z-50 mt-2 w-full overflow-hidden rounded-xl border border-slate-100 bg-white p-1 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] animate-in fade-in zoom-in-95 duration-100">
           <ul className="max-h-60 overflow-y-auto">
             {options.map((option) => (
@@ -82,6 +88,12 @@ export function Select({ options, value, onChange, placeholder = "Select...", cl
             ))}
           </ul>
         </div>
+      )}
+      </div>
+      {error && (
+        <p className="text-sm text-red-600 animate-in fade-in slide-in-from-top-1">
+          {error}
+        </p>
       )}
     </div>
   );

@@ -35,11 +35,18 @@ const processQueue = (error: any, token: string | null = null) => {
 };
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // The backend wraps all responses in GenericResponseModel: { success, data, message, errorList, globalErrorCode }
+    // Unwrap automatically so consumers get the inner payload directly
+    if (response.data && typeof response.data === "object" && "success" in response.data && "data" in response.data) {
+      response.data = response.data.data;
+    }
+    return response;
+  },
   async (error: AxiosError) => {
     const originalRequest = error.config as any;
 
-    if (originalRequest?.url?.includes('/auth/login') || originalRequest?.url?.includes('/auth/refresh-token')) {
+    if (originalRequest?.url?.includes('/auth/login') || originalRequest?.url?.includes('/refresh')) {
       return Promise.reject(error);
     }
 
@@ -76,7 +83,7 @@ api.interceptors.response.use(
       try {
         const { data } = await axios.post<{
           data: { accessToken: string; refreshToken: string };
-        }>(`${api.defaults.baseURL}/auth/refresh-token`, { refreshToken });
+        }>(`${api.defaults.baseURL}/refresh`, { refreshToken });
 
         const newAccessToken = data.data.accessToken;
         const newRefreshToken = data.data.refreshToken;

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -11,19 +11,10 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-
-const data = [
-  { name: "Aug 1", documents: 30, extractions: 10 },
-  { name: "Aug 2", documents: 20, extractions: 15 },
-  { name: "Aug 3", documents: 40, extractions: 20 },
-  { name: "Aug 4", documents: 30, extractions: 18 },
-  { name: "Aug 5", documents: 50, extractions: 25 },
-  { name: "Aug 6", documents: 60, extractions: 35 },
-  { name: "Aug 7", documents: 40, extractions: 20 },
-  { name: "Aug 8", documents: 55, extractions: 30 },
-  { name: "Aug 9", documents: 70, extractions: 40 },
-  { name: "Aug 10", documents: 80, extractions: 45 },
-];
+import { Input } from "@/components/ui/Input";
+import { Spinner } from "@/components/ui/Spinner";
+import { useAdminStore } from "@/store/useAdminStore";
+import { useLanguage } from "@/localization/LanguageContext";
 
 const CalendarIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -37,100 +28,94 @@ const CalendarIcon = () => (
 const StatCard = ({
   title,
   value,
-  trend,
-  trendUp,
+  isLoading
 }: {
   title: string;
-  value: string;
-  trend: string;
-  trendUp: boolean;
+  value: string | number;
+  isLoading: boolean;
 }) => (
   <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
     <h3 className="text-sm font-semibold text-slate-500 mb-4">{title}</h3>
-    <div className="flex items-end gap-3 mb-2">
-      <span className="text-4xl font-bold text-slate-900">{value}</span>
-      <span className={`text-sm font-semibold mb-1 ${trendUp ? "text-emerald-500" : "text-red-500"}`}>
-        {trendUp ? "+" : ""}{trend}
-      </span>
+    <div className="flex items-end gap-3 mb-2 h-10">
+      {isLoading ? (
+        <Spinner className="h-6 w-6 text-slate-400" />
+      ) : (
+        <span className="text-4xl font-bold text-slate-900">{value}</span>
+      )}
     </div>
-    <p className="text-xs text-slate-400">vs previous 10 days</p>
   </div>
 );
 
 export default function AdminDashboardPage() {
+  const { t } = useLanguage();
+  const { activitySummary, isActivitySummaryLoading, activitySummaryError, fetchActivitySummary } = useAdminStore();
+  
+  // Default to last 10 days
+  const [fromDate, setFromDate] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 10);
+    return d.toISOString().split("T")[0];
+  });
+  
+  const [toDate, setToDate] = useState(() => {
+    return new Date().toISOString().split("T")[0];
+  });
+
+  const [dateError, setDateError] = useState("");
+
+  useEffect(() => {
+    if (fromDate > toDate) {
+      setDateError(t('admin.dashboard.dateError'));
+      return;
+    }
+    setDateError("");
+    fetchActivitySummary({ fromDate, toDate });
+  }, [fromDate, toDate, fetchActivitySummary]);
+
   return (
     <div className="space-y-8 pb-8">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-          Dashboard
+          {t('admin.dashboard.title')}
         </h1>
-        <button className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm transition hover:bg-slate-50">
-          <span>Aug 1, 2026 - Aug 10, 2026</span>
-          <CalendarIcon />
-        </button>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <StatCard title="Active Patients" value="84" trend="12%" trendUp={true} />
-        <StatCard title="Active Doctors" value="12" trend="9%" trendUp={true} />
-        <StatCard title="Documents Uploaded" value="231" trend="18%" trendUp={true} />
-        <StatCard title="Extractions Completed" value="218" trend="14%" trendUp={true} />
-        <StatCard title="CV Versions Generated" value="47" trend="8%" trendUp={true} />
-      </div>
-
-      <div className="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-slate-900">
-            Activity Overview <span className="text-sm font-normal text-slate-500">(Last 10 Days)</span>
-          </h2>
-        </div>
-        <div className="h-[350px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-              <XAxis 
-                dataKey="name" 
-                axisLine={false} 
-                tickLine={false} 
-                tick={{ fill: "#64748B", fontSize: 12 }} 
-                dy={10} 
-              />
-              <YAxis 
-                axisLine={false} 
-                tickLine={false} 
-                tick={{ fill: "#64748B", fontSize: 12 }} 
-              />
-              <Tooltip 
-                contentStyle={{ borderRadius: "12px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)" }}
-              />
-              <Legend 
-                verticalAlign="top" 
-                align="right" 
-                iconType="circle" 
-                wrapperStyle={{ paddingBottom: "20px" }}
-              />
-              <Line
-                type="monotone"
-                dataKey="documents"
-                name="Documents"
-                stroke="#2563EB"
-                strokeWidth={3}
-                dot={{ r: 4, strokeWidth: 2 }}
-                activeDot={{ r: 6 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="extractions"
-                name="Extractions"
-                stroke="#60A5FA"
-                strokeWidth={3}
-                dot={{ r: 4, strokeWidth: 2 }}
-                activeDot={{ r: 6 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Input 
+              type="date" 
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+              className="w-40"
+            />
+            <span className="text-slate-400">{t('admin.dashboard.to')}</span>
+            <Input 
+              type="date" 
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+              className="w-40"
+            />
+          </div>
         </div>
       </div>
+      
+      {dateError && (
+        <div className="text-sm text-red-500">
+          {dateError}
+        </div>
+      )}
+
+      {activitySummaryError && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-600">
+          {activitySummaryError}
+        </div>
+      )}
+
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <StatCard title={t('admin.dashboard.activeUsers')} value={activitySummary?.activeUsers || 0} isLoading={isActivitySummaryLoading} />
+        <StatCard title={t('admin.dashboard.documentsUploaded')} value={activitySummary?.documentsUploaded || 0} isLoading={isActivitySummaryLoading} />
+        <StatCard title={t('admin.dashboard.extractionsCompleted')} value={activitySummary?.extractionsCompleted || 0} isLoading={isActivitySummaryLoading} />
+        <StatCard title={t('admin.dashboard.cvVersionsGenerated')} value={activitySummary?.medicalCvVersionsGenerated || 0} isLoading={isActivitySummaryLoading} />
+      </div>
+
     </div>
   );
 }
