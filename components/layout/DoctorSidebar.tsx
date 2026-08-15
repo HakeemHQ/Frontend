@@ -4,8 +4,9 @@ import React from "react";
 import Link from "next/link";
 import { usePathname, useParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/localization/LanguageContext";
 
-
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const PatientsIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -53,15 +54,17 @@ export function DoctorSidebar() {
   const pathname = usePathname();
   const params = useParams();
   const { logout } = useAuth();
+  const { t } = useLanguage();
   
   const code = params?.code as string | undefined;
 
   const navItems = [
-    { label: "Patients", href: "/doctor/patients", icon: <PatientsIcon /> },
-    { label: "All CVs", href: "/doctor/medical-cvs", icon: <CVsIcon /> },
-    { label: "My Profile", href: "/doctor/profile", icon: <ProfileIcon /> },
+    { id: "patients", label: t('nav.patients'), href: "/doctor/patients", icon: <PatientsIcon /> },
+    { id: "allCvs", label: t('nav.allCvs'), href: "/doctor/medical-cvs", icon: <CVsIcon /> },
+    { id: "profile", label: t('nav.myProfile'), href: "/doctor/profile", icon: <ProfileIcon /> },
     { 
-      label: "Upload Record", 
+      id: "upload",
+      label: t('nav.uploadRecord'), 
       href: code ? `/doctor/patients/workspace/${code}/documents/upload` : "/doctor/upload", 
       icon: <UploadIcon /> 
     },
@@ -81,10 +84,10 @@ export function DoctorSidebar() {
           </div>
           <div>
             <div className="text-lg font-bold tracking-tight text-blue-600">
-              Hakeem
+              {t('common.appName')}
             </div>
             <div className="text-[10px] uppercase font-semibold text-slate-400">
-              Premium Medical SaaS
+              {t('common.brandTagline')}
             </div>
           </div>
         </div>
@@ -95,14 +98,14 @@ export function DoctorSidebar() {
               const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/' && item.href !== '/doctor/patients');
               
               // Special case for Patients tab to keep it active inside workspace
-              const isPatientsTab = item.label === "Patients";
+              const isPatientsTab = item.id === "patients";
               const isPatientsActive = isPatientsTab && pathname.startsWith('/doctor/patients');
               
               const finalIsActive = isPatientsActive || isActive;
 
               return (
                 <Link
-                  key={item.label}
+                  key={item.id}
                   href={item.href}
                   className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
                     finalIsActive
@@ -120,13 +123,16 @@ export function DoctorSidebar() {
           </div>
         </nav>
 
-        <div className="px-4 py-6">
+        <div className="px-4 py-6 space-y-4">
+          <div className="flex w-full justify-center">
+            <LanguageSwitcher />
+          </div>
           <button 
             onClick={logout}
             className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold text-red-500 transition-colors hover:bg-red-50"
           >
             <LogoutIcon />
-            <span>Logout</span>
+            <span>{t('nav.logout')}</span>
           </button>
         </div>
       </div>

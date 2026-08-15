@@ -1,5 +1,6 @@
-import { Plus_Jakarta_Sans, Inter } from "next/font/google";
+import { Plus_Jakarta_Sans, Inter, Cairo } from "next/font/google";
 import "./globals.css";
+import { LanguageProvider } from "@/localization/LanguageContext";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-heading",
@@ -9,6 +10,11 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
+});
+
+const cairo = Cairo({
+  variable: "--font-arabic",
+  subsets: ["arabic", "latin"],
 });
 
 export const metadata = {
@@ -24,10 +30,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${plusJakartaSans.variable} ${inter.variable} h-full antialiased`}
+      dir="ltr"
+      className={`${plusJakartaSans.variable} ${inter.variable} ${cairo.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-sans bg-background text-slate-900">
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

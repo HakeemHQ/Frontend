@@ -13,8 +13,10 @@ import {
   UserIcon
 } from "@hugeicons/core-free-icons";
 import { AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/localization/LanguageContext";
 
 export default function RequestAccessPage({ params }: { params: Promise<{ code: string }> }) {
+  const { t } = useLanguage();
   const router = useRouter();
   const { code } = use(params);
   const [isSending, setIsSending] = useState(false);
@@ -27,22 +29,22 @@ export default function RequestAccessPage({ params }: { params: Promise<{ code: 
     try {
       await requestPatientAccess({ patientCode: code });
       // The API returns 201 Created on success
-      setToast({ message: "Access request sent successfully.", type: "success" });
+      setToast({ message: t('doctor.requestAccess.successMessage'), type: "success" });
       
       // Delay navigation slightly so user can see success toast
       setTimeout(() => {
         router.push(`/doctor/patients/redeem-access/${code}`);
       }, 1000);
     } catch (err: any) {
-      let errorMessage = "Failed to request access.";
+      let errorMessage = t('doctor.requestAccess.errorDefault');
       
       const statusCode = err.response?.status;
       if (statusCode === 404) {
-        errorMessage = "Patient not found.";
+        errorMessage = t('doctor.requestAccess.errorNotFound');
       } else if (statusCode === 409) {
-        errorMessage = "An access request is already pending or active.";
+        errorMessage = t('doctor.requestAccess.errorConflict');
       } else if (statusCode === 422) {
-        errorMessage = "Invalid patient code format.";
+        errorMessage = t('doctor.requestAccess.errorFormat');
       } else if (err.response?.data?.message) {
         errorMessage = err.response.data.message;
       }
@@ -69,18 +71,18 @@ export default function RequestAccessPage({ params }: { params: Promise<{ code: 
       <div className="flex items-center text-sm text-slate-500 mb-6">
         <Link href="/doctor/patients" className="flex items-center hover:text-slate-800 transition">
           <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 mr-1" />
-          <span>Patients</span>
+          <span>{t('doctor.requestAccess.patients')}</span>
         </Link>
         <span className="mx-2">&gt;</span>
-        <span className="font-medium text-slate-900">Request Access</span>
+        <span className="font-medium text-slate-900">{t('doctor.requestAccess.title')}</span>
       </div>
 
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-2">
-          Request Access
+          {t('doctor.requestAccess.heading')}
         </h1>
         <p className="text-slate-500 text-sm">
-          You are requesting access to this patient's medical data.
+          {t('doctor.requestAccess.description')}
         </p>
       </div>
 
@@ -93,8 +95,8 @@ export default function RequestAccessPage({ params }: { params: Promise<{ code: 
               <HugeiconsIcon icon={UserIcon} className="w-8 h-8 text-slate-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-slate-900">Patient Data</h3>
-              <p className="text-slate-500 text-sm">Patient Code: {code}</p>
+              <h3 className="text-lg font-semibold text-slate-900">{t('doctor.requestAccess.patientData')}</h3>
+              <p className="text-slate-500 text-sm">{t('doctor.requestAccess.patientCode')}: {code}</p>
             </div>
           </div>
 
@@ -102,7 +104,7 @@ export default function RequestAccessPage({ params }: { params: Promise<{ code: 
           <div className="mt-6 flex items-start gap-3 p-4 bg-background rounded-xl border border-slate-100">
             <HugeiconsIcon icon={InformationCircleIcon} className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
             <p className="text-sm text-slate-700">
-              The patient will receive a request on their mobile app.
+              {t('doctor.requestAccess.infoAlert')}
             </p>
           </div>
         </div>
@@ -114,7 +116,7 @@ export default function RequestAccessPage({ params }: { params: Promise<{ code: 
           fullWidth 
           className="bg-[#008060] hover:bg-[#006e52] text-white border-0 py-4 text-base font-semibold shadow-sm transition"
         >
-          {isSending ? "Sending Request..." : "Send Request"}
+          {isSending ? t('doctor.requestAccess.sending') : t('doctor.requestAccess.send')}
         </Button>
       </div>
     </div>

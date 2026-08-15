@@ -4,6 +4,7 @@ import React, { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { useLanguage } from "@/localization/LanguageContext";
 import {
   ArrowLeft01Icon,
   CheckmarkCircle02Icon,
@@ -11,6 +12,7 @@ import {
 } from "@hugeicons/core-free-icons";
 
 export default function AccessGrantedPage({ params }: { params: Promise<{ code: string }> }) {
+  const { t } = useLanguage();
   const { code } = use(params);
   const [accessData, setAccessData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -36,7 +38,7 @@ export default function AccessGrantedPage({ params }: { params: Promise<{ code: 
   };
 
   const calculateTimeLimit = (granted?: string, expires?: string) => {
-    if (!granted || !expires) return "N/A";
+    if (!granted || !expires) return t('doctor.accessGranted.na');
     let gStr = granted;
     let eStr = expires;
     if (!gStr.endsWith('Z')) gStr += 'Z';
@@ -44,7 +46,7 @@ export default function AccessGrantedPage({ params }: { params: Promise<{ code: 
     const g = new Date(gStr).getTime();
     const e = new Date(eStr).getTime();
     const diffHours = Math.round((e - g) / (1000 * 60 * 60));
-    return `${diffHours} hour${diffHours !== 1 ? 's' : ''}`;
+    return `${diffHours} ${diffHours === 1 ? t('doctor.accessGranted.hour') : t('doctor.accessGranted.hours')}`;
   };
 
   if (isLoading) {
@@ -67,19 +69,19 @@ export default function AccessGrantedPage({ params }: { params: Promise<{ code: 
       <div className="flex items-center text-sm text-slate-500 mb-6">
         <Link href="/doctor/patients" className="flex items-center hover:text-slate-800 transition">
           <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 mr-1" />
-          <span>Patients</span>
+          <span>{t('doctor.accessGranted.patients')}</span>
         </Link>
         <span className="mx-2">&gt;</span>
-        <span className="font-medium text-slate-900">Access Granted</span>
+        <span className="font-medium text-slate-900">{t('doctor.accessGranted.title')}</span>
       </div>
 
       <div className="flex flex-col items-center mt-12 mb-8">
         <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-16 h-16 text-[#008060] mb-4" />
         <h1 className="text-3xl font-bold tracking-tight text-[#008060] mb-2 font-heading">
-          Access Granted
+          {t('doctor.accessGranted.heading')}
         </h1>
         <p className="text-slate-500 text-sm text-center">
-          You now have access to the patient's medical data.
+          {t('doctor.accessGranted.description')}
         </p>
       </div>
 
@@ -92,23 +94,23 @@ export default function AccessGrantedPage({ params }: { params: Promise<{ code: 
             </div>
             <div>
               <h3 className="text-lg font-semibold text-slate-900 font-heading">{patientName}</h3>
-              <p className="text-slate-500 text-sm">Patient Code: {patientCode}</p>
+              <p className="text-slate-500 text-sm">{t('doctor.accessGranted.patientCode')}: {patientCode}</p>
             </div>
           </div>
 
           <div className="space-y-0">
             <div className="flex items-center justify-between py-4 border-t border-slate-100 text-sm">
-              <span className="font-semibold text-slate-700">Access Granted At</span>
+              <span className="font-semibold text-slate-700">{t('doctor.accessGranted.grantedAt')}</span>
               <span className="text-slate-500">{formatDate(grantedAtTime)}</span>
             </div>
             
             <div className="flex items-center justify-between py-4 border-t border-slate-100 text-sm">
-              <span className="font-semibold text-slate-700">Time limit</span>
+              <span className="font-semibold text-slate-700">{t('doctor.accessGranted.timeLimit')}</span>
               <span className="text-slate-500">{calculateTimeLimit(grantedAtTime, expiresAtTime)}</span>
             </div>
 
             <div className="flex items-center justify-between py-4 border-t border-slate-100 text-sm">
-              <span className="font-semibold text-slate-700">Access Expires At</span>
+              <span className="font-semibold text-slate-700">{t('doctor.accessGranted.expiresAt')}</span>
               <span className="text-slate-500">{formatDate(expiresAtTime)}</span>
             </div>
           </div>
@@ -120,7 +122,7 @@ export default function AccessGrantedPage({ params }: { params: Promise<{ code: 
             fullWidth 
             className="bg-[#008060] hover:bg-[#006e52] text-white border-0 py-4 text-base font-semibold shadow-sm transition"
           >
-            Go to Patient Workspace
+            {t('doctor.accessGranted.goToWorkspace')}
           </Button>
         </Link>
       </div>

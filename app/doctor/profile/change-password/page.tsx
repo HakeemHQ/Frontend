@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { useLanguage } from "@/localization/LanguageContext";
 
 const ArrowLeftIcon = ({ className }: { className?: string }) => (
   <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -41,6 +42,7 @@ const ShieldIcon = ({ className }: { className?: string }) => (
 );
 
 export default function ChangePasswordPage() {
+  const { t } = useLanguage();
   const router = useRouter();
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
@@ -72,7 +74,7 @@ export default function ChangePasswordPage() {
           <ArrowLeftIcon className="w-5 h-5 text-slate-700" />
         </button>
         <h1 className="text-2xl font-bold text-slate-900 font-heading">
-          Change Password
+          {t('doctor.profile.changePasswordTitle')}
         </h1>
       </div>
 
@@ -81,16 +83,16 @@ export default function ChangePasswordPage() {
         <div className="bg-[#b3c7f1]/40 border border-[#b3c7f1]/60 rounded-lg p-4 flex items-start gap-3 mb-8">
           <ShieldIcon className="w-5 h-5 text-indigo-900 shrink-0 mt-0.5" />
           <p className="text-sm text-indigo-950 leading-relaxed font-medium">
-            Ensure your new password uses a combination of letters, numbers, and symbols for maximum clinical-grade security.
+            {t('doctor.profile.changePasswordDesc')}
           </p>
         </div>
 
         <form onSubmit={handleUpdate} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-700">Current Password</label>
+            <label className="text-sm font-semibold text-slate-700">{t('doctor.profile.currentPassword')}</label>
             <Input 
               type={showCurrent ? "text" : "password"}
-              placeholder="At least 8 characters"
+              placeholder={t('doctor.profile.passwordPlaceholder')}
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
               className="bg-white"
@@ -110,10 +112,10 @@ export default function ChangePasswordPage() {
           <div className="border-t border-slate-100 my-6"></div>
 
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-700">New Password</label>
+            <label className="text-sm font-semibold text-slate-700">{t('doctor.profile.newPassword')}</label>
             <Input 
               type={showNew ? "text" : "password"}
-              placeholder="At least 8 characters"
+              placeholder={t('doctor.profile.passwordPlaceholder')}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               className="bg-white"
@@ -139,17 +141,17 @@ export default function ChangePasswordPage() {
               </div>
               <div className="text-right">
                 <span className="text-xs font-medium text-slate-500">
-                  Password strength: {isStrong ? 'Strong' : isMedium ? 'Medium' : 'Weak'}
+                  {t('doctor.profile.passwordStrength')}: {isStrong ? t('doctor.profile.strengthStrong') : isMedium ? t('doctor.profile.strengthMedium') : t('doctor.profile.strengthWeak')}
                 </span>
               </div>
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-700">Confirm Password</label>
+            <label className="text-sm font-semibold text-slate-700">{t('doctor.profile.confirmPassword')}</label>
             <Input 
               type={showConfirm ? "text" : "password"}
-              placeholder="At least 8 characters"
+              placeholder={t('doctor.profile.passwordPlaceholder')}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="bg-white"

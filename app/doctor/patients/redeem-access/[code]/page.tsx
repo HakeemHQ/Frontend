@@ -13,8 +13,10 @@ import {
   UserIcon
 } from "@hugeicons/core-free-icons";
 import { AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/localization/LanguageContext";
 
 export default function RedeemAccessPage({ params }: { params: Promise<{ code: string }> }) {
+  const { t } = useLanguage();
   const router = useRouter();
   const { code } = use(params);
   const [oneTimeCode, setOneTimeCode] = useState("");
@@ -23,7 +25,7 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
 
   const handleRedeem = async () => {
     if (!oneTimeCode || oneTimeCode.length < 6) {
-      setToast({ message: "Please enter a valid 6-digit one-time code.", type: "warning" });
+      setToast({ message: t('doctor.redeemAccess.warningInvalid'), type: "warning" });
       return;
     }
 
@@ -35,22 +37,22 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
       const accessData = (res as any).data || res;
       sessionStorage.setItem(`access_${code}`, JSON.stringify(accessData));
       
-      setToast({ message: "Access successfully redeemed. Redirecting...", type: "success" });
+      setToast({ message: t('doctor.redeemAccess.successMessage'), type: "success" });
       setTimeout(() => {
         router.push(`/doctor/patients/access-granted/${code}`);
       }, 1000);
     } catch (err: any) {
-      let errorMessage = "Failed to redeem code.";
+      let errorMessage = t('doctor.redeemAccess.errorDefault');
       
       const statusCode = err.response?.status;
       if (err.response?.data?.message) {
         errorMessage = err.response.data.message;
       } else if (statusCode === 401 || statusCode === 403) {
-        errorMessage = "Unauthorized to redeem this code.";
+        errorMessage = t('doctor.redeemAccess.errorUnauthorized');
       } else if (statusCode === 409) {
-        errorMessage = "Invalid or expired one-time code, or an active session already exists.";
+        errorMessage = t('doctor.redeemAccess.errorConflict');
       } else if (statusCode === 422) {
-        errorMessage = "Invalid code format.";
+        errorMessage = t('doctor.redeemAccess.errorFormat');
       }
       
       setToast({ message: errorMessage, type: "error" });
@@ -75,18 +77,18 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
       <div className="flex items-center text-sm text-slate-500 mb-6">
         <Link href="/doctor/patients" className="flex items-center hover:text-slate-800 transition">
           <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 mr-1" />
-          <span>Patients</span>
+          <span>{t('doctor.redeemAccess.patients')}</span>
         </Link>
         <span className="mx-2">&gt;</span>
-        <span className="font-medium text-slate-900">Redeem Access</span>
+        <span className="font-medium text-slate-900">{t('doctor.redeemAccess.title')}</span>
       </div>
 
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-2">
-          Redeem Access Code
+          {t('doctor.redeemAccess.heading')}
         </h1>
         <p className="text-slate-500 text-sm">
-          Enter the one-time code provided by the patient.
+          {t('doctor.redeemAccess.description')}
         </p>
       </div>
 
@@ -99,14 +101,14 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
               <HugeiconsIcon icon={UserIcon} className="w-8 h-8 text-slate-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-slate-900">Patient Data</h3>
-              <p className="text-slate-500 text-sm">Patient Code: {code}</p>
+              <h3 className="text-lg font-semibold text-slate-900">{t('doctor.redeemAccess.patientData')}</h3>
+              <p className="text-slate-500 text-sm">{t('doctor.redeemAccess.patientCode')}: {code}</p>
             </div>
           </div>
 
           <div className="border-t border-slate-100 pt-6">
             <label className="block text-sm font-semibold text-slate-900 mb-2" htmlFor="ot-code">
-              One-Time Code
+              {t('doctor.redeemAccess.otcLabel')}
             </label>
             <Input
               id="ot-code"
@@ -127,7 +129,7 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
             fullWidth 
             className="bg-[#008060] hover:bg-[#006e52] text-white border-0 py-4 text-base font-semibold shadow-sm transition"
           >
-            {isRedeeming ? "Redeeming Code..." : "Redeem Code"}
+            {isRedeeming ? t('doctor.redeemAccess.redeeming') : t('doctor.redeemAccess.redeem')}
           </Button>
         </div>
       </div>

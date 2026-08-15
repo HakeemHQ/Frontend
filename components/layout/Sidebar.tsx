@@ -1,11 +1,18 @@
-const navItems = [
-  { label: "Home", href: "/home", icon: "Home" },
-  { label: "Timeline", href: "/timeline", icon: "Clock" },
-  { label: "Medical CV", href: "/medical-cv", icon: "FileText" },
-  { label: "Upload", href: "/upload", icon: "Upload" },
-];
+"use client";
+
+import { useLanguage } from "@/localization/LanguageContext";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 export function Sidebar() {
+  const { t } = useLanguage();
+
+  const navItems = [
+    { label: t("nav.home"), href: "/home", icon: "Home" },
+    { label: t("nav.timeline"), href: "/timeline", icon: "Clock" },
+    { label: t("nav.medicalCv"), href: "/medical-cv", icon: "FileText" },
+    { label: t("nav.upload"), href: "/upload", icon: "Upload" },
+  ];
+
   return (
     <aside className="fixed left-0 top-0 hidden h-screen w-[240px] border-r border-slate-200 bg-white md:block">
       <div className="flex h-full flex-col">
@@ -19,7 +26,7 @@ export function Sidebar() {
             </svg>
           </div>
           <span className="text-xl font-bold tracking-tight text-slate-900">
-            Hakeem
+            {t("common.appName")}
           </span>
         </div>
 
@@ -27,7 +34,7 @@ export function Sidebar() {
           <div className="space-y-2">
             {navItems.map((item) => (
               <a
-                key={item.label}
+                key={item.href}
                 href={item.href}
                 className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-900"
               >
@@ -46,15 +53,18 @@ export function Sidebar() {
             className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-900"
           >
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-50 text-slate-600">
-              Settings
+              {t("nav.settings")}
             </span>
-            <span>Settings</span>
+            <span>{t("nav.settings")}</span>
           </a>
         </nav>
 
-        <div className="border-t border-slate-200 px-4 py-5">
+        <div className="border-t border-slate-200 px-4 py-5 space-y-4">
+          <div className="flex w-full justify-center">
+            <LanguageSwitcher />
+          </div>
           <button className="flex w-full items-center justify-center rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700">
-            Collapse
+            {t("nav.collapse")}
           </button>
         </div>
       </div>

@@ -18,15 +18,17 @@ import {
 } from "@hugeicons/core-free-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/localization/LanguageContext";
 
-const verifySchema = z.object({
-  patientCode: z.string().min(1, "Patient Code is required"),
-  nationalId: z.string().min(1, "National ID is required"),
+const getVerifySchema = (t: any) => z.object({
+  patientCode: z.string().min(1, t('doctor.verifyIdentity.validationCode')),
+  nationalId: z.string().min(1, t('doctor.verifyIdentity.validationId')),
 });
 
-type VerifyFormValues = z.infer<typeof verifySchema>;
+type VerifyFormValues = z.infer<ReturnType<typeof getVerifySchema>>;
 
 export default function VerifyIdentityPage() {
+  const { t } = useLanguage();
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "loading">("idle");
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "warning" } | null>(null);
@@ -36,7 +38,7 @@ export default function VerifyIdentityPage() {
     handleSubmit,
     formState: { errors },
   } = useForm<VerifyFormValues>({
-    resolver: zodResolver(verifySchema),
+    resolver: zodResolver(getVerifySchema(t)),
     defaultValues: {
       patientCode: "",
       nationalId: "",
@@ -63,22 +65,22 @@ export default function VerifyIdentityPage() {
       }
       
       // 3. Navigate directly to redeem page
-      setToast({ message: "Identity verified. Redirecting...", type: "success" });
+      setToast({ message: t('doctor.verifyIdentity.successMessage'), type: "success" });
       setTimeout(() => {
         router.push(`/doctor/patients/redeem-access/${data.patientCode}`);
       }, 500);
 
     } catch (err: any) {
       setStatus("idle");
-      let errorMessage = "Failed to process request.";
+      let errorMessage = t('doctor.verifyIdentity.errorDefault');
       
       const statusCode = err.response?.status;
       if (statusCode === 404) {
-        errorMessage = "Invalid Patient Code.";
+        errorMessage = t('doctor.verifyIdentity.errorInvalidCode');
       } else if (statusCode === 409) {
-        errorMessage = "National ID is already verified to another account.";
+        errorMessage = t('doctor.verifyIdentity.errorConflict');
       } else if (statusCode === 422) {
-        errorMessage = "Format mismatch in provided data.";
+        errorMessage = t('doctor.verifyIdentity.errorFormat');
       } else if (err.response?.data?.message) {
         errorMessage = err.response.data.message;
       }
@@ -102,10 +104,10 @@ export default function VerifyIdentityPage() {
       <div className="flex items-center text-sm font-medium text-slate-500 mb-8">
         <Link href="/doctor/patients" className="flex items-center hover:text-slate-900 transition-colors">
           <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 mr-1.5" />
-          <span>Patients</span>
+          <span>{t('doctor.verifyIdentity.patients')}</span>
         </Link>
         <span className="mx-3 text-slate-300">/</span>
-        <span className="text-slate-900 font-semibold">Verify Identity</span>
+        <span className="text-slate-900 font-semibold">{t('doctor.verifyIdentity.title')}</span>
       </div>
 
       <motion.div 
@@ -119,20 +121,20 @@ export default function VerifyIdentityPage() {
             <HugeiconsIcon icon={UserIdVerificationIcon} className="w-10 h-10" />
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 mb-3">
-            Verify Patient Identity
+            {t('doctor.verifyIdentity.heading')}
           </h1>
           <p className="text-slate-500 text-base max-w-md mx-auto">
-            Enter the patient code and verify their national ID to grant them access to their medical records securely.
+            {t('doctor.verifyIdentity.description')}
           </p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-md mx-auto">
           <div className="space-y-2">
             <label className="text-sm font-bold text-slate-900 ml-1" htmlFor="patientCode">
-              Patient Code
+              {t('doctor.verifyIdentity.patientCode')}
             </label>
             <Input
-              placeholder="e.g. H89K-27P"
+              placeholder={t('doctor.verifyIdentity.patientCodePlaceholder')}
               iconLeft={<HugeiconsIcon icon={Search01Icon} className="h-5 w-5 text-slate-400" />}
               id="patientCode"
               className="bg-slate-50 border-slate-200 focus-visible:ring-emerald-500/20 focus-visible:border-emerald-500 rounded-2xl h-14"
@@ -143,10 +145,10 @@ export default function VerifyIdentityPage() {
 
           <div className="space-y-2">
             <label className="text-sm font-bold text-slate-900 ml-1" htmlFor="nationalId">
-              National ID
+              {t('doctor.verifyIdentity.nationalId')}
             </label>
             <Input
-              placeholder="e.g. 3000512X00000X"
+              placeholder={t('doctor.verifyIdentity.nationalIdPlaceholder')}
               iconLeft={<HugeiconsIcon icon={UserIdVerificationIcon} className="h-5 w-5 text-slate-400" />}
               id="nationalId"
               className="bg-slate-50 border-slate-200 focus-visible:ring-emerald-500/20 focus-visible:border-emerald-500 rounded-2xl h-14"
@@ -162,7 +164,7 @@ export default function VerifyIdentityPage() {
               fullWidth 
               className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl h-14 text-lg font-bold shadow-md hover:shadow-lg transition-all"
             >
-              {status === "loading" ? "Processing..." : "Verify & Proceed"}
+              {status === "loading" ? t('doctor.verifyIdentity.processing') : t('doctor.verifyIdentity.verifyProceed')}
             </Button>
           </div>
         </form>

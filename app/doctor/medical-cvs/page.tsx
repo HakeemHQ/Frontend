@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/localization/LanguageContext";
 
 // Mock Data for Global CVs across patients
 const mockAllCVs = [
@@ -61,6 +62,7 @@ const mockAllCVs = [
 ];
 
 export default function GlobalMedicalCVsPage() {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [verificationFilter, setVerificationFilter] = useState("All");
 
@@ -123,9 +125,9 @@ export default function GlobalMedicalCVsPage() {
     <div className="max-w-7xl mx-auto pt-4 pb-12 px-4 sm:px-6 lg:px-8 space-y-10">
       
       <div>
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">All Patient CVs</h1>
+        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">{t('doctor.medicalCvs.heading')}</h1>
         <p className="text-slate-500 text-base">
-          View and review Medical CVs across all your active patients seamlessly.
+          {t('doctor.medicalCvs.description')}
         </p>
       </div>
 
@@ -133,7 +135,7 @@ export default function GlobalMedicalCVsPage() {
       <div className="bg-white/80 backdrop-blur-xl p-3 md:p-4 rounded-3xl border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="w-full md:w-1/2">
           <Input 
-            placeholder="Search by title, patient name or code..." 
+            placeholder={t('doctor.medicalCvs.searchPlaceholder')} 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             iconLeft={<HugeiconsIcon icon={SearchIcon} className="w-5 h-5 text-slate-400" />}
@@ -143,14 +145,14 @@ export default function GlobalMedicalCVsPage() {
         <div className="w-full md:w-auto flex items-center gap-4 bg-slate-50/50 p-2 rounded-2xl">
           <div className="flex items-center gap-2 text-sm font-bold text-slate-500 pl-2">
             <HugeiconsIcon icon={FilterIcon} className="w-5 h-5" />
-            Status
+            {t('doctor.medicalCvs.status')}
           </div>
           <div className="w-48">
             <Select 
               options={[
-                { value: "All", label: "All Statuses" },
-                { value: "Unreviewed", label: "Unreviewed" },
-                { value: "DoctorVerified", label: "Verified" }
+                { value: "All", label: t('doctor.medicalCvs.filterAll') },
+                { value: "Unreviewed", label: t('doctor.medicalCvs.filterUnreviewed') },
+                { value: "DoctorVerified", label: t('doctor.medicalCvs.filterVerified') }
               ]}
               value={verificationFilter}
               onChange={setVerificationFilter}
@@ -205,7 +207,7 @@ export default function GlobalMedicalCVsPage() {
                         {cv.patientName} <span className="text-slate-400 font-medium">({cv.patientCode})</span>
                       </div>
                       <p className="text-xs font-bold text-slate-400 mb-5 bg-slate-50 inline-block px-2.5 py-1 rounded-md">
-                        Version {cv.latestVersionNumber} • {cv.date}
+                        {t('doctor.medicalCvs.version')} {cv.latestVersionNumber} • {cv.date}
                       </p>
                     </div>
 
@@ -230,7 +232,7 @@ export default function GlobalMedicalCVsPage() {
           <div className="w-20 h-20 bg-white shadow-sm text-slate-400 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-slate-100">
             <HugeiconsIcon icon={SearchIcon} className="w-10 h-10" />
           </div>
-          <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 mb-2">No CVs Found</h2>
+          <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 mb-2">{t('doctor.medicalCvs.noResults')}</h2>
           <p className="text-slate-500 mb-8 max-w-md mx-auto text-base">
             We couldn&apos;t find any Medical CVs matching your current filters. Try adjusting your search or status filter.
           </p>

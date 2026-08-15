@@ -7,6 +7,7 @@ import { useProfileStore } from "@/store/useProfileStore";
 import { getDoctorProfile, DoctorProfile } from "@/lib/api/profile";
 import { Toast } from "@/components/ui/Toast";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/localization/LanguageContext";
 
 const UserIcon = ({ className }: { className?: string }) => (
   <svg className={className} width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -16,6 +17,7 @@ const UserIcon = ({ className }: { className?: string }) => (
 );
 
 export default function DoctorProfilePage() {
+  const { t } = useLanguage();
   const router = useRouter();
   const { profile, setProfile, isLoading, setIsLoading, error, setError } = useProfileStore();
   
@@ -27,11 +29,9 @@ export default function DoctorProfilePage() {
       setError(null);
       
       try {
-        const response = await getDoctorProfile();
-        // Handle case where backend wraps response in { data: {...} }
-        const actualData = (response as any).data || response;
+        const profile = await getDoctorProfile();
         if (mounted) {
-          setProfile(actualData);
+          setProfile(profile);
         }
       } catch (err: any) {
         if (mounted) {
@@ -62,10 +62,10 @@ export default function DoctorProfilePage() {
       
       <div>
         <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">
-          My Profile
+          {t('doctor.profile.title')}
         </h1>
         <p className="text-slate-500 text-base">
-          Manage your account details and security seamlessly.
+          {t('doctor.profile.description')}
         </p>
       </div>
 
@@ -116,23 +116,23 @@ export default function DoctorProfilePage() {
 
             <div className="space-y-2">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl hover:bg-slate-50/80 transition-colors">
-                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">Email Address</span>
+                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">{t('doctor.profile.email')}</span>
                 <span className="text-base font-semibold text-slate-900">{doc.email}</span>
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl hover:bg-slate-50/80 transition-colors">
-                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">License Number</span>
+                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">{t('doctor.profile.licenseNumber')}</span>
                 <span className="text-base font-semibold text-slate-900">{doc.licenseNumber}</span>
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl hover:bg-slate-50/80 transition-colors">
-                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">Specialty</span>
+                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">{t('doctor.profile.specialty')}</span>
                 <span className="text-base font-semibold text-slate-900">{doc.specialty}</span>
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl hover:bg-slate-50/80 transition-colors">
-                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">Account Status</span>
+                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">{t('doctor.profile.accountStatus')}</span>
                 <span className="text-base font-bold text-emerald-600 uppercase tracking-wide text-sm">{doc.status}</span>
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl hover:bg-slate-50/80 transition-colors">
-                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">Doctor ID</span>
+                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">{t('doctor.profile.doctorId')}</span>
                 <span className="text-base font-mono text-slate-600 bg-slate-100 px-2 py-1 rounded-md text-sm">{doc.doctorId}</span>
               </div>
             </div>
@@ -142,7 +142,7 @@ export default function DoctorProfilePage() {
             <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-4">
               <UserIcon className="w-8 h-8 text-slate-300" />
             </div>
-            <p className="font-bold text-lg text-slate-900">No profile data available</p>
+            <p className="font-bold text-lg text-slate-900">{t('doctor.profile.noData')}</p>
           </div>
         )}
 

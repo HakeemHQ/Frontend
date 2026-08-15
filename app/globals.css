@@ -70,3 +70,48 @@
   }
 }
 
+/* RTL Support */
+[dir="rtl"] {
+  /* Flip sidebar positioning */
+  & .fixed.left-0 {
+    left: auto;
+    right: 0;
+  }
+
+  /* Flip sidebar transform */
+  & .-translate-x-full {
+    --tw-translate-x: 0;
+    transform: translateX(100%);
+  }
+
+  /* Flip padding for sidebar offset */
+  & .md\:pl-\[260px\] {
+    padding-left: 0;
+    padding-right: 260px;
+  }
+
+  & .md\:pl-\[240px\] {
+    padding-left: 0;
+    padding-right: 240px;
+  }
+
+  /* Flip border directions */
+  & .border-r {
+    border-right: none;
+    border-left: 1px solid;
+    border-left-color: inherit;
+  }
+
+  /* Ensure text alignment is correct */
+  & table {
+    text-align: right;
+  }
+
+  & .text-left {
+    text-align: right;
+  }
+
+  & .text-right {
+    text-align: left;
+  }
+}

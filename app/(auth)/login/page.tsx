@@ -11,6 +11,8 @@ import { AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useLanguage } from "@/localization/LanguageContext";
+import LanguageSwitcher from "@/components/layout/LanguageSwitcher";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email address"),
@@ -75,6 +77,7 @@ const HistoryIcon = ({ className }: { className?: string }) => (
 );
 
 export default function LoginPage() {
+  const { t } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "warning" } | null>(null);
   const { login, loading, error } = useAuth();
@@ -101,12 +104,15 @@ export default function LoginPage() {
     setToast(null);
     const success = await login(data);
     if (success) {
-      setToast({ message: "Login successful! Redirecting...", type: "success" });
+      setToast({ message: t('auth.login.loginSuccessful'), type: "success" });
     }
   };
 
   return (
-    <main className="flex min-h-screen w-full bg-white text-gray-900 font-sans">
+    <main className="flex min-h-screen w-full bg-white text-gray-900 font-sans relative">
+      <div className="absolute top-4 right-4 z-50">
+        <LanguageSwitcher />
+      </div>
       <AnimatePresence>
         {toast && (
           <Toast
@@ -127,14 +133,14 @@ export default function LoginPage() {
                 <path d="M4 12h16" />
               </svg>
             </div>
-            <span className="text-2xl font-bold tracking-tight text-blue-600">Hakeem</span>
+            <span className="text-2xl font-bold tracking-tight text-blue-600">{t('common.appName')}</span>
           </div>
 
           <h1 className="mb-6 text-4xl xl:text-5xl font-bold leading-tight tracking-tight text-gray-900">
-            Your medical history, organized and secure.
+            {t('auth.login.heroTitle')}
           </h1>
           <p className="text-lg text-gray-600 leading-relaxed mb-16 max-w-md">
-            Access your comprehensive medical records, track your timeline, and manage appointments seamlessly in one secure platform.
+            {t('auth.login.heroSubtitle')}
           </p>
 
           <div className="relative w-full h-40">
@@ -165,22 +171,22 @@ export default function LoginPage() {
         <div className="w-full max-w-md space-y-8 rounded-3xl sm:border sm:border-gray-100 sm:bg-white sm:p-10 sm:shadow-[0_2px_40px_-12px_rgba(0,0,0,0.05)]">
           <div className="text-center sm:text-left">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-              Welcome back
+              {t('auth.login.title')}
             </h2>
             <p className="mt-2 text-sm text-gray-500">
-              Sign in to access your medical records
+              {t('auth.login.subtitle')}
             </p>
           </div>
 
           <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-gray-700" htmlFor="email">
-                Email
+                {t('auth.login.emailLabel')}
               </label>
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t('auth.login.emailPlaceholder')}
                 {...register("email")}
                 error={errors.email?.message}
                 iconLeft={<MailIcon className="h-5 w-5" />}
@@ -189,12 +195,12 @@ export default function LoginPage() {
 
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-gray-700" htmlFor="password">
-                Password
+                {t('auth.login.passwordLabel')}
               </label>
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="Enter your password"
+                placeholder={t('auth.login.passwordPlaceholder')}
                 {...register("password")}
                 error={errors.password?.message}
                 iconLeft={<LockIcon className="h-5 w-5" />}
@@ -203,7 +209,7 @@ export default function LoginPage() {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="hover:text-gray-600 focus:outline-none"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={showPassword ? t('auth.login.hidePassword') : t('auth.login.showPassword')}
                   >
                     {showPassword ? (
                       <EyeOffIcon className="h-5 w-5" />
@@ -220,19 +226,19 @@ export default function LoginPage() {
                 href="/forgot-password"
                 className="text-sm font-medium text-blue-600 hover:text-blue-500 hover:underline"
               >
-                Forgot password?
+                {t('auth.login.forgotPassword')}
               </Link>
             </div>
 
             <Button type="submit" fullWidth className="py-3.5 text-base shadow-sm hover:shadow-md" disabled={loading}>
-              {loading ? "Signing in..." : "Login"}
+              {loading ? t('auth.login.submitting') : t('auth.login.submitButton')}
             </Button>
           </form>
 
           <div className="space-y-6 pt-2">
             <div className="flex items-center justify-center gap-2 rounded-xl bg-slate-50 px-4 py-3 text-xs font-medium text-blue-700">
               <ShieldIcon className="h-4 w-4" />
-              <span>256-bit encrypted. Your data is never sold or shared.</span>
+              <span>{t('auth.login.securityNote')}</span>
             </div>
 
             

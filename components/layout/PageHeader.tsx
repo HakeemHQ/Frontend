@@ -1,10 +1,18 @@
+"use client";
+
+import { useLanguage } from "@/localization/LanguageContext";
+
 export function PageHeader({
   title,
   description,
+  children,
 }: {
   title: string;
   description?: string;
+  children?: React.ReactNode;
 }) {
+  const { t } = useLanguage();
+
   return (
     <div className="flex items-center justify-between gap-4">
       <div>
@@ -15,9 +23,7 @@ export function PageHeader({
           <p className="mt-2 text-sm text-slate-500">{description}</p>
         )}
       </div>
-      <div className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600">
-        Actions
-      </div>
+      {children && <div>{children}</div>}
     </div>
   );
 }
