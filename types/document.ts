@@ -1,6 +1,45 @@
 export type MedicalDocument = {
-  id: string;
+  documentId: string;
+  documentType: string;
   title: string;
-  createdAt?: string;
-  status?: "uploaded" | "processing" | "reviewed";
+  documentDate: string;
+  extractionStatus: string;
+  reviewStatus?: string;
 };
+
+export interface ExtractedField {
+  extractedFieldId: string;
+  fieldName: string;
+  extractedValue: string;
+  confidence: number;
+  evidenceText: string;
+  issues: string[];
+  correctedValue?: string;
+}
+
+export interface ExtractedItem {
+  extractedItemId: string;
+  itemType: string;
+  sequenceNumber: number;
+  pageNumber: number;
+  fields: ExtractedField[];
+}
+
+export interface DocumentExtractedData {
+  documentId: string;
+  documentType: string;
+  extractionStatus: string;
+  reviewStatus?: string;
+  items: ExtractedItem[];
+}
+
+export interface ReviewFieldPayload {
+  extractedFieldId: string;
+  decision: "approved" | "rejected" | "corrected";
+  correctedValue?: string;
+}
+
+export interface ReviewItemPayload {
+  extractedItemId: string;
+  fields: ReviewFieldPayload[];
+}

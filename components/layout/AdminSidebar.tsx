@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import { useLanguage } from "@/localization/LanguageContext";
+import Image from "next/image";
 
 const DashboardIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -51,36 +51,37 @@ const LogoutIcon = () => (
   </svg>
 );
 
+const navItems = [
+  { label: "Dashboard", href: "/admin/dashboard", icon: <DashboardIcon /> },
+  { label: "Doctors", href: "/admin/doctors", icon: <DoctorsIcon /> },
+  { label: "Users", href: "/admin/users", icon: <UsersIcon /> },
+  { label: "Audit Logs", href: "/admin/logs", icon: <LogsIcon /> },
+];
+
 export function AdminSidebar() {
   const pathname = usePathname();
   const { logout } = useAuth();
-  const { t } = useLanguage();
-
-  const navItems = [
-    { label: t('nav.dashboard'), href: "/admin/dashboard", icon: <DashboardIcon /> },
-    { label: t('nav.doctors'), href: "/admin/doctors", icon: <DoctorsIcon /> },
-    { label: t('nav.users'), href: "/admin/users", icon: <UsersIcon /> },
-    { label: t('nav.auditLogs'), href: "/admin/audit-logs", icon: <LogsIcon /> },
-  ];
 
   return (
     <aside className="fixed left-0 top-0 hidden h-screen w-[260px] border-r border-slate-100 bg-white md:block">
       <div className="flex h-full flex-col">
         <div className="flex items-center gap-3 px-6 py-8">
-          <div className="flex h-8 w-8 items-center justify-center shrink-0">
-            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-              <rect x="3" y="2" width="9" height="28" fill="#2563eb" />
-              <rect x="12" y="11" width="8" height="10" fill="#2563eb" />
-              <path d="M20 2H29V21L20 30V2Z" fill="#2563eb" />
-              <path d="M29 21V30H20L29 21Z" fill="#10b981" />
-            </svg>
+          <div className="flex h-10 w-10 items-center justify-center shrink-0 overflow-hidden rounded-xl">
+            <Image 
+              src="/icon.png" 
+              alt="Hakeem Logo" 
+              width={40} 
+              height={40} 
+              className="object-contain w-full h-full"
+              priority
+            />
           </div>
           <div>
             <div className="text-lg font-bold tracking-tight text-blue-600">
-              {t('common.appName')}
+              Hakeem
             </div>
             <div className="text-[10px] uppercase font-semibold text-slate-400">
-              {t('common.brandTagline')}
+              Premium Medical SaaS
             </div>
           </div>
         </div>
@@ -109,14 +110,13 @@ export function AdminSidebar() {
           </div>
         </nav>
 
-        <div className="px-4 py-6 space-y-4">
-          
+        <div className="px-4 py-6">
           <button 
             onClick={logout}
             className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold text-red-500 transition-colors hover:bg-red-50 cursor-pointer"
           >
             <LogoutIcon />
-            <span>{t('nav.logout')}</span>
+            <span>Logout</span>
           </button>
         </div>
       </div>

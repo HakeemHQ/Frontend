@@ -1,219 +1,258 @@
 "use client";
 
-import React, { use, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowLeft01Icon,
-  CheckmarkCircle02Icon,
-  Cancel01Icon,
   DocumentValidationIcon,
-  UserIcon,
-  PillsTabletIcon,
-  FirstAidKitIcon,
-  Note01Icon
+  CheckmarkCircle02Icon,
+  Time02Icon,
+  Alert01Icon,
+  EyeIcon,
+  TickDouble01Icon,
+  Download04Icon
 } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/ui/Button";
+import { motion, AnimatePresence } from "framer-motion";
+import { usePatientMedicalCvsStore } from "@/store/usePatientMedicalCvsStore";
+import { Toast } from "@/components/ui/Toast";
+import { MedicalCvVersionDetail } from "@/types/medical-cv";
 
-// Mock data for the CV detail
-const mockCVDetails = {
-  "cv-123": {
-    title: "Cardiology Medical CV",
-    status: "DoctorVerified",
-    patientName: "Mazen Mohamed",
-    version: 2,
-    date: "2023-10-15",
-    content: {
-      conditions: ["Hypertension (Diagnosed 2020)", "Type 2 Diabetes Mellitus (Diagnosed 2018)"],
-      medications: ["Lisinopril 10mg daily", "Metformin 500mg twice daily"],
-      allergies: ["Penicillin (Rash)"],
-      recentNotes: "Patient reports stable blood pressure. Adhering to medication regimen."
-    }
-  },
-  "cv-124": {
-    title: "My Diabetes CV",
-    status: "Unreviewed",
-    patientName: "Mazen Mohamed",
-    version: 1,
-    date: "2023-11-02",
-    content: {
-      conditions: ["Type 2 Diabetes Mellitus (Diagnosed 2018)"],
-      medications: ["Metformin 500mg twice daily", "Glipizide 5mg daily"],
-      allergies: ["None known"],
-      recentNotes: "HbA1c levels slightly elevated at last check. Discussing diet adjustments."
-    }
-  },
-  // Default fallback for any other ID
-  "default": {
-    title: "General Medical CV",
-    status: "Unreviewed",
-    patientName: "Patient Name",
-    version: 1,
-    date: "2023-12-01",
-    content: {
-      conditions: ["Asthma"],
-      medications: ["Albuterol inhaler as needed"],
-      allergies: ["Pollen"],
-      recentNotes: "General checkup completed. No immediate concerns."
-    }
-  }
-};
-
-export default function CVReviewPage({ params }: { params: Promise<{ code: string, cvId: string }> }) {
-  const router = useRouter();
+export default function MedicalCVDetailsPage({ params }: { params: Promise<{ code: string; cvId: string }> }) {
   const { code, cvId } = use(params);
+  const { currentCvDetails, isFetchingDetails, error, fetchCvDetails, generatePreviewLink, approveVersion } = usePatientMedicalCvsStore();
   
-  // Use specific mock data if available, else default
-  const cvData = mockCVDetails[cvId as keyof typeof mockCVDetails] || mockCVDetails["default"];
-  const [status, setStatus] = useState(cvData.status);
+  const [toastMessage, setToastMessage] = useState<{ message: string; type: 'success' | 'error' | 'warning' } | null>(null);
+  const [approvingVersionId, setApprovingVersionId] = useState<string | null>(null);
+  const [previewingVersionId, setPreviewingVersionId] = useState<string | null>(null);
 
-  const handleApprove = () => {
-    // In a real app, this would call the API to update the status
-    setStatus("DoctorVerified");
+  useEffect(() => {
+    if (cvId) {
+      fetchCvDetails(cvId);
+    }
+  }, [cvId, fetchCvDetails]);
+
+  useEffect(() => {
+    if (error) {
+      setToastMessage({ message: error, type: 'error' });
+    }
+  }, [error]);
+
+  const handlePreview = async (versionId: string) => {
+    setPreviewingVersionId(versionId);
+    const url = await generatePreviewLink(versionId);
+    setPreviewingVersionId(null);
+
+    if (url) {
+      window.open(url, "_blank");
+    } else {
+      setToastMessage({ message: "Failed to generate preview link.", type: "error" });
+    }
   };
 
+  const handleApprove = async (versionId: string) => {
+    setApprovingVersionId(versionId);
+    const success = await approveVersion(versionId, cvId);
+    setApprovingVersionId(null);
+
+    if (success) {
+      setToastMessage({ message: "Version approved successfully!", type: "success" });
+    } else {
+      setToastMessage({ message: "Failed to approve version.", type: "error" });
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'approved':
+      case 'ready':
+        return (
+          <span className="flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-emerald-100">
+            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5" />
+            Approved
+          </span>
+        );
+      case 'draft':
+        return (
+          <span className="flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-blue-100">
+            <HugeiconsIcon icon={DocumentValidationIcon} className="w-3.5 h-3.5" />
+            Draft
+          </span>
+        );
+      case 'failed':
+        return (
+          <span className="flex items-center gap-1 px-2.5 py-1 bg-red-50 text-red-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-red-100">
+            <HugeiconsIcon icon={Alert01Icon} className="w-3.5 h-3.5" />
+            Failed
+          </span>
+        );
+      case 'queued':
+      case 'processing':
+        return (
+          <span className="flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-amber-100">
+            <HugeiconsIcon icon={Time02Icon} className="w-3.5 h-3.5" />
+            {status}
+          </span>
+        );
+      default:
+        return (
+          <span className="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-slate-200">
+            {status}
+          </span>
+        );
+    }
+  };
+
+  if (isFetchingDetails) {
+    return (
+      <div className="max-w-4xl mx-auto pt-4 pb-12 animate-in fade-in duration-300">
+        <div className="animate-pulse space-y-6">
+          <div className="h-6 w-32 bg-slate-200 rounded-md"></div>
+          <div className="h-12 w-3/4 bg-slate-200 rounded-xl"></div>
+          <div className="h-4 w-1/2 bg-slate-200 rounded-md"></div>
+          <div className="mt-8 space-y-4">
+            <div className="h-32 w-full bg-slate-100 rounded-2xl"></div>
+            <div className="h-32 w-full bg-slate-100 rounded-2xl"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!currentCvDetails && !isFetchingDetails) {
+    return (
+      <div className="max-w-4xl mx-auto pt-4 pb-12 text-center">
+        <h2 className="text-2xl font-bold text-slate-900 mb-2 font-heading">CV Not Found</h2>
+        <p className="text-slate-500 mb-6">We couldn&apos;t load the details for this Medical CV.</p>
+        <Link href={`/doctor/patients/workspace/${code}/medical-cv`}>
+          <Button variant="outline" className="rounded-xl">Go Back</Button>
+        </Link>
+      </div>
+    );
+  }
+
+  const cv = currentCvDetails!;
+  const versions = [...(cv.versions || [])].sort((a, b) => b.versionNumber - a.versionNumber); // Sort newest first
+
   return (
-    <div className="max-w-4xl mx-auto pt-4 pb-24 animate-in fade-in duration-300">
+    <div className="max-w-4xl mx-auto pt-4 pb-12 animate-in fade-in duration-300 relative">
+      <AnimatePresence>
+        {toastMessage && (
+          <Toast 
+            message={toastMessage.message} 
+            type={toastMessage.type} 
+            onClose={() => setToastMessage(null)} 
+          />
+        )}
+      </AnimatePresence>
+
       {/* Back Navigation */}
-      <div className="mb-6 flex items-center justify-between">
-        <button 
-          onClick={() => router.back()}
-          className="flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 transition"
+      <div className="mb-8">
+        <Link 
+          href={`/doctor/patients/workspace/${code}/medical-cv`}
+          className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 transition"
         >
           <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 mr-1.5" />
-          Back to CVs
-        </button>
+          Back to Medical CVs
+        </Link>
       </div>
 
-      {/* Header */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm mb-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex items-start gap-4">
-          <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shrink-0 border border-blue-100">
-            <HugeiconsIcon icon={DocumentValidationIcon} className="w-7 h-7" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900 font-heading tracking-tight mb-1">
-              {cvData.title}
-            </h1>
-            <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
-              <span className="font-medium text-slate-700">{cvData.patientName}</span>
-              <span>•</span>
-              <span>Version {cvData.version}</span>
-              <span>•</span>
-              <span>{cvData.date}</span>
-            </div>
-          </div>
+      <div className="mb-10 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-5">
+          <HugeiconsIcon icon={DocumentValidationIcon} className="w-48 h-48" />
         </div>
-
-        <div>
-          {status === "DoctorVerified" ? (
-             <span className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-xl text-xs font-bold uppercase tracking-wide border border-emerald-100">
-             <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-4 h-4" />
-             Verified
-           </span>
-          ) : (
-            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-700 rounded-xl text-xs font-bold uppercase tracking-wide border border-amber-100">
-             <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-             Needs Review
-           </span>
-          )}
-        </div>
-      </div>
-
-      {/* CV Content Sections */}
-      <div className="space-y-6">
         
-        {/* Conditions */}
-        <section className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
-            <div className="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center">
-              <HugeiconsIcon icon={FirstAidKitIcon} className="w-5 h-5" />
-            </div>
-            <h2 className="text-xl font-bold text-slate-900 font-heading">Conditions & Diagnoses</h2>
+        <div className="relative z-10">
+          <h1 className="text-3xl font-bold text-slate-900 font-heading mb-3 pr-12">
+            {cv.title || "Untitled Medical CV"}
+          </h1>
+          <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500 font-medium">
+            <span className="capitalize bg-slate-100 px-3 py-1 rounded-lg">Type: {cv.scopeType}</span>
+            {cv.focus && <span className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-lg border border-emerald-100">Focus: {cv.focus}</span>}
+            <span>•</span>
+            <span>Created: {new Date(cv.createdAt).toLocaleDateString()}</span>
           </div>
-          <ul className="space-y-3">
-            {cvData.content.conditions.map((condition, i) => (
-              <li key={i} className="flex items-start gap-3 text-slate-700 font-medium">
-                <div className="w-1.5 h-1.5 rounded-full bg-slate-300 mt-2 shrink-0"></div>
-                {condition}
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        {/* Medications */}
-        <section className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
-            <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
-              <HugeiconsIcon icon={PillsTabletIcon} className="w-5 h-5" />
-            </div>
-            <h2 className="text-xl font-bold text-slate-900 font-heading">Current Medications</h2>
-          </div>
-          <ul className="space-y-3">
-            {cvData.content.medications.map((med, i) => (
-              <li key={i} className="flex items-start gap-3 text-slate-700 font-medium">
-                <div className="w-1.5 h-1.5 rounded-full bg-slate-300 mt-2 shrink-0"></div>
-                {med}
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        {/* Allergies & Notes Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <section className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
-            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
-              <div className="w-10 h-10 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center">
-                <HugeiconsIcon icon={UserIcon} className="w-5 h-5" />
-              </div>
-              <h2 className="text-xl font-bold text-slate-900 font-heading">Allergies</h2>
-            </div>
-            <ul className="space-y-3">
-              {cvData.content.allergies.map((allergy, i) => (
-                <li key={i} className="flex items-start gap-3 text-slate-700 font-medium">
-                  <div className="w-1.5 h-1.5 rounded-full bg-slate-300 mt-2 shrink-0"></div>
-                  {allergy}
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
-            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
-              <div className="w-10 h-10 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center">
-                <HugeiconsIcon icon={Note01Icon} className="w-5 h-5" />
-              </div>
-              <h2 className="text-xl font-bold text-slate-900 font-heading">Clinical Notes</h2>
-            </div>
-            <p className="text-slate-700 font-medium leading-relaxed">
-              {cvData.content.recentNotes}
-            </p>
-          </section>
         </div>
       </div>
 
-      {/* Bottom Action Bar for Reviewing */}
-      {status === "Unreviewed" && (
-        <div className="fixed bottom-0 left-0 right-0 md:left-[260px] bg-white border-t border-slate-200 p-4 shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.1)] z-50 animate-in slide-in-from-bottom-full duration-500">
-          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div>
-              <h3 className="font-bold text-slate-900">Review Required</h3>
-              <p className="text-sm text-slate-500">Please review this generated CV for clinical accuracy.</p>
-            </div>
-            <div className="flex items-center gap-3 w-full sm:w-auto">
-              <Button variant="outline" className="flex-1 sm:flex-none flex items-center gap-2 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 active:bg-red-100">
-                <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
-                Reject
-              </Button>
-              <Button onClick={handleApprove} className="flex-1 sm:flex-none flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 focus:ring-emerald-500 shadow-sm shadow-emerald-200 text-white">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} fontVariant="solid" className="w-4 h-4" />
-                Approve & Verify
-              </Button>
-            </div>
+      <div className="mb-6">
+        <h2 className="text-xl font-bold text-slate-900 font-heading">Version History</h2>
+        <p className="text-slate-500 text-sm">Review drafts, preview PDFs, and approve versions.</p>
+      </div>
+
+      <div className="space-y-4">
+        {versions.length > 0 ? (
+          versions.map((version, index) => (
+            <motion.div
+              key={version.medicalCvVersionId}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className={`bg-white border p-5 rounded-2xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${
+                version.status.toLowerCase() === 'draft' ? 'border-blue-200 ring-2 ring-blue-50' : 'border-slate-200'
+              }`}
+            >
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <h3 className="font-bold text-slate-900 text-lg">Version {version.versionNumber}</h3>
+                  {getStatusBadge(version.status)}
+                </div>
+                <div className="text-sm text-slate-500 font-medium flex flex-wrap items-center gap-x-4 gap-y-1">
+                  <span>Generated on: {new Date(version.createdAt).toLocaleString()}</span>
+                  {version.approvedAt && (
+                    <span className="text-emerald-600 flex items-center gap-1">
+                      <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5" />
+                      Approved on: {new Date(version.approvedAt).toLocaleDateString()}
+                    </span>
+                  )}
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3 shrink-0">
+                {/* Preview Button */}
+                <Button 
+                  variant="outline" 
+                  className="rounded-xl flex items-center gap-2"
+                  disabled={!version.pdfAvailable || previewingVersionId === version.medicalCvVersionId}
+                  onClick={() => handlePreview(version.medicalCvVersionId)}
+                >
+                  <HugeiconsIcon icon={EyeIcon} className="w-4 h-4" />
+                  {previewingVersionId === version.medicalCvVersionId ? 'Loading...' : 'Preview PDF'}
+                </Button>
+
+                {/* Approve Button */}
+                {version.status.toLowerCase() === 'draft' && (
+                  <Button 
+                    variant="primary" 
+                    className="rounded-xl flex items-center gap-2 shadow-md shadow-emerald-200"
+                    disabled={approvingVersionId === version.medicalCvVersionId}
+                    onClick={() => handleApprove(version.medicalCvVersionId)}
+                  >
+                    <HugeiconsIcon icon={TickDouble01Icon} className="w-4 h-4" />
+                    {approvingVersionId === version.medicalCvVersionId ? 'Approving...' : 'Approve Draft'}
+                  </Button>
+                )}
+                
+                {version.status.toLowerCase() === 'approved' && version.pdfAvailable && (
+                  <Button 
+                    variant="outline" 
+                    className="rounded-xl flex items-center gap-2"
+                    onClick={() => window.open(`/api/v1/medical-cv-versions/${version.medicalCvVersionId}/pdf`, "_blank")}
+                  >
+                    <HugeiconsIcon icon={Download04Icon} className="w-4 h-4" />
+                    Download
+                  </Button>
+                )}
+              </div>
+            </motion.div>
+          ))
+        ) : (
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-8 text-center">
+            <p className="text-slate-500">No versions generated yet.</p>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

@@ -9,7 +9,6 @@ import { usePatientsStore } from "@/store/usePatientsStore";
 import { getPatients } from "@/lib/api/patients";
 import { Toast } from "@/components/ui/Toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { useLanguage } from "@/localization/LanguageContext";
 
 const SearchIcon = ({ className }: { className?: string }) => (
   <svg className={className} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -25,12 +24,9 @@ const UserIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-
-
 const STATUS_FILTERS = ["Active", "Expired", "Revoked"];
 
 export default function PatientsPage() {
-  const { t } = useLanguage();
   const { 
     patients, 
     setPatients, 
@@ -51,10 +47,11 @@ export default function PatientsPage() {
     setError(null);
     try {
       const response = await getPatients(pageNum, 10, status);
-      if (response && response.items) {
-        setPatients(response.items);
-      } else if (Array.isArray(response)) {
-        setPatients(response);
+      const actualData = (response as any).data || response;
+      if (actualData && actualData.items) {
+        setPatients(actualData.items);
+      } else if (Array.isArray(actualData)) {
+        setPatients(actualData);
       } else {
         setPatients([]);
       }
@@ -69,6 +66,16 @@ export default function PatientsPage() {
     fetchPatients(page, statusFilter);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, statusFilter]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("expired") === "true") {
+        setError("You cannot access files for an expired patient. Please request access again.");
+        window.history.replaceState({}, '', '/doctor/patients');
+      }
+    }
+  }, [setError]);
 
   const filteredPatients = (patients || []).filter(
     (p) => 
@@ -87,15 +94,15 @@ export default function PatientsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div>
           <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">
-            {t('doctor.patients.title')}
+            Patients
           </h1>
           <p className="text-slate-500 text-base">
-            {t('doctor.patients.description')}
+            Manage your patients and access permissions beautifully.
           </p>
         </div>
         <Link href="/doctor/patients/verify-identity">
           <Button className="bg-emerald-600 hover:bg-emerald-700 text-white whitespace-nowrap rounded-xl shadow-md hover:shadow-lg transition-all h-12 px-6 font-medium">
-            {t('doctor.patients.verifyNewPatient')}
+            Verify New Patient
           </Button>
         </Link>
       </div>
@@ -103,7 +110,7 @@ export default function PatientsPage() {
       <div className="flex flex-col md:flex-row gap-4 items-center bg-white p-2 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
         <div className="w-full md:flex-1">
           <Input
-            placeholder={t('doctor.patients.searchPlaceholder')}
+            placeholder="Search by patient name or code..."
             iconLeft={<SearchIcon className="h-5 w-5 text-slate-400" />}
             className="border-none shadow-none focus-visible:ring-0 bg-transparent text-base"
             value={searchQuery}
@@ -181,7 +188,13 @@ export default function PatientsPage() {
                 >
                   <Link 
                     href={`/doctor/patients/workspace/${patient.patientCode}`}
-                    onClick={() => {
+                    onClick={(e) => {
+                      if (itemStatus === "Expired" || itemStatus === "Revoked") {
+                        e.preventDefault();
+                        setError(`You cannot access files for a${itemStatus === "Expired" ? "n expired" : " revoked"} patient. Please request access again.`);
+                        return;
+                      }
+                      
                       const sessionData = {
                         ...patient,
                         patient: {
@@ -202,28 +215,28 @@ export default function PatientsPage() {
                         </div>
                         <div>
                           <h3 className="text-lg font-bold text-slate-900 group-hover:text-emerald-700 transition-colors duration-300">{patient.fullName}</h3>
-                          <p className="text-sm font-medium text-slate-500 mt-0.5">{t('doctor.patients.code')} {patient.patientCode}</p>
+                          <p className="text-sm font-medium text-slate-500 mt-0.5">Code: {patient.patientCode}</p>
                         </div>
                       </div>
                       <div className="sm:text-right flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center">
                         {itemStatus === "Active" ? (
                           <>
                             <span className="inline-block px-3 py-1.5 text-xs font-bold tracking-wide rounded-lg bg-emerald-50 text-emerald-600 mb-1 sm:mb-2">
-                              {t('doctor.patients.statusActive')}
+                              ACTIVE
                             </span>
                             {timeStr && (
                               <p className="text-sm font-medium text-slate-400">
-                                {t('doctor.patients.until')} {timeStr}
+                                Until {timeStr}
                               </p>
                             )}
                           </>
                         ) : itemStatus === "Revoked" ? (
                            <span className="inline-block px-3 py-1.5 text-xs font-bold tracking-wide rounded-lg bg-rose-50 text-rose-600 mb-1 sm:mb-2">
-                             {t('doctor.patients.statusRevoked')}
+                             REVOKED
                            </span>
                         ) : (
                            <span className="inline-block px-3 py-1.5 text-xs font-bold tracking-wide rounded-lg bg-slate-100 text-slate-600 mb-1 sm:mb-2">
-                             {t('doctor.patients.statusExpired')}
+                             EXPIRED
                            </span>
                         )}
                       </div>
@@ -242,11 +255,11 @@ export default function PatientsPage() {
             <div className="h-16 w-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
               <UserIcon className="w-8 h-8 text-slate-300" />
             </div>
-            <p className="font-bold text-xl text-slate-900 mb-1">{t('doctor.patients.noResults')}</p>
+            <p className="font-bold text-xl text-slate-900 mb-1">No patients found</p>
             <p className="text-base text-slate-500 max-w-md">
               {statusFilter === "All" 
-                ? t('doctor.patients.noPatientsAll')
-                : `${t('doctor.patients.noPatientsFilter')} ${t(`doctor.patients.filter${statusFilter}`)}`}
+                ? "You haven't requested access to any patients yet. Start by verifying a new patient."
+                : `You don't have any patients with status: ${statusFilter}`}
             </p>
           </motion.div>
         )}
@@ -261,10 +274,10 @@ export default function PatientsPage() {
             onClick={() => setPage(page - 1)}
             className="rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900"
           >
-            {t('doctor.patients.previous')}
+            Previous
           </Button>
           <span className="text-sm text-slate-500 font-semibold bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100">
-            {t('doctor.patients.page')} {page}
+            Page {page}
           </span>
           <Button 
             variant="outline" 
@@ -272,7 +285,7 @@ export default function PatientsPage() {
             disabled={patients.length < 10}
             className="rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900"
           >
-            {t('doctor.patients.next')}
+            Next
           </Button>
         </div>
       )}

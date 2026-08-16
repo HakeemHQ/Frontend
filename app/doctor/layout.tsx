@@ -1,16 +1,21 @@
+"use client";
+
 import React from "react";
 import { DoctorSidebar } from "@/components/layout/DoctorSidebar";
 import LanguageSwitcher from "@/components/layout/LanguageSwitcher";
+import { useSidebarStore } from "@/store/useSidebarStore";
 
 export default function DoctorLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { isCollapsed } = useSidebarStore();
+
   return (
     <div className="min-h-screen bg-slate-50 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-100 via-slate-50 to-slate-100 selection:bg-emerald-500/30">
       <DoctorSidebar />
-      <div className="md:pl-[260px] flex flex-col min-h-screen transition-all duration-300">
+      <div className={`flex flex-col min-h-screen transition-all duration-300 ${isCollapsed ? "pl-[80px]" : "pl-[80px] lg:pl-[260px]"}`}>
         <header className="sticky top-0 z-30 flex h-16 items-center justify-end px-6 sm:px-8 bg-white/80 backdrop-blur border-b border-slate-100">
           <LanguageSwitcher />
         </header>

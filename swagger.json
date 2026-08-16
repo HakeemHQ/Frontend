@@ -13,6 +13,631 @@
     "version": "v1"
   },
   "paths": {
+    "/admin/doctors": {
+      "post": {
+        "tags": [
+          "AdminDoctors"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.Doctors.Commands.AddDoctor.CreateDoctorCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.Doctors.Commands.AddDoctor.CreateDoctorCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.Doctors.Commands.AddDoctor.CreateDoctorCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Doctors.DTOs.CreateDoctorResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Doctors.DTOs.CreateDoctorResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Doctors.DTOs.CreateDoctorResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "AdminDoctors"
+        ],
+        "parameters": [
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Specialty",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Status",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Hakeem.Domain.Enums.Identity.AccountStatus"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Doctors.DTOs.AdminDoctorsResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Doctors.DTOs.AdminDoctorsResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Doctors.DTOs.AdminDoctorsResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/doctors/{doctorId}": {
+      "get": {
+        "tags": [
+          "AdminDoctors"
+        ],
+        "parameters": [
+          {
+            "name": "doctorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Doctors.DTOs.AdminDoctorResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Doctors.DTOs.AdminDoctorResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Doctors.DTOs.AdminDoctorResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/doctors/{doctorId}/status": {
+      "patch": {
+        "tags": [
+          "AdminDoctors"
+        ],
+        "parameters": [
+          {
+            "name": "doctorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.Doctors.Commands.UpdateDoctorStatus.DTOs.UpdateDoctorStatusRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.Doctors.Commands.UpdateDoctorStatus.DTOs.UpdateDoctorStatusRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.Doctors.Commands.UpdateDoctorStatus.DTOs.UpdateDoctorStatusRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Doctors.Commands.UpdateDoctorStatus.UpdateDoctorStatusResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Doctors.Commands.UpdateDoctorStatus.UpdateDoctorStatusResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Doctors.Commands.UpdateDoctorStatus.UpdateDoctorStatusResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/users": {
+      "get": {
+        "tags": [
+          "AdminDoctors"
+        ],
+        "parameters": [
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "UserType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Hakeem.Domain.Enums.Identity.ApplicationRole"
+            }
+          },
+          {
+            "name": "Status",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Hakeem.Domain.Enums.Identity.AccountStatus"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Users.GetUsers.DTOs.AdminUsersResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Users.GetUsers.DTOs.AdminUsersResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Users.GetUsers.DTOs.AdminUsersResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/users/{userId}/status": {
+      "patch": {
+        "tags": [
+          "AdminDoctors"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.Users.UpdateUserStatus.DTOs.UpdateUserStatusRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.Users.UpdateUserStatus.DTOs.UpdateUserStatusRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.Users.UpdateUserStatus.DTOs.UpdateUserStatusRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Users.UpdateUserStatus.Commands.UpdateUserStatusResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Users.UpdateUserStatus.Commands.UpdateUserStatusResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Users.UpdateUserStatus.Commands.UpdateUserStatusResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/audit-logs": {
+      "get": {
+        "tags": [
+          "AdminDoctors"
+        ],
+        "parameters": [
+          {
+            "name": "Action",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ActorUserId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "FromDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "ToDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.AduitLogs.GetAuditLogs.DTOs.AdminAuditLogsResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.AduitLogs.GetAuditLogs.DTOs.AdminAuditLogsResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.AduitLogs.GetAuditLogs.DTOs.AdminAuditLogsResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/activity-summary": {
+      "get": {
+        "tags": [
+          "AdminDoctors"
+        ],
+        "parameters": [
+          {
+            "name": "fromDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.ActiveSummery.DTOs.ActivitySummaryDto, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.ActiveSummery.DTOs.ActivitySummaryDto, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.ActiveSummery.DTOs.ActivitySummaryDto, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/auth/login": {
       "post": {
         "tags": [
@@ -387,6 +1012,281 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/doctor/patients/{patientId}/medical-cvs": {
+      "post": {
+        "tags": [
+          "DoctorMedicalCvs"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.GenerateDoctorMedicalCvRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.GenerateDoctorMedicalCvRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.GenerateDoctorMedicalCvRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.GenerateDoctorMedicalCvResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.GenerateDoctorMedicalCvResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.GenerateDoctorMedicalCvResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "DoctorMedicalCvs"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Collections.Generic.IReadOnlyList`1[[Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.DoctorMedicalCvResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Collections.Generic.IReadOnlyList`1[[Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.DoctorMedicalCvResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Collections.Generic.IReadOnlyList`1[[Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.DoctorMedicalCvResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
           }
         }
       }
@@ -844,6 +1744,371 @@
         }
       }
     },
+    "/doctor/patients/{patientId}/ai/questions": {
+      "post": {
+        "tags": [
+          "DoctorPatientAi"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Api.Controllers.DoctorAiQuestionRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Api.Controllers.DoctorAiQuestionRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Api.Controllers.DoctorAiQuestionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Doctor.MedicalIntelligence.Commands.Chat.DoctorMedicalIntelligenceChatResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Doctor.MedicalIntelligence.Commands.Chat.DoctorMedicalIntelligenceChatResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Doctor.MedicalIntelligence.Commands.Chat.DoctorMedicalIntelligenceChatResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/doctor/patients/{patientId}/documents": {
+      "get": {
+        "tags": [
+          "DoctorPatientDocuments"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "documentName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "DoctorPatientDocuments"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "PatientProfileId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "File": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "Title": {
+                    "type": "string"
+                  },
+                  "DocumentDate": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                }
+              },
+              "encoding": {
+                "PatientProfileId": {
+                  "style": "form"
+                },
+                "File": {
+                  "style": "form"
+                },
+                "Title": {
+                  "style": "form"
+                },
+                "DocumentDate": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Doctor.Documents.Commands.UploadDocument.DoctorUploadDocumentResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Doctor.Documents.Commands.UploadDocument.DoctorUploadDocumentResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Doctor.Documents.Commands.UploadDocument.DoctorUploadDocumentResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Content Too Large",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported Media Type",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/doctor/patient-identities/verify": {
       "post": {
         "tags": [
@@ -992,6 +2257,77 @@
         }
       }
     },
+    "/doctor/patients/{patientId}/medical-records": {
+      "get": {
+        "tags": [
+          "DoctorPatientMedicalRecords"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "recordType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fromDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/doctor/profile": {
       "get": {
         "tags": [
@@ -1057,6 +2393,252 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/extracted-items/{extractedItemId}/review": {
+      "put": {
+        "tags": [
+          "DoctorReviewConfirmation"
+        ],
+        "parameters": [
+          {
+            "name": "extractedItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Application.Features.PatientReviewAndConfirmation.Commands.PatientReviewConfirmationCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Application.Features.PatientReviewAndConfirmation.Commands.PatientReviewConfirmationCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Application.Features.PatientReviewAndConfirmation.Commands.PatientReviewConfirmationCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/documents/{documentId}/content": {
+      "get": {
+        "tags": [
+          "DocumentOperations"
+        ],
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{documentId}": {
+      "delete": {
+        "tags": [
+          "DocumentOperations"
+        ],
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "MedicalDocument"
+        ],
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -1266,8 +2848,8 @@
           }
         },
         "responses": {
-          "202": {
-            "description": "Accepted",
+          "201": {
+            "description": "Created",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1326,8 +2908,48 @@
               }
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
           "422": {
             "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1388,6 +3010,26 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1973,189 +3615,6 @@
             "description": "OK"
           }
         }
-      },
-      "post": {
-        "tags": [
-          "MedicalDocument"
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "File": {
-                    "type": "string",
-                    "format": "binary"
-                  },
-                  "Title": {
-                    "type": "string"
-                  },
-                  "DocumentDate": {
-                    "type": "string",
-                    "format": "date"
-                  }
-                }
-              },
-              "encoding": {
-                "File": {
-                  "style": "form"
-                },
-                "Title": {
-                  "style": "form"
-                },
-                "DocumentDate": {
-                  "style": "form"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.MedicalDocuments.Commands.UploadDocument.UploadDocumentResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.MedicalDocuments.Commands.UploadDocument.UploadDocumentResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.MedicalDocuments.Commands.UploadDocument.UploadDocumentResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
-                }
-              }
-            }
-          },
-          "413": {
-            "description": "Content Too Large",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
-                }
-              }
-            }
-          },
-          "415": {
-            "description": "Unsupported Media Type",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Content",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/documents/{documentId}": {
-      "get": {
-        "tags": [
-          "MedicalDocument"
-        ],
-        "parameters": [
-          {
-            "name": "documentId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
       }
     },
     "/medical-intelligence/chat": {
@@ -2378,17 +3837,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SearchMedicalRecordsRequest"
+                "$ref": "#/components/schemas/Hakeem.Api.Controllers.SearchMedicalRecordsRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/SearchMedicalRecordsRequest"
+                "$ref": "#/components/schemas/Hakeem.Api.Controllers.SearchMedicalRecordsRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/SearchMedicalRecordsRequest"
+                "$ref": "#/components/schemas/Hakeem.Api.Controllers.SearchMedicalRecordsRequest"
               }
             }
           }
@@ -3099,44 +4558,216 @@
         }
       }
     },
-    "/extracted-items/{extractedItemId}/review": {
+    "/patient/push-devices": {
       "put": {
         "tags": [
-          "PatientReviewConfirmation"
-        ],
-        "parameters": [
-          {
-            "name": "extractedItemId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
+          "PatientPushDevices"
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Hakeem.Application.Features.PatientReviewAndConfirmation.Commands.PatientReviewConfirmationCommand"
+                "$ref": "#/components/schemas/Hakeem.Application.Features.PushDevices.Commands.RegisterPushDevice.RegisterPushDeviceCommand"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/Hakeem.Application.Features.PatientReviewAndConfirmation.Commands.PatientReviewConfirmationCommand"
+                "$ref": "#/components/schemas/Hakeem.Application.Features.PushDevices.Commands.RegisterPushDevice.RegisterPushDeviceCommand"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/Hakeem.Application.Features.PatientReviewAndConfirmation.Commands.PatientReviewConfirmationCommand"
+                "$ref": "#/components/schemas/Hakeem.Application.Features.PushDevices.Commands.RegisterPushDevice.RegisterPushDeviceCommand"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.PushDevices.Commands.RegisterPushDevice.RegisterPushDeviceResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.PushDevices.Commands.RegisterPushDevice.RegisterPushDeviceResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.PushDevices.Commands.RegisterPushDevice.RegisterPushDeviceResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "PatientPushDevices"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Application.Features.PushDevices.Commands.UnregisterPushDevice.UnregisterPushDeviceCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Application.Features.PushDevices.Commands.UnregisterPushDevice.UnregisterPushDeviceCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Hakeem.Application.Features.PushDevices.Commands.UnregisterPushDevice.UnregisterPushDeviceCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+                }
+              }
+            }
           }
         }
       }
@@ -3320,6 +4951,34 @@
   },
   "components": {
     "schemas": {
+      "Hakeem.Api.Controllers.DoctorAiQuestionRequest": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Api.Controllers.SearchMedicalRecordsRequest": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "nullable": true
+          },
+          "patientProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "Hakeem.Api.Controllers.TestEmbeddingRequest": {
         "type": "object",
         "properties": {
@@ -3577,6 +5236,222 @@
         },
         "additionalProperties": false
       },
+      "Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.ActiveSummery.DTOs.ActivitySummaryDto, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.ErrorResponseModel"
+            },
+            "nullable": true
+          },
+          "globalErrorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.ActiveSummery.DTOs.ActivitySummaryDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.AduitLogs.GetAuditLogs.DTOs.AdminAuditLogsResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.ErrorResponseModel"
+            },
+            "nullable": true
+          },
+          "globalErrorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.AduitLogs.GetAuditLogs.DTOs.AdminAuditLogsResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Doctors.Commands.UpdateDoctorStatus.UpdateDoctorStatusResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.ErrorResponseModel"
+            },
+            "nullable": true
+          },
+          "globalErrorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.Doctors.Commands.UpdateDoctorStatus.UpdateDoctorStatusResult"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Doctors.DTOs.AdminDoctorResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.ErrorResponseModel"
+            },
+            "nullable": true
+          },
+          "globalErrorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.Doctors.DTOs.AdminDoctorResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Doctors.DTOs.AdminDoctorsResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.ErrorResponseModel"
+            },
+            "nullable": true
+          },
+          "globalErrorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.Doctors.DTOs.AdminDoctorsResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Doctors.DTOs.CreateDoctorResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.ErrorResponseModel"
+            },
+            "nullable": true
+          },
+          "globalErrorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.Doctors.DTOs.CreateDoctorResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Users.GetUsers.DTOs.AdminUsersResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.ErrorResponseModel"
+            },
+            "nullable": true
+          },
+          "globalErrorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.Users.GetUsers.DTOs.AdminUsersResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Admin.Users.UpdateUserStatus.Commands.UpdateUserStatusResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.ErrorResponseModel"
+            },
+            "nullable": true
+          },
+          "globalErrorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.Users.UpdateUserStatus.Commands.UpdateUserStatusResult"
+          }
+        },
+        "additionalProperties": false
+      },
       "Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Auth.Commands.Login.LoginResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
         "type": "object",
         "properties": {
@@ -3654,6 +5529,87 @@
           },
           "data": {
             "$ref": "#/components/schemas/Hakeem.Application.Features.Auth.Commands.Registration.RegisterResult"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Doctor.Documents.Commands.UploadDocument.DoctorUploadDocumentResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.ErrorResponseModel"
+            },
+            "nullable": true
+          },
+          "globalErrorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/Hakeem.Application.Features.Doctor.Documents.Commands.UploadDocument.DoctorUploadDocumentResult"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.GenerateDoctorMedicalCvResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.ErrorResponseModel"
+            },
+            "nullable": true
+          },
+          "globalErrorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.GenerateDoctorMedicalCvResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.Doctor.MedicalIntelligence.Commands.Chat.DoctorMedicalIntelligenceChatResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.ErrorResponseModel"
+            },
+            "nullable": true
+          },
+          "globalErrorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/Hakeem.Application.Features.Doctor.MedicalIntelligence.Commands.Chat.DoctorMedicalIntelligenceChatResponse"
           }
         },
         "additionalProperties": false
@@ -3843,33 +5799,6 @@
           },
           "data": {
             "$ref": "#/components/schemas/Hakeem.Application.Features.MedicalDataExtraction.DTOs.ExtractedFieldsResponse"
-          }
-        },
-        "additionalProperties": false
-      },
-      "Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.MedicalDocuments.Commands.UploadDocument.UploadDocumentResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean"
-          },
-          "message": {
-            "type": "string",
-            "nullable": true
-          },
-          "errorList": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.ErrorResponseModel"
-            },
-            "nullable": true
-          },
-          "globalErrorCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/Hakeem.Application.Features.MedicalDocuments.Commands.UploadDocument.UploadDocumentResult"
           }
         },
         "additionalProperties": false
@@ -4117,6 +6046,33 @@
         },
         "additionalProperties": false
       },
+      "Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Features.PushDevices.Commands.RegisterPushDevice.RegisterPushDeviceResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.ErrorResponseModel"
+            },
+            "nullable": true
+          },
+          "globalErrorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/Hakeem.Application.Features.PushDevices.Commands.RegisterPushDevice.RegisterPushDeviceResult"
+          }
+        },
+        "additionalProperties": false
+      },
       "Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[Hakeem.Application.Interfaces.Rag.TestQdrantUpsertResult, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
         "type": "object",
         "properties": {
@@ -4140,6 +6096,37 @@
           },
           "data": {
             "$ref": "#/components/schemas/Hakeem.Application.Interfaces.Rag.TestQdrantUpsertResult"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Common.ResponseModel.GenericResponseModel`1[[System.Collections.Generic.IReadOnlyList`1[[Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.DoctorMedicalCvResponse, Hakeem.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Common.ResponseModel.ErrorResponseModel"
+            },
+            "nullable": true
+          },
+          "globalErrorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.DoctorMedicalCvResponse"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4197,6 +6184,301 @@
             "nullable": true
           },
           "data": {
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Admin.ActiveSummery.DTOs.ActivitySummaryDto": {
+        "type": "object",
+        "properties": {
+          "fromDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "toDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "activePatients": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activeDoctors": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "documentsUploaded": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "extractionsCompleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "medicalCvVersionsGenerated": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Admin.AduitLogs.GetAuditLogs.DTOs.AdminAuditLogDto": {
+        "type": "object",
+        "properties": {
+          "auditLogId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "actorUserId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "action": {
+            "type": "string",
+            "nullable": true
+          },
+          "target": {
+            "type": "string",
+            "nullable": true
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Admin.AduitLogs.GetAuditLogs.DTOs.AdminAuditLogsResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.AduitLogs.GetAuditLogs.DTOs.AdminAuditLogDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Admin.Doctors.Commands.AddDoctor.CreateDoctorCommand": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "specialty": {
+            "type": "string",
+            "nullable": true
+          },
+          "temporaryPassword": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Admin.Doctors.Commands.UpdateDoctorStatus.DTOs.UpdateDoctorStatusRequest": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Admin.Doctors.Commands.UpdateDoctorStatus.UpdateDoctorStatusResult": {
+        "type": "object",
+        "properties": {
+          "doctorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Admin.Doctors.DTOs.AdminDoctorListItem": {
+        "type": "object",
+        "properties": {
+          "doctorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "specialty": {
+            "type": "string",
+            "nullable": true
+          },
+          "licenseNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Admin.Doctors.DTOs.AdminDoctorResponse": {
+        "type": "object",
+        "properties": {
+          "doctorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "specialty": {
+            "type": "string",
+            "nullable": true
+          },
+          "licenseNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Admin.Doctors.DTOs.AdminDoctorsResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.Doctors.DTOs.AdminDoctorListItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Admin.Doctors.DTOs.CreateDoctorResponse": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "specialty": {
+            "type": "string",
+            "nullable": true
+          },
+          "licenseNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Admin.Users.GetUsers.DTOs.AdminUserDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "userType": {
+            "$ref": "#/components/schemas/Hakeem.Domain.Enums.Identity.ApplicationRole"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Hakeem.Domain.Enums.Identity.AccountStatus"
+          },
+          "identityVerificationStatus": {
+            "$ref": "#/components/schemas/Hakeem.Domain.Enums.Identity.IdentityVerificationStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Admin.Users.GetUsers.DTOs.AdminUsersResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Features.Admin.Users.GetUsers.DTOs.AdminUserDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Admin.Users.UpdateUserStatus.Commands.UpdateUserStatusResult": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Admin.Users.UpdateUserStatus.DTOs.UpdateUserStatusRequest": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -4408,6 +6690,249 @@
         },
         "additionalProperties": false
       },
+      "Hakeem.Application.Features.Doctor.Documents.Commands.UploadDocument.DoctorUploadDocumentResult": {
+        "type": "object",
+        "properties": {
+          "documentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentType": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "extractionStatus": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.DoctorMedicalCvResponse": {
+        "type": "object",
+        "properties": {
+          "medicalCvId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "scopeType": {
+            "type": "string",
+            "nullable": true
+          },
+          "focus": {
+            "type": "string",
+            "nullable": true
+          },
+          "versions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.DoctorMedicalCvVersionResponse"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.DoctorMedicalCvVersionResponse": {
+        "type": "object",
+        "properties": {
+          "medicalCvVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "versionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "pdfFileKey": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.GenerateDoctorMedicalCvRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.GenerateDoctorMedicalCvResponse": {
+        "type": "object",
+        "properties": {
+          "medicalCvId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "latestVersion": {
+            "$ref": "#/components/schemas/Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.GenerateDoctorMedicalCvVersionResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Doctor.MedicalCvs.DTOs.GenerateDoctorMedicalCvVersionResponse": {
+        "type": "object",
+        "properties": {
+          "medicalCvVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "versionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "generationStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "verificationStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdByRole": {
+            "type": "string",
+            "nullable": true
+          },
+          "pdfUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "previewExpiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Doctor.MedicalIntelligence.Commands.Chat.DoctorGeneratedFocusedMedicalCvResponse": {
+        "type": "object",
+        "properties": {
+          "medicalCvId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "medicalCvVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "focus": {
+            "type": "string",
+            "nullable": true
+          },
+          "versionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "previewUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "previewExpiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Doctor.MedicalIntelligence.Commands.Chat.DoctorMedicalIntelligenceChatResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "ragResults": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hakeem.Application.Features.Doctor.MedicalIntelligence.Commands.Chat.DoctorMedicalIntelligenceRagResultResponse"
+            },
+            "nullable": true
+          },
+          "generatedCv": {
+            "$ref": "#/components/schemas/Hakeem.Application.Features.Doctor.MedicalIntelligence.Commands.Chat.DoctorGeneratedFocusedMedicalCvResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.Doctor.MedicalIntelligence.Commands.Chat.DoctorMedicalIntelligenceRagResultResponse": {
+        "type": "object",
+        "properties": {
+          "medicalRecordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "score": {
+            "type": "number",
+            "format": "float"
+          },
+          "recordType": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "clinicalDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "fields": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Hakeem.Application.Features.DoctorPatientAccesses.Queries.GetDoctorPatientAccesses.DoctorPatientAccessItem": {
         "type": "object",
         "properties": {
@@ -4546,9 +7071,6 @@
             "type": "string",
             "nullable": true
           },
-          "scopeType": {
-            "$ref": "#/components/schemas/Hakeem.Domain.Enums.MedicalCvs.MedicalCvScopeType"
-          },
           "latestVersion": {
             "$ref": "#/components/schemas/Hakeem.Application.Features.MedicalCvs.Commands.GenerateFullMedicalCv.LatestMedicalCvVersionResponse"
           }
@@ -4566,13 +7088,17 @@
             "type": "integer",
             "format": "int32"
           },
-          "status": {
+          "generationStatus": {
             "type": "string",
             "nullable": true
           },
-          "createdAt": {
+          "verificationStatus": {
             "type": "string",
-            "format": "date-time"
+            "nullable": true
+          },
+          "createdByRole": {
+            "type": "string",
+            "nullable": true
           },
           "pdfUrl": {
             "type": "string",
@@ -4812,32 +7338,6 @@
             "items": {
               "$ref": "#/components/schemas/Hakeem.Application.Features.MedicalDataExtraction.DTOs.ExtractedFieldResponse"
             },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "Hakeem.Application.Features.MedicalDocuments.Commands.UploadDocument.UploadDocumentResult": {
-        "type": "object",
-        "properties": {
-          "documentId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "documentType": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "documentDate": {
-            "type": "string",
-            "format": "date"
-          },
-          "extractionStatus": {
-            "type": "string",
             "nullable": true
           }
         },
@@ -5426,6 +7926,67 @@
         },
         "additionalProperties": false
       },
+      "Hakeem.Application.Features.PushDevices.Commands.RegisterPushDevice.RegisterPushDeviceCommand": {
+        "type": "object",
+        "properties": {
+          "expoPushToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "platform": {
+            "type": "string",
+            "nullable": true
+          },
+          "language": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.PushDevices.Commands.RegisterPushDevice.RegisterPushDeviceResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expoPushToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "platform": {
+            "type": "string",
+            "nullable": true
+          },
+          "language": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Hakeem.Application.Features.PushDevices.Commands.UnregisterPushDevice.UnregisterPushDeviceCommand": {
+        "type": "object",
+        "properties": {
+          "expoPushToken": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Hakeem.Application.Interfaces.Rag.TestQdrantSearchResult": {
         "type": "object",
         "properties": {
@@ -5492,6 +8053,28 @@
         ],
         "type": "string"
       },
+      "Hakeem.Domain.Enums.Identity.AccountStatus": {
+        "enum": [
+          "active",
+          "suspended"
+        ],
+        "type": "string"
+      },
+      "Hakeem.Domain.Enums.Identity.ApplicationRole": {
+        "enum": [
+          "patient",
+          "doctor",
+          "admin"
+        ],
+        "type": "string"
+      },
+      "Hakeem.Domain.Enums.Identity.IdentityVerificationStatus": {
+        "enum": [
+          "pending",
+          "verified"
+        ],
+        "type": "string"
+      },
       "Hakeem.Domain.Enums.MedicalCvs.MedicalCvScopeType": {
         "enum": [
           "full",
@@ -5543,24 +8126,6 @@
           }
         },
         "additionalProperties": { }
-      },
-      "SearchMedicalRecordsRequest": {
-        "type": "object",
-        "properties": {
-          "query": {
-            "type": "string",
-            "nullable": true
-          },
-          "patientProfileId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "limit": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
       }
     },
     "securitySchemes": {
