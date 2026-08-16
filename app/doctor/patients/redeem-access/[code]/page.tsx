@@ -25,7 +25,7 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
 
   const handleRedeem = async () => {
     if (!oneTimeCode || oneTimeCode.length < 6) {
-      setToast({ message: t('doctor.redeemAccess.warningInvalid'), type: "warning" });
+      setToast({ message: t('doctor.redeemAccess.invalidCode'), type: "warning" });
       return;
     }
 
@@ -42,17 +42,17 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
         router.push(`/doctor/patients/access-granted/${code}`);
       }, 1000);
     } catch (err: any) {
-      let errorMessage = t('doctor.redeemAccess.errorDefault');
+      let errorMessage = t('doctor.redeemAccess.failedMessage');
       
       const statusCode = err.response?.status;
       if (err.response?.data?.message) {
         errorMessage = err.response.data.message;
       } else if (statusCode === 401 || statusCode === 403) {
-        errorMessage = t('doctor.redeemAccess.errorUnauthorized');
+        errorMessage = t('doctor.redeemAccess.unauthorized');
       } else if (statusCode === 409) {
-        errorMessage = t('doctor.redeemAccess.errorConflict');
+        errorMessage = t('doctor.redeemAccess.expiredCode');
       } else if (statusCode === 422) {
-        errorMessage = t('doctor.redeemAccess.errorFormat');
+        errorMessage = t('doctor.redeemAccess.invalidFormat');
       }
       
       setToast({ message: errorMessage, type: "error" });
@@ -76,19 +76,19 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
       {/* Header Breadcrumbs */}
       <div className="flex items-center text-sm text-slate-500 mb-6">
         <Link href="/doctor/patients" className="flex items-center hover:text-slate-800 transition">
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 mr-1" />
-          <span>{t('doctor.redeemAccess.patients')}</span>
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 rtl:rotate-180 mr-1 rtl:mr-0 rtl:ml-1" />
+          <span>{t('doctor.redeemAccess.breadcrumbPatients')}</span>
         </Link>
-        <span className="mx-2">&gt;</span>
-        <span className="font-medium text-slate-900">{t('doctor.redeemAccess.title')}</span>
+        <span className="mx-2">/</span>
+        <span className="font-medium text-slate-900">{t('doctor.redeemAccess.breadcrumbCurrent')}</span>
       </div>
 
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-2">
-          {t('doctor.redeemAccess.heading')}
+          {t('doctor.redeemAccess.title')}
         </h1>
         <p className="text-slate-500 text-sm">
-          {t('doctor.redeemAccess.description')}
+          {t('doctor.redeemAccess.subtitle')}
         </p>
       </div>
 
@@ -108,7 +108,7 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
 
           <div className="border-t border-slate-100 pt-6">
             <label className="block text-sm font-semibold text-slate-900 mb-2" htmlFor="ot-code">
-              {t('doctor.redeemAccess.otcLabel')}
+              {t('doctor.redeemAccess.oneTimeCode')}
             </label>
             <Input
               id="ot-code"
@@ -116,7 +116,7 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
               value={oneTimeCode}
               onChange={(e) => setOneTimeCode(e.target.value)}
               maxLength={6}
-              className="font-medium tracking-widest"
+              className="font-medium tracking-widest text-center"
             />
           </div>
         </div>
@@ -129,7 +129,7 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
             fullWidth 
             className="bg-[#008060] hover:bg-[#006e52] text-white border-0 py-4 text-base font-semibold shadow-sm transition"
           >
-            {isRedeeming ? t('doctor.redeemAccess.redeeming') : t('doctor.redeemAccess.redeem')}
+            {isRedeeming ? t('doctor.redeemAccess.redeeming') : t('doctor.redeemAccess.redeemButton')}
           </Button>
         </div>
       </div>

@@ -70,8 +70,9 @@ export default function ChangePasswordPage() {
         <button 
           onClick={() => router.back()}
           className="w-10 h-10 shrink-0 bg-white border border-slate-200 rounded-full flex items-center justify-center hover:bg-slate-50 transition"
+          aria-label={t('ui.back')}
         >
-          <ArrowLeftIcon className="w-5 h-5 text-slate-700" />
+          <ArrowLeftIcon className="w-5 h-5 text-slate-700 rtl:rotate-180" />
         </button>
         <h1 className="text-2xl font-bold text-slate-900 font-heading">
           {t('doctor.profile.changePasswordTitle')}
@@ -139,7 +140,7 @@ export default function ChangePasswordPage() {
                 <div className={`h-1 flex-1 rounded-full ${isStrong ? 'bg-blue-500' : 'bg-slate-100'}`}></div>
                 <div className={`h-1 flex-1 rounded-full ${isStrong && newPassword.length >= 10 ? 'bg-blue-600' : 'bg-slate-100'}`}></div>
               </div>
-              <div className="text-right">
+              <div className="text-right rtl:text-left">
                 <span className="text-xs font-medium text-slate-500">
                   {t('doctor.profile.passwordStrength')}: {isStrong ? t('doctor.profile.strengthStrong') : isMedium ? t('doctor.profile.strengthMedium') : t('doctor.profile.strengthWeak')}
                 </span>
@@ -170,7 +171,7 @@ export default function ChangePasswordPage() {
 
           <div className="pt-4">
             <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 shadow-sm text-base">
-              Update Password
+              {t('doctor.profile.updatePassword')}
             </Button>
           </div>
         </form>

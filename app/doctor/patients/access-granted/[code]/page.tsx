@@ -68,20 +68,20 @@ export default function AccessGrantedPage({ params }: { params: Promise<{ code: 
       {/* Header Breadcrumbs */}
       <div className="flex items-center text-sm text-slate-500 mb-6">
         <Link href="/doctor/patients" className="flex items-center hover:text-slate-800 transition">
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 mr-1" />
-          <span>{t('doctor.accessGranted.patients')}</span>
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 rtl:rotate-180 mr-1 rtl:mr-0 rtl:ml-1" />
+          <span>{t('doctor.accessGranted.breadcrumbPatients')}</span>
         </Link>
-        <span className="mx-2">&gt;</span>
-        <span className="font-medium text-slate-900">{t('doctor.accessGranted.title')}</span>
+        <span className="mx-2">/</span>
+        <span className="font-medium text-slate-900">{t('doctor.accessGranted.breadcrumbCurrent')}</span>
       </div>
 
       <div className="flex flex-col items-center mt-12 mb-8">
         <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-16 h-16 text-[#008060] mb-4" />
         <h1 className="text-3xl font-bold tracking-tight text-[#008060] mb-2 font-heading">
-          {t('doctor.accessGranted.heading')}
+          {t('doctor.accessGranted.title')}
         </h1>
         <p className="text-slate-500 text-sm text-center">
-          {t('doctor.accessGranted.description')}
+          {t('doctor.accessGranted.subtitle')}
         </p>
       </div>
 
@@ -94,7 +94,7 @@ export default function AccessGrantedPage({ params }: { params: Promise<{ code: 
             </div>
             <div>
               <h3 className="text-lg font-semibold text-slate-900 font-heading">{patientName}</h3>
-              <p className="text-slate-500 text-sm">{t('doctor.accessGranted.patientCode')}: {patientCode}</p>
+              <p className="text-slate-500 text-sm">{t('doctor.redeemAccess.patientCode')}: {patientCode}</p>
             </div>
           </div>
 

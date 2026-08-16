@@ -20,9 +20,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/localization/LanguageContext";
 
-const getVerifySchema = (t: any) => z.object({
-  patientCode: z.string().min(1, t('doctor.verifyIdentity.validationCode')),
-  nationalId: z.string().min(1, t('doctor.verifyIdentity.validationId')),
+  const getVerifySchema = (t: any) => z.object({
+  patientCode: z.string().min(1, t('doctor.verifyIdentity.invalidCode')),
+  nationalId: z.string().min(1, t('doctor.verifyIdentity.formatMismatch')),
 });
 
 type VerifyFormValues = z.infer<ReturnType<typeof getVerifySchema>>;
@@ -72,15 +72,15 @@ export default function VerifyIdentityPage() {
 
     } catch (err: any) {
       setStatus("idle");
-      let errorMessage = t('doctor.verifyIdentity.errorDefault');
+      let errorMessage = t('doctor.verifyIdentity.failedMessage');
       
       const statusCode = err.response?.status;
       if (statusCode === 404) {
-        errorMessage = t('doctor.verifyIdentity.errorInvalidCode');
+        errorMessage = t('doctor.verifyIdentity.invalidCode');
       } else if (statusCode === 409) {
-        errorMessage = t('doctor.verifyIdentity.errorConflict');
+        errorMessage = t('doctor.verifyIdentity.alreadyVerified');
       } else if (statusCode === 422) {
-        errorMessage = t('doctor.verifyIdentity.errorFormat');
+        errorMessage = t('doctor.verifyIdentity.formatMismatch');
       } else if (err.response?.data?.message) {
         errorMessage = err.response.data.message;
       }
@@ -103,11 +103,11 @@ export default function VerifyIdentityPage() {
 
       <div className="flex items-center text-sm font-medium text-slate-500 mb-8">
         <Link href="/doctor/patients" className="flex items-center hover:text-slate-900 transition-colors">
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 mr-1.5" />
-          <span>{t('doctor.verifyIdentity.patients')}</span>
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 rtl:rotate-180 mr-1.5 rtl:mr-0 rtl:ml-1.5" />
+          <span>{t('doctor.verifyIdentity.breadcrumbPatients')}</span>
         </Link>
         <span className="mx-3 text-slate-300">/</span>
-        <span className="text-slate-900 font-semibold">{t('doctor.verifyIdentity.title')}</span>
+        <span className="text-slate-900 font-semibold">{t('doctor.verifyIdentity.breadcrumbCurrent')}</span>
       </div>
 
       <motion.div 
@@ -121,16 +121,16 @@ export default function VerifyIdentityPage() {
             <HugeiconsIcon icon={UserIdVerificationIcon} className="w-10 h-10" />
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 mb-3">
-            {t('doctor.verifyIdentity.heading')}
+            {t('doctor.verifyIdentity.title')}
           </h1>
           <p className="text-slate-500 text-base max-w-md mx-auto">
-            {t('doctor.verifyIdentity.description')}
+            {t('doctor.verifyIdentity.subtitle')}
           </p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-md mx-auto">
           <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-900 ml-1" htmlFor="patientCode">
+            <label className="text-sm font-bold text-slate-900" htmlFor="patientCode">
               {t('doctor.verifyIdentity.patientCode')}
             </label>
             <Input
@@ -144,7 +144,7 @@ export default function VerifyIdentityPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-900 ml-1" htmlFor="nationalId">
+            <label className="text-sm font-bold text-slate-900" htmlFor="nationalId">
               {t('doctor.verifyIdentity.nationalId')}
             </label>
             <Input
@@ -164,7 +164,7 @@ export default function VerifyIdentityPage() {
               fullWidth 
               className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl h-14 text-lg font-bold shadow-md hover:shadow-lg transition-all"
             >
-              {status === "loading" ? t('doctor.verifyIdentity.processing') : t('doctor.verifyIdentity.verifyProceed')}
+              {status === "loading" ? t('doctor.verifyIdentity.processing') : t('doctor.verifyIdentity.submitButton')}
             </Button>
           </div>
         </form>

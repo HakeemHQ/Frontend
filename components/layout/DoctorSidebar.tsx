@@ -55,7 +55,10 @@ const ChevronRightIcon = () => (
   </svg>
 );
 
+import { useLanguage } from "@/localization/LanguageContext";
+
 export function DoctorSidebar() {
+  const { t, isRTL } = useLanguage();
   const pathname = usePathname();
   const params = useParams();
   const { logout } = useAuth();
@@ -64,8 +67,8 @@ export function DoctorSidebar() {
   const code = params?.code as string | undefined;
 
   const navItems = [
-    { label: "Patients", href: "/doctor/patients", icon: <PatientsIcon /> },
-    { label: "My Profile", href: "/doctor/profile", icon: <ProfileIcon /> },
+    { label: t('nav.patients'), href: "/doctor/patients", icon: <PatientsIcon /> },
+    { label: t('nav.myProfile'), href: "/doctor/profile", icon: <ProfileIcon /> },
   ];
 
   return (
@@ -78,9 +81,15 @@ export function DoctorSidebar() {
         {/* Toggle Button */}
         <button 
           onClick={toggleCollapse}
-          className="absolute -right-3 top-10 hidden lg:flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm hover:text-blue-600 transition-colors z-50"
+          className={`absolute top-10 hidden lg:flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm hover:text-blue-600 transition-colors z-50 ${
+            isRTL ? "-left-3" : "-right-3"
+          }`}
+          aria-label={t('nav.toggleSidebar')}
         >
-          {isCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+          {isRTL 
+            ? (isCollapsed ? <ChevronLeftIcon /> : <ChevronRightIcon />) 
+            : (isCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />)
+          }
         </button>
 
         <div className={`flex items-center px-6 py-8 ${isCollapsed ? "justify-center px-0" : "gap-3"}`}>
@@ -97,10 +106,10 @@ export function DoctorSidebar() {
           {!isCollapsed && (
             <div className="hidden lg:block overflow-hidden whitespace-nowrap transition-opacity duration-300">
               <div className="text-lg font-bold tracking-tight text-blue-600">
-                Hakeem
+                {t('common.appName')}
               </div>
               <div className="text-[10px] uppercase font-semibold text-slate-400">
-                Premium Medical SaaS
+                {t('common.brandTagline')}
               </div>
             </div>
           )}
@@ -111,14 +120,14 @@ export function DoctorSidebar() {
             {navItems.map((item) => {
               const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/' && item.href !== '/doctor/patients');
               
-              const isPatientsTab = item.label === "Patients";
+              const isPatientsTab = item.href === "/doctor/patients";
               const isPatientsActive = isPatientsTab && pathname.startsWith('/doctor/patients');
               
               const finalIsActive = isPatientsActive || isActive;
 
               return (
                 <Link
-                  key={item.label}
+                  key={item.href}
                   href={item.href}
                   title={isCollapsed ? item.label : undefined}
                   className={`flex items-center rounded-lg py-3 font-semibold transition-colors ${
@@ -142,13 +151,13 @@ export function DoctorSidebar() {
         <div className="px-4 py-6">
           <button 
             onClick={logout}
-            title={isCollapsed ? "Logout" : undefined}
-            className={`flex w-full items-center rounded-lg py-3 font-semibold text-red-500 transition-colors hover:bg-red-50 ${
+            title={isCollapsed ? t('nav.logout') : undefined}
+            className={`flex w-full items-center rounded-lg py-3 font-semibold text-red-500 transition-colors hover:bg-red-50 cursor-pointer ${
               isCollapsed ? "justify-center px-0" : "gap-3 px-4 text-sm"
             }`}
           >
             <LogoutIcon />
-            {!isCollapsed && <span className="hidden lg:block">Logout</span>}
+            {!isCollapsed && <span className="hidden lg:block">{t('nav.logout')}</span>}
           </button>
         </div>
       </div>

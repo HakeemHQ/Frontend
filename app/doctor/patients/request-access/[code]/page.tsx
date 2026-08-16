@@ -36,15 +36,15 @@ export default function RequestAccessPage({ params }: { params: Promise<{ code: 
         router.push(`/doctor/patients/redeem-access/${code}`);
       }, 1000);
     } catch (err: any) {
-      let errorMessage = t('doctor.requestAccess.errorDefault');
+      let errorMessage = t('doctor.requestAccess.failedMessage');
       
       const statusCode = err.response?.status;
       if (statusCode === 404) {
-        errorMessage = t('doctor.requestAccess.errorNotFound');
+        errorMessage = t('doctor.requestAccess.patientNotFound');
       } else if (statusCode === 409) {
-        errorMessage = t('doctor.requestAccess.errorConflict');
+        errorMessage = t('doctor.requestAccess.alreadyPending');
       } else if (statusCode === 422) {
-        errorMessage = t('doctor.requestAccess.errorFormat');
+        errorMessage = t('doctor.requestAccess.invalidFormat');
       } else if (err.response?.data?.message) {
         errorMessage = err.response.data.message;
       }
@@ -70,19 +70,19 @@ export default function RequestAccessPage({ params }: { params: Promise<{ code: 
       {/* Header Breadcrumbs */}
       <div className="flex items-center text-sm text-slate-500 mb-6">
         <Link href="/doctor/patients" className="flex items-center hover:text-slate-800 transition">
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 mr-1" />
-          <span>{t('doctor.requestAccess.patients')}</span>
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 rtl:rotate-180 mr-1 rtl:mr-0 rtl:ml-1" />
+          <span>{t('doctor.requestAccess.breadcrumbPatients')}</span>
         </Link>
-        <span className="mx-2">&gt;</span>
-        <span className="font-medium text-slate-900">{t('doctor.requestAccess.title')}</span>
+        <span className="mx-2">/</span>
+        <span className="font-medium text-slate-900">{t('doctor.requestAccess.breadcrumbCurrent')}</span>
       </div>
 
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-2">
-          {t('doctor.requestAccess.heading')}
+          {t('doctor.requestAccess.title')}
         </h1>
         <p className="text-slate-500 text-sm">
-          {t('doctor.requestAccess.description')}
+          {t('doctor.requestAccess.subtitle')}
         </p>
       </div>
 
@@ -104,7 +104,7 @@ export default function RequestAccessPage({ params }: { params: Promise<{ code: 
           <div className="mt-6 flex items-start gap-3 p-4 bg-background rounded-xl border border-slate-100">
             <HugeiconsIcon icon={InformationCircleIcon} className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
             <p className="text-sm text-slate-700">
-              {t('doctor.requestAccess.infoAlert')}
+              {t('doctor.requestAccess.infoMessage')}
             </p>
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function RequestAccessPage({ params }: { params: Promise<{ code: 
           fullWidth 
           className="bg-[#008060] hover:bg-[#006e52] text-white border-0 py-4 text-base font-semibold shadow-sm transition"
         >
-          {isSending ? t('doctor.requestAccess.sending') : t('doctor.requestAccess.send')}
+          {isSending ? t('doctor.requestAccess.sending') : t('doctor.requestAccess.sendRequest')}
         </Button>
       </div>
     </div>

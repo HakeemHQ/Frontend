@@ -105,7 +105,7 @@ export default function DoctorProfilePage() {
               <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-3xl bg-emerald-50 text-emerald-600 shadow-sm border border-emerald-100/50">
                 <UserIcon className="w-12 h-12" />
               </div>
-              <div className="text-center sm:text-left pt-2">
+              <div className="text-center sm:text-left rtl:sm:text-right pt-2">
                 <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">{doc.fullName}</h2>
                 <p className="text-slate-500 font-medium mt-1 text-lg">{doc.specialty}</p>
                 <span className="inline-flex items-center rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-emerald-600 mt-4">
@@ -121,18 +121,18 @@ export default function DoctorProfilePage() {
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl hover:bg-slate-50/80 transition-colors">
                 <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">{t('doctor.profile.licenseNumber')}</span>
-                <span className="text-base font-semibold text-slate-900">{doc.licenseNumber}</span>
+                <span className="text-base font-semibold text-slate-900">{doc.licenseNumber || "N/A"}</span>
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl hover:bg-slate-50/80 transition-colors">
                 <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">{t('doctor.profile.specialty')}</span>
                 <span className="text-base font-semibold text-slate-900">{doc.specialty}</span>
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl hover:bg-slate-50/80 transition-colors">
-                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">{t('doctor.profile.accountStatus')}</span>
+                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">{t('doctor.profile.status')}</span>
                 <span className="text-base font-bold text-emerald-600 uppercase tracking-wide text-sm">{doc.status}</span>
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl hover:bg-slate-50/80 transition-colors">
-                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">{t('doctor.profile.doctorId')}</span>
+                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">{t('admin.doctors.doctorId')}</span>
                 <span className="text-base font-mono text-slate-600 bg-slate-100 px-2 py-1 rounded-md text-sm">{doc.doctorId}</span>
               </div>
             </div>
@@ -142,7 +142,7 @@ export default function DoctorProfilePage() {
             <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-4">
               <UserIcon className="w-8 h-8 text-slate-300" />
             </div>
-            <p className="font-bold text-lg text-slate-900">{t('doctor.profile.noData')}</p>
+            <p className="font-bold text-lg text-slate-900">{t('ui.noDataFound')}</p>
           </div>
         )}
 
@@ -152,7 +152,7 @@ export default function DoctorProfilePage() {
               className="w-full sm:w-auto px-8 h-12 rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-md hover:shadow-lg transition-all font-semibold"
               onClick={() => router.push('/doctor/profile/change-password')}
             >
-              Change Password
+              {t('doctor.profile.changePassword')}
             </Button>
           </div>
         )}
