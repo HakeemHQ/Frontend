@@ -5,6 +5,8 @@ export type MedicalDocument = {
   documentDate: string;
   extractionStatus: string;
   reviewStatus?: string;
+  documentReviewStatus?: string;
+  status?: string;
 };
 
 export interface ExtractedField {
@@ -22,6 +24,8 @@ export interface ExtractedItem {
   itemType: string;
   sequenceNumber: number;
   pageNumber: number;
+  reviewStatus?: string;
+  documentReviewStatus?: string;
   fields: ExtractedField[];
 }
 

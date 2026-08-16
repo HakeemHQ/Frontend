@@ -46,6 +46,7 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
   const [savingItems, setSavingItems] = useState<Record<string, boolean>>({});
   const [savedItems, setSavedItems] = useState<Record<string, boolean>>({});
 
+  // Initialize and update state from fetched extractedData
   useEffect(() => {
     let url: string | null = null;
     
@@ -72,22 +73,32 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
         setExtractedData(typedData);
         
         // Initialize state
-        const initialDecisions: any = {};
-        const initialValues: any = {};
+        const initialDecisions: Record<string, "approved" | "rejected" | "corrected"> = {};
+        const initialValues: Record<string, string> = {};
+        const initialSavedItems: Record<string, boolean> = {};
         
         if (typedData?.items) {
           typedData.items.forEach(item => {
+            const isItemAlreadyReviewed = item.reviewStatus && ['reviewed', 'confirmed', 'approved'].includes(item.reviewStatus.toLowerCase());
+            if (isItemAlreadyReviewed) {
+              initialSavedItems[item.extractedItemId] = true;
+            }
+
             item.fields.forEach(field => {
               initialDecisions[field.extractedFieldId] = "approved";
-              initialValues[field.extractedFieldId] = field.extractedValue || "";
+              initialValues[field.extractedFieldId] = field.correctedValue || field.extractedValue || "";
             });
           });
         }
         
         setFieldDecisions(initialDecisions);
         setFieldValues(initialValues);
+        setSavedItems(initialSavedItems);
         
-        if (typedData?.reviewStatus && typedData.reviewStatus.toLowerCase() === 'reviewed') {
+        const isDocReviewed = typedData?.reviewStatus && ['reviewed', 'confirmed', 'approved'].includes(typedData.reviewStatus.toLowerCase());
+        const areAllItemsReviewed = typedData?.items && typedData.items.length > 0 && typedData.items.every(it => it.reviewStatus && ['reviewed', 'confirmed', 'approved'].includes(it.reviewStatus.toLowerCase()));
+
+        if (isDocReviewed || areAllItemsReviewed) {
           setIsConfirmed(true);
         }
         
@@ -137,7 +148,6 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
     const fieldsPayload: ReviewFieldPayload[] = item.fields.map(field => {
       const decision = fieldDecisions[field.extractedFieldId] || "approved";
       
-      // Map to PascalCase for C# backend to ensure it parses correctly if case-sensitive
       let csharpDecision = "Approved";
       if (decision === "corrected") csharpDecision = "Corrected";
       if (decision === "rejected") csharpDecision = "Rejected";
@@ -154,13 +164,17 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
       fields: fieldsPayload
     };
 
-    const success = await reviewExtractedItem(item.extractedItemId, payload);
-    
-    if (success) {
-      setToastMessage({ message: `Successfully saved ${item.itemType} data!`, type: "success" });
-      setSavedItems(prev => ({ ...prev, [item.extractedItemId]: true }));
-    } else {
-      setToastMessage({ message: `Failed to save ${item.itemType} data.`, type: "error" });
+    try {
+      const success = await reviewExtractedItem(item.extractedItemId, payload);
+      
+      if (success !== false) {
+        setToastMessage({ message: `Successfully saved ${item.itemType} review!`, type: "success" });
+        setSavedItems(prev => ({ ...prev, [item.extractedItemId]: true }));
+      } else {
+        setToastMessage({ message: `Failed to save ${item.itemType} review.`, type: "error" });
+      }
+    } catch (e: any) {
+      setToastMessage({ message: e?.response?.data?.message || `Failed to save ${item.itemType} review.`, type: "error" });
     }
     
     setSavingItems(prev => ({ ...prev, [item.extractedItemId]: false }));
@@ -185,28 +199,44 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
   const handleConfirmAll = async () => {
     setIsConfirming(true);
     
-    // Auto-save any items that haven't been explicitly saved yet
-    if (extractedData?.items) {
-      const unsavedItems = extractedData.items.filter(item => !savedItems[item.extractedItemId]);
-      if (unsavedItems.length > 0) {
-        setToastMessage({ message: `Saving ${unsavedItems.length} pending item(s)...`, type: "success" });
-        await Promise.all(unsavedItems.map(item => handleSaveItem(item)));
+    try {
+      // Auto-save any items that haven't been explicitly saved yet
+      if (extractedData?.items) {
+        const unsavedItems = extractedData.items.filter(item => !savedItems[item.extractedItemId]);
+        if (unsavedItems.length > 0) {
+          for (const item of unsavedItems) {
+            await handleSaveItem(item);
+          }
+        }
       }
-    }
 
-    const response = await confirmExtractedData(documentId);
-    if (response) {
-      setToastMessage({ message: `Successfully confirmed ${response.confirmedItemCount || 0} extracted items!`, type: "success" });
-      setIsConfirmed(true);
-    } else {
-      setToastMessage({ message: "Failed to confirm extracted data.", type: "error" });
+      const response = await confirmExtractedData(documentId);
+      if (response !== false) {
+        const confirmedCount = response?.confirmedItemCount ?? (extractedData?.items?.length || 0);
+        setToastMessage({ message: `Successfully confirmed ${confirmedCount} extracted item(s)!`, type: "success" });
+        setIsConfirmed(true);
+        
+        // Mark all items as saved
+        if (extractedData?.items) {
+          const allSaved: Record<string, boolean> = {};
+          extractedData.items.forEach(it => { allSaved[it.extractedItemId] = true; });
+          setSavedItems(allSaved);
+        }
+      } else {
+        setToastMessage({ message: "Failed to confirm extracted data.", type: "error" });
+      }
+    } catch (e: any) {
+      setToastMessage({ message: e?.response?.data?.message || "Failed to confirm extracted data.", type: "error" });
+    } finally {
+      setIsConfirming(false);
     }
-    setIsConfirming(false);
   };
 
   const handleFinishReview = () => {
-    router.push(`/doctor/patients/workspace/${code}/documents/${documentId}`);
+    router.push(`/doctor/patients/workspace/${code}/documents`);
   };
+
+  const allItemsSaved = extractedData?.items && extractedData.items.length > 0 && extractedData.items.every(it => savedItems[it.extractedItemId]);
 
   return (
     <div className="max-w-[1400px] mx-auto pt-4 pb-12 animate-in fade-in duration-300 relative">
@@ -279,7 +309,7 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
           <p className="text-slate-500">Please review the AI-extracted fields against the original document.</p>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <Button 
             variant="outline" 
             className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 font-semibold flex items-center gap-2 disabled:opacity-50"
@@ -294,35 +324,34 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
             {isDeleting ? "Deleting..." : "Delete"}
           </Button>
 
-          {!isConfirmed ? (
+          {!isConfirmed && !allItemsSaved ? (
             <Button
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold flex items-center gap-2 disabled:opacity-50"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold flex items-center gap-2 shadow-sm transition-all disabled:opacity-50"
               onClick={handleConfirmAll}
               disabled={isConfirming}
             >
               {isConfirming ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Confirming...
+                  Confirming All...
                 </>
               ) : (
                 <>
                   <HugeiconsIcon icon={Tick02Icon} className="w-4 h-4" />
-                  Confirm All
+                  Confirm All Items
                 </>
               )}
             </Button>
           ) : (
-            <div className="flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-lg font-semibold border border-green-200">
-              <HugeiconsIcon icon={Tick02Icon} className="w-5 h-5" />
-              Confirmed
+            <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-xl font-bold border border-emerald-200 shadow-sm">
+              <HugeiconsIcon icon={Tick02Icon} className="w-4 h-4" />
+              All Items Confirmed
             </div>
           )}
 
           <Button 
             onClick={handleFinishReview}
-            disabled={!isConfirmed}
-            className="bg-slate-900 hover:bg-slate-800 text-white font-semibold flex items-center gap-2 disabled:opacity-50"
+            className="bg-slate-900 hover:bg-slate-800 text-white font-semibold flex items-center gap-2 shadow-sm"
           >
             Finish Review
             <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4" />
@@ -334,13 +363,14 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
         
         {/* Left Side: Document Preview */}
         <div className="border border-slate-200 rounded-2xl bg-white shadow-sm overflow-hidden flex flex-col lg:sticky lg:top-6 h-[600px] lg:h-[800px]">
-          <div className="bg-slate-50 px-4 py-3 border-b border-slate-200">
+          <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
             <h3 className="font-bold text-slate-700">Document Evidence</h3>
+            {fileType && <span className="text-xs text-slate-400 font-mono uppercase">{fileType.split('/')[1] || fileType}</span>}
           </div>
           
           <div className="flex-1 bg-slate-100/50 flex items-center justify-center relative overflow-hidden">
             {isLoading ? (
-              <div className="w-10 h-10 border-4 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-10 h-10 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
             ) : blobUrl ? (
               fileType?.includes("pdf") ? (
                 <iframe src={blobUrl} className="w-full h-full border-0" title="Document Preview" />
@@ -363,119 +393,195 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
         <div className="space-y-6">
           {isExtracting ? (
             <div className="border border-slate-200 rounded-2xl bg-white p-12 text-center shadow-sm">
-              <div className="w-10 h-10 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <div className="w-10 h-10 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
               <p className="text-slate-500 font-medium">Loading extracted data...</p>
             </div>
           ) : extractedData?.items && extractedData.items.length > 0 ? (
-            extractedData.items.map((item, itemIdx) => (
-              <div key={item.extractedItemId || itemIdx} className="border border-slate-200 rounded-2xl bg-white shadow-sm overflow-hidden transition-all hover:border-slate-300">
-                
-                {/* Item Header */}
-                <div className="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-                  <div>
-                    <h2 className="text-lg font-bold text-slate-900 font-heading uppercase">
-                      {item.itemType} <span className="text-slate-400 text-sm normal-case">(Item {item.sequenceNumber})</span>
-                    </h2>
-                  </div>
-                  {savedItems[item.extractedItemId] && (
-                    <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                      <HugeiconsIcon icon={Tick02Icon} className="w-3 h-3" />
-                      Saved
+            extractedData.items.map((item, itemIdx) => {
+              const isItemSaved = isConfirmed || !!savedItems[item.extractedItemId];
+
+              return (
+                <div 
+                  key={item.extractedItemId || itemIdx} 
+                  className={`border rounded-2xl bg-white shadow-sm overflow-hidden transition-all duration-300 ${
+                    isItemSaved 
+                      ? 'border-emerald-200 bg-emerald-50/10 shadow-emerald-50' 
+                      : 'border-slate-200 hover:border-slate-300'
+                  }`}
+                >
+                  
+                  {/* Item Header */}
+                  <div className={`px-6 py-4 border-b flex items-center justify-between transition-colors ${
+                    isItemSaved ? 'bg-emerald-50/60 border-emerald-100' : 'bg-slate-50 border-slate-200'
+                  }`}>
+                    <div className="flex items-center gap-3">
+                      <h2 className="text-base font-bold text-slate-900 font-heading uppercase">
+                        {item.itemType} <span className="text-slate-400 text-sm font-normal normal-case">(Item {item.sequenceNumber || itemIdx + 1})</span>
+                      </h2>
                     </div>
-                  )}
-                </div>
-                
-                {/* Fields List */}
-                <div className="p-6 space-y-6">
-                  {item.fields.map(field => {
-                    const decision = fieldDecisions[field.extractedFieldId];
-                    const val = fieldValues[field.extractedFieldId] || "";
-                    
-                    const isRejected = decision === "rejected";
-                    const isCorrected = decision === "corrected";
-
-                    return (
-                      <div key={field.extractedFieldId} className={`p-4 rounded-xl border ${isRejected ? 'border-red-200 bg-red-50/50 opacity-75' : isCorrected ? 'border-amber-200 bg-amber-50/50' : 'border-slate-100 bg-slate-50'}`}>
-                        
-                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-3">
-                          <div className="flex-1">
-                            <h4 className="font-bold text-slate-800 text-sm mb-1">{field.fieldName}</h4>
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${field.confidence > 0.8 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
-                                {Math.round(field.confidence * 100)}% Confident
-                              </span>
-                            </div>
-                          </div>
-                          
-                          {/* Decision Toggles */}
-                          <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200 shadow-sm shrink-0">
-                            <button
-                              onClick={() => handleDecisionChange(field.extractedFieldId, "approved")}
-                              className={`p-2 rounded-md transition ${decision === "approved" ? 'bg-green-100 text-green-700' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'}`}
-                              title="Approve"
-                            >
-                              <HugeiconsIcon icon={Tick02Icon} className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDecisionChange(field.extractedFieldId, "corrected")}
-                              className={`p-2 rounded-md transition ${decision === "corrected" ? 'bg-amber-100 text-amber-700' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'}`}
-                              title="Correct manually"
-                            >
-                              <HugeiconsIcon icon={Edit02Icon} className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDecisionChange(field.extractedFieldId, "rejected")}
-                              className={`p-2 rounded-md transition ${decision === "rejected" ? 'bg-red-100 text-red-700' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'}`}
-                              title="Reject completely"
-                            >
-                              <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Input Value */}
-                        <div className={`${isRejected ? 'pointer-events-none opacity-50' : ''}`}>
-                          <Input
-                            value={val}
-                            onChange={(e) => handleValueChange(field.extractedFieldId, e.target.value)}
-                            className="bg-white"
-                          />
-                        </div>
-                        
-                        {/* Issues */}
-                        {field.issues && field.issues.length > 0 && (
-                          <div className="mt-3 text-xs text-red-600 bg-red-50/50 p-2 rounded-md">
-                            <span className="font-bold block mb-1">Issues noted by AI:</span>
-                            <ul className="list-disc list-inside">
-                              {field.issues.map((issue, i) => <li key={i}>{issue}</li>)}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-                
-                {/* Save Button for Item */}
-                <div className="bg-slate-50 p-4 border-t border-slate-200 flex justify-end">
-                  <Button
-                    className="bg-slate-900 hover:bg-slate-800 text-white disabled:opacity-50"
-                    onClick={() => handleSaveItem(item)}
-                    disabled={savingItems[item.extractedItemId]}
-                  >
-                    {savingItems[item.extractedItemId] ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Saving...
+                    {isItemSaved ? (
+                      <div className="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-xs">
+                        <HugeiconsIcon icon={Tick02Icon} className="w-3.5 h-3.5" />
+                        Approved & Saved
                       </div>
                     ) : (
-                      "Save Item Review"
+                      <div className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-bold">
+                        Pending Review
+                      </div>
                     )}
-                  </Button>
-                </div>
+                  </div>
+                  
+                  {/* Fields List */}
+                  <div className="p-6 space-y-5">
+                    {item.fields.map(field => {
+                      const decision = fieldDecisions[field.extractedFieldId] || "approved";
+                      const val = fieldValues[field.extractedFieldId] || "";
+                      
+                      const isRejected = decision === "rejected";
+                      const isCorrected = decision === "corrected";
+                      const isApproved = decision === "approved";
 
-              </div>
-            ))
+                      return (
+                        <div 
+                          key={field.extractedFieldId} 
+                          className={`p-4 rounded-xl border transition-all duration-200 ${
+                            isItemSaved
+                              ? 'border-emerald-100 bg-emerald-50/30'
+                              : isRejected 
+                              ? 'border-red-200 bg-red-50/60 opacity-80' 
+                              : isCorrected 
+                              ? 'border-amber-300 bg-amber-50/60 ring-2 ring-amber-100' 
+                              : 'border-slate-200 bg-slate-50/70 hover:bg-slate-50'
+                          }`}
+                        >
+                          
+                          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-2.5">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h4 className="font-bold text-slate-800 text-sm">{field.fieldName}</h4>
+                                {isCorrected && (
+                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 uppercase">
+                                    Modified
+                                  </span>
+                                )}
+                                {isRejected && (
+                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-800 uppercase">
+                                    Rejected
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                                  field.confidence > 0.8 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                                }`}>
+                                  {Math.round(field.confidence * 100)}% Confident
+                                </span>
+                              </div>
+                            </div>
+                            
+                            {/* Decision Toggles */}
+                            <div className={`flex items-center gap-1 bg-white p-1 rounded-xl border shadow-xs shrink-0 ${isItemSaved ? 'opacity-60 border-slate-200' : 'border-slate-200'}`}>
+                              <button
+                                type="button"
+                                disabled={isItemSaved}
+                                onClick={() => handleDecisionChange(field.extractedFieldId, "approved")}
+                                className={`p-2 rounded-lg transition-all ${
+                                  isApproved && !isRejected && !isCorrected
+                                    ? 'bg-emerald-600 text-white shadow-xs font-bold' 
+                                    : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'
+                                } ${isItemSaved ? 'cursor-default' : 'cursor-pointer'}`}
+                                title="Approve Field"
+                              >
+                                <HugeiconsIcon icon={Tick02Icon} className="w-4 h-4" />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={isItemSaved}
+                                onClick={() => handleDecisionChange(field.extractedFieldId, "corrected")}
+                                className={`p-2 rounded-lg transition-all ${
+                                  isCorrected 
+                                    ? 'bg-amber-500 text-white shadow-xs font-bold' 
+                                    : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'
+                                } ${isItemSaved ? 'cursor-default' : 'cursor-pointer'}`}
+                                title="Correct manually"
+                              >
+                                <HugeiconsIcon icon={Edit02Icon} className="w-4 h-4" />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={isItemSaved}
+                                onClick={() => handleDecisionChange(field.extractedFieldId, "rejected")}
+                                className={`p-2 rounded-lg transition-all ${
+                                  isRejected 
+                                    ? 'bg-red-600 text-white shadow-xs font-bold' 
+                                    : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'
+                                } ${isItemSaved ? 'cursor-default' : 'cursor-pointer'}`}
+                                title="Reject completely"
+                              >
+                                <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Input Value */}
+                          <div className={`${isRejected ? 'pointer-events-none opacity-40 line-through' : ''}`}>
+                            <Input
+                              value={val}
+                              disabled={isItemSaved || isRejected}
+                              onChange={(e) => handleValueChange(field.extractedFieldId, e.target.value)}
+                              className={`bg-white transition-all font-medium ${
+                                isCorrected ? 'border-amber-300 focus:border-amber-500' : ''
+                              } ${isItemSaved ? 'bg-slate-50/50 text-slate-700' : ''}`}
+                            />
+                          </div>
+                          
+                          {/* Issues */}
+                          {field.issues && field.issues.length > 0 && (
+                            <div className="mt-3 text-xs text-red-700 bg-red-50 p-2.5 rounded-lg border border-red-100">
+                              <span className="font-bold block mb-1">AI Flagged Issue:</span>
+                              <ul className="list-disc list-inside space-y-0.5">
+                                {field.issues.map((issue, i) => <li key={i}>{issue}</li>)}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  
+                  {/* Save Button for Item */}
+                  <div className="bg-slate-50/80 px-6 py-4 border-t border-slate-200 flex items-center justify-between">
+                    <p className="text-xs text-slate-400">
+                      {isItemSaved ? "Item locked after review" : "Save individual item or click Confirm All above"}
+                    </p>
+                    <Button
+                      className={`font-semibold transition-all ${
+                        isItemSaved
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-none cursor-default'
+                          : 'bg-slate-900 hover:bg-slate-800 text-white'
+                      }`}
+                      onClick={() => !isItemSaved && handleSaveItem(item)}
+                      disabled={isItemSaved || savingItems[item.extractedItemId]}
+                    >
+                      {savingItems[item.extractedItemId] ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          Saving...
+                        </div>
+                      ) : isItemSaved ? (
+                        <div className="flex items-center gap-1.5">
+                          <HugeiconsIcon icon={Tick02Icon} className="w-4 h-4" />
+                          Saved & Approved
+                        </div>
+                      ) : (
+                        "Save Item Review"
+                      )}
+                    </Button>
+                  </div>
+
+                </div>
+              );
+            })
           ) : extractedData ? (
             <div className="border border-slate-200 rounded-2xl bg-white p-12 text-center shadow-sm">
               <p className="text-slate-500 font-medium">No extraction data found to review.</p>

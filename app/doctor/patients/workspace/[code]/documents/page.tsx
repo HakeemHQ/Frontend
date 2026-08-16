@@ -58,47 +58,61 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
   });
 
   const getStatusBadge = (doc: any) => {
-    const extStatus = doc.extractionStatus?.toLowerCase() || '';
-    const revStatus = doc.reviewStatus?.toLowerCase() || '';
+    const extStatus = (doc.extractionStatus || doc.status || '').toLowerCase();
+    const revStatus = (doc.reviewStatus || doc.documentReviewStatus || '').toLowerCase();
 
-    if (!extStatus) {
+    if (
+      revStatus === 'fullyreviewed' || 
+      revStatus === 'fully_reviewed' || 
+      revStatus === 'reviewed' || 
+      revStatus === 'confirmed' || 
+      revStatus === 'approved'
+    ) {
       return (
-        <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-50 text-slate-700 border border-slate-200 uppercase tracking-wide">
-          Unknown
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-emerald-100">
+          <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5" />
+          Reviewed
         </span>
       );
     }
-    
+
+    if (revStatus === 'partiallyreviewed' || revStatus === 'partially_reviewed') {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-amber-100">
+          <HugeiconsIcon icon={Time02Icon} className="w-3.5 h-3.5" />
+          Partially Reviewed
+        </span>
+      );
+    }
+
     if (extStatus === 'processing' || extStatus === 'queued') {
       return (
-        <span className="flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-amber-100">
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-amber-100">
           <HugeiconsIcon icon={Time02Icon} className="w-3.5 h-3.5" />
-          {doc.extractionStatus}
+          {doc.extractionStatus || 'Processing'}
         </span>
       );
     }
     
-    if (extStatus === 'completed') {
-      if (revStatus === 'reviewed' || revStatus === 'confirmed') {
-        return (
-          <span className="flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-emerald-100">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5" />
-            Reviewed
-          </span>
-        );
-      } else {
-        return (
-          <span className="flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-blue-100">
-            <HugeiconsIcon icon={Time02Icon} className="w-3.5 h-3.5" />
-            Waiting for Review
-          </span>
-        );
-      }
+    if (
+      extStatus === 'completed' || 
+      extStatus === 'waiting for review' || 
+      extStatus === 'waiting_for_review' || 
+      revStatus === 'unreviewed' || 
+      revStatus === 'waiting for review' || 
+      revStatus === 'pending'
+    ) {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-blue-100">
+          <HugeiconsIcon icon={Time02Icon} className="w-3.5 h-3.5" />
+          Waiting for Review
+        </span>
+      );
     }
 
     if (extStatus === 'uploaded') {
       return (
-        <span className="flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-emerald-100">
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-emerald-100">
           <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5" />
           Uploaded
         </span>
@@ -107,7 +121,7 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
     
     return (
       <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wide bg-slate-50 text-slate-700 border border-slate-200">
-        {doc.extractionStatus}
+        {doc.reviewStatus || doc.extractionStatus || doc.status || 'Unknown'}
       </span>
     );
   };
@@ -201,8 +215,15 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
                       key={doc.documentId} 
                       className="bg-white hover:bg-slate-50 transition cursor-pointer"
                       onClick={() => {
-                        const status = doc.extractionStatus?.toLowerCase();
-                        if (status === 'completed' || status === 'waiting for review' || status === 'waiting_for_review') {
+                        const revStatus = (doc.reviewStatus || doc.documentReviewStatus || '').toLowerCase();
+                        const isReviewed = 
+                          revStatus === 'fullyreviewed' || 
+                          revStatus === 'fully_reviewed' || 
+                          revStatus === 'reviewed' || 
+                          revStatus === 'confirmed' || 
+                          revStatus === 'approved';
+
+                        if (!isReviewed && (doc.extractionStatus?.toLowerCase() === 'completed' || doc.extractionStatus?.toLowerCase() === 'waiting for review' || doc.extractionStatus?.toLowerCase() === 'waiting_for_review' || revStatus === 'partiallyreviewed' || revStatus === 'partially_reviewed')) {
                           router.push(`/doctor/patients/workspace/${code}/documents/${doc.documentId}/review`);
                         } else {
                           router.push(`/doctor/patients/workspace/${code}/documents/${doc.documentId}`);

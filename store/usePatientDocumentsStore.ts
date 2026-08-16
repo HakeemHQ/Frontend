@@ -137,14 +137,26 @@ export const usePatientDocumentsStore = create<PatientDocumentsState>((set, get)
     set({ isLoading: true, error: null });
     try {
       const { confirmAllExtractedItems } = await import("@/lib/api/documents");
-      const response = await confirmAllExtractedItems(documentId);
+      const response: any = await confirmAllExtractedItems(documentId);
       
-      const isSuccess = 'success' in response ? (response as any).success : true;
-      const actualData = 'success' in response ? (response as any).data : response;
+      const isFailed = typeof response === 'object' && response !== null && 'success' in response && response.success === false;
 
-      if (isSuccess) {
-        set({ isLoading: false });
-        return actualData;
+      if (!isFailed) {
+        // Optimistically update document in state.documents
+        set((state) => ({
+          documents: state.documents.map((doc) =>
+            doc.documentId === documentId
+              ? { ...doc, reviewStatus: "reviewed", documentReviewStatus: "reviewed" }
+              : doc
+          ),
+          isLoading: false,
+        }));
+
+        const actualData = typeof response === 'object' && response !== null && 'data' in response && response.data !== undefined
+          ? response.data 
+          : response;
+
+        return actualData || true;
       } else {
         set({ error: (response as any).message || "Failed to confirm extracted data", isLoading: false });
         return false;
