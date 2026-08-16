@@ -8,12 +8,15 @@ import {
   ArrowRight01Icon,
   UserIcon,
 } from "@hugeicons/core-free-icons";
+import { askAiQuestion, AiSource } from "@/lib/api/ai";
 
 type Message = {
   id: string;
   role: "user" | "bot";
   text: string;
   timestamp: Date;
+  sources?: AiSource[];
+  isError?: boolean;
 };
 
 export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code: string }> }) {
@@ -31,14 +34,15 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
     scrollToBottom();
   }, [messages, isTyping]);
 
-  const handleSendMessage = (e?: React.FormEvent) => {
+  const handleSendMessage = async (e?: React.FormEvent, presetPrompt?: string) => {
     e?.preventDefault();
-    if (!inputValue.trim()) return;
+    const textToSend = presetPrompt || inputValue.trim();
+    if (!textToSend) return;
 
     const newUserMsg: Message = {
       id: Date.now().toString(),
       role: "user",
-      text: inputValue.trim(),
+      text: textToSend,
       timestamp: new Date(),
     };
 
@@ -46,26 +50,47 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
     setInputValue("");
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const botResponses = [
-        `I can certainly help you analyze that lab report for patient ${code}. Could you specify which values you're concerned about?`,
-        `Based on patient ${code}'s history, that seems like a normal variance.`,
-        "I've found 3 recent clinical guidelines regarding this treatment protocol. Would you like me to summarize them?",
-        "The interaction between those two medications is generally mild, but you should monitor for potential liver enzyme elevation."
-      ];
-      const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
+    try {
+      const dataStr = sessionStorage.getItem(`access_${code}`);
+      let patientId = "";
+      if (dataStr) {
+        const accessData = JSON.parse(dataStr);
+        patientId = accessData?.patientId || accessData?.patient?.patientId;
+      }
+
+      if (!patientId) {
+        throw new Error("Patient session not found.");
+      }
+
+      const response = await askAiQuestion(patientId, textToSend);
       
-      const newBotMsg: Message = {
+      const isSuccess = 'success' in response ? response.success : true;
+      const responseData = 'success' in response ? response.data : response;
+
+        if (isSuccess && responseData) {
+        const newBotMsg: Message = {
+          id: (Date.now() + 1).toString(),
+          role: "bot",
+          text: responseData.message,
+          sources: responseData.ragResults,
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, newBotMsg]);
+      } else {
+        throw new Error((response as any).message || "Failed to get an answer.");
+      }
+    } catch (err: any) {
+      const errorMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: "bot",
-        text: messages.length === 0 ? `Hello there! I'm ready to assist you with patient ${code}'s records. What would you like to know?` : randomResponse,
+        text: err.message || "An error occurred while connecting to H-bot.",
+        isError: true,
         timestamp: new Date(),
       };
-      
-      setMessages((prev) => [...prev, newBotMsg]);
+      setMessages((prev) => [...prev, errorMsg]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const suggestedPrompts = [
@@ -112,7 +137,7 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
                 <button 
                   key={i}
                   onClick={() => {
-                    setInputValue(prompt);
+                    handleSendMessage(undefined, prompt);
                   }}
                   className="px-4 py-3 bg-white border border-slate-200 hover:border-blue-300 hover:shadow-sm hover:bg-blue-50/50 rounded-xl text-sm font-medium text-slate-700 transition-all text-left flex items-center gap-2"
                 >
@@ -138,10 +163,24 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
                       className={`px-5 py-3.5 shadow-sm text-[15px] leading-relaxed ${
                         msg.role === 'user' 
                           ? 'bg-blue-600 text-white rounded-2xl rounded-tr-sm' 
-                          : 'bg-white border border-slate-100 text-slate-800 rounded-2xl rounded-tl-sm'
+                          : msg.isError 
+                            ? 'bg-red-50 border border-red-100 text-red-800 rounded-2xl rounded-tl-sm'
+                            : 'bg-white border border-slate-100 text-slate-800 rounded-2xl rounded-tl-sm'
                       }`}
                     >
                       {msg.text}
+                      {msg.sources && msg.sources.length > 0 && (
+                        <div className="mt-3 pt-3 border-t border-slate-100/60 flex flex-col gap-1.5">
+                          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Sources referenced</span>
+                          <div className="flex flex-wrap gap-1.5">
+                            {msg.sources.map((src, i) => (
+                              <span key={i} className="inline-flex items-center px-2 py-1 bg-slate-50 text-slate-600 text-[11px] rounded-md border border-slate-200" title={src.recordType}>
+                                {src.displayName}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <span className="text-[10px] font-medium text-slate-400 px-1">
                       {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

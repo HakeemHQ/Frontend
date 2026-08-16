@@ -23,8 +23,6 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
   const { code } = use(params);
 
   const [title, setTitle] = useState("");
-  const [scopeType, setScopeType] = useState<"Full" | "Focused">("Full");
-  const [focus, setFocus] = useState("");
   const { createCv, isCreating, error: storeError, clearError } = usePatientMedicalCvsStore();
   const [showSuccess, setShowSuccess] = useState(false);
   const [toastMessage, setToastMessage] = useState<{ message: string; type: 'success' | 'error' | 'warning' } | null>(null);
@@ -55,13 +53,7 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
       return;
     }
 
-    const payload = {
-      title,
-      scopeType,
-      ...(scopeType === "Focused" && { focus })
-    };
-
-    // Use title only for testing
+    // Create CV with just the title as requested by the backend for now
     const success = await createCv(title, patientId);
     
     if (success) {
@@ -104,15 +96,13 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
             Medical CV Generated Successfully!
           </h2>
           <p className="text-slate-500 text-lg max-w-lg mx-auto mb-10">
-            The new {scopeType === "Focused" ? "focused" : "full"} Medical CV &quot;{title}&quot; has been created and is now available in the patient&apos;s records.
+            The Medical CV &quot;{title}&quot; has been created and is now available in the patient&apos;s records.
           </p>
           <div className="flex items-center justify-center gap-4">
             <button
               onClick={() => {
                 setShowSuccess(false);
                 setTitle("");
-                setScopeType("Full");
-                setFocus("");
               }}
               className="px-6 py-3 border-2 border-slate-200 text-slate-700 font-semibold rounded-xl hover:border-slate-300 hover:bg-slate-50 transition"
             >
@@ -138,7 +128,7 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
                 Generate Medical CV
               </h1>
               <p className="text-slate-500 leading-relaxed text-sm max-w-xl">
-                Create a structured summary of the patient&apos;s medical history. Choose a full comprehensive view or narrow the focus to a specific condition or specialty.
+                Create a structured summary of the patient&apos;s medical history. Name it descriptively to easily find it later.
               </p>
             </div>
           </div>
@@ -162,99 +152,8 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
               />
             </div>
 
-            {/* Scope Type Selection */}
-            <div className="space-y-4">
-              <label className="block text-sm font-bold text-slate-900">
-                Scope Type <span className="text-red-500">*</span>
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Full Option */}
-                <label
-                  className={`relative flex flex-col p-5 rounded-2xl border-2 cursor-pointer transition-all ${
-                    scopeType === "Full"
-                      ? "border-blue-600 bg-blue-50/50 shadow-sm"
-                      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="scopeType"
-                    value="Full"
-                    className="sr-only"
-                    checked={scopeType === "Full"}
-                    onChange={() => setScopeType("Full")}
-                  />
-                  <div className="flex justify-between items-start mb-3">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${scopeType === "Full" ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500"}`}>
-                      <HugeiconsIcon icon={DocumentValidationIcon} className="w-5 h-5" />
-                    </div>
-                    {scopeType === "Full" && (
-                      <div className="text-blue-600">
-                        <HugeiconsIcon icon={CheckmarkCircle02Icon} fontVariant="solid" className="w-6 h-6" />
-                      </div>
-                    )}
-                  </div>
-                  <h3 className="font-bold text-slate-900 mb-1">Full Scope</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    A comprehensive summary of the patient&apos;s entire medical history and all associated records.
-                  </p>
-                </label>
-
-                {/* Focused Option */}
-                <label
-                  className={`relative flex flex-col p-5 rounded-2xl border-2 cursor-pointer transition-all ${
-                    scopeType === "Focused"
-                      ? "border-blue-600 bg-blue-50/50 shadow-sm"
-                      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="scopeType"
-                    value="Focused"
-                    className="sr-only"
-                    checked={scopeType === "Focused"}
-                    onChange={() => setScopeType("Focused")}
-                  />
-                  <div className="flex justify-between items-start mb-3">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${scopeType === "Focused" ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500"}`}>
-                      <HugeiconsIcon icon={Target01Icon} className="w-5 h-5" />
-                    </div>
-                    {scopeType === "Focused" && (
-                      <div className="text-blue-600">
-                        <HugeiconsIcon icon={CheckmarkCircle02Icon} fontVariant="solid" className="w-6 h-6" />
-                      </div>
-                    )}
-                  </div>
-                  <h3 className="font-bold text-slate-900 mb-1">Focused Scope</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    A tailored summary focusing specifically on a certain condition, specialty, or timeframe.
-                  </p>
-                </label>
-              </div>
-            </div>
-
-            {/* Focus Field (Conditional) */}
-            {scopeType === "Focused" && (
-              <div className="space-y-3 animate-in slide-in-from-top-2 fade-in duration-300">
-                <label htmlFor="cv-focus" className="block text-sm font-bold text-slate-900">
-                  Focus Area <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  id="cv-focus"
-                  type="text"
-                  required
-                  value={focus}
-                  onChange={(e) => setFocus(e.target.value)}
-                  placeholder="e.g. Diabetes, Cardiology, Orthopedics"
-                  iconLeft={<HugeiconsIcon icon={Target01Icon} className="w-5 h-5 text-slate-400" />}
-                  className="font-medium"
-                />
-              </div>
-            )}
-
             {/* Submit Button */}
-            <div className="pt-4 border-t border-slate-100 flex flex-col items-end gap-3">
+            <div className="pt-4 border-t border-slate-100 flex justify-end">
               <Button
                 type="submit"
                 disabled={isCreating}

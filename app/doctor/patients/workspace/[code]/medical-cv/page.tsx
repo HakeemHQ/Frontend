@@ -54,11 +54,11 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
   const filteredCVs = cvs.filter(cv => {
     const matchesSearch = cv.title.toLowerCase().includes(searchQuery.toLowerCase());
     
-    // Status mapping for filter: we map based on the first version's status or 'unknown'
-    const status = cv.versions?.[0]?.status || "unknown";
+    // Status mapping for filter: we map based on the backend's status
+    const status = cv.verificationStatus || "unknown";
     let matchesVerification = true;
-    if (verificationFilter === "Ready" && status.toLowerCase() !== "ready") matchesVerification = false;
-    if (verificationFilter === "Queued" && status.toLowerCase() !== "queued" && status.toLowerCase() !== "processing") matchesVerification = false;
+    if (verificationFilter === "Draft" && status.toLowerCase() !== "draft") matchesVerification = false;
+    if (verificationFilter === "Ready" && status.toLowerCase() !== "ready" && status.toLowerCase() !== "approved") matchesVerification = false;
     
     return matchesSearch && matchesVerification;
   });
@@ -66,12 +66,14 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
       case 'ready':
+      case 'approved':
         return (
           <span className="flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-emerald-100">
             <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5" />
             Ready
           </span>
         );
+      case 'draft':
       case 'queued':
       case 'processing':
         return (
@@ -168,7 +170,7 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
             <Select 
               options={[
                 { value: "All", label: "All Statuses" },
-                { value: "Queued", label: "Queued" },
+                { value: "Draft", label: "Draft" },
                 { value: "Ready", label: "Ready" }
               ]}
               value={verificationFilter}
@@ -184,9 +186,8 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           <AnimatePresence>
             {filteredCVs.map((cv) => {
-              const latestVersion = cv.versions?.[0] || { versionNumber: 0, status: 'Unknown', createdAt: 'N/A' };
-              const dateObj = latestVersion.createdAt !== 'N/A' ? new Date(latestVersion.createdAt) : null;
-              const formattedDate = dateObj ? dateObj.toLocaleDateString() : 'N/A';
+              const status = cv.verificationStatus || 'Unknown';
+              const versionNumber = cv.latestVersionNumber || 1;
 
               return (
                 <motion.div
@@ -221,16 +222,16 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
                           {cv.title || "Untitled CV"}
                         </h3>
                         <p className="text-xs font-semibold text-slate-500 mb-1 capitalize">
-                          {cv.scopeType} <span className="font-medium">({cv.focus || "General"})</span>
+                          Medical CV <span className="font-medium">({cv.createdByRole || "Doctor"})</span>
                         </p>
                         <p className="text-[11px] font-bold text-slate-400 mb-4 bg-slate-50 inline-block px-2 py-0.5 rounded">
-                          Version {latestVersion.versionNumber} • {formattedDate}
+                          Version {versionNumber}
                         </p>
                       </div>
 
                       <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap">
                         <div className="flex items-center gap-2">
-                          {getStatusBadge(latestVersion.status)}
+                          {getStatusBadge(status)}
                         </div>
                       </div>
                     </div>

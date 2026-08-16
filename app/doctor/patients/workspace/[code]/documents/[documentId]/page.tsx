@@ -1,22 +1,123 @@
 "use client";
 
-import React, { use } from "react";
+import React, { use, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowLeft01Icon,
-  Download01Icon
+  Download01Icon,
+  File01Icon,
+  Delete02Icon,
+  Alert02Icon,
+  Tick02Icon
 } from "@hugeicons/core-free-icons";
+import { getDocumentContent, getDocumentExtractedFields } from "@/lib/api/documents";
+import { usePatientDocumentsStore } from "@/store/usePatientDocumentsStore";
+import { Toast } from "@/components/ui/Toast";
+import { AnimatePresence, motion } from "framer-motion";
+import { DocumentExtractedData } from "@/types/document";
 
 export default function DocumentPreviewPage({ params }: { params: Promise<{ code: string, documentId: string }> }) {
-  const { code } = use(params);
+  const router = useRouter();
+  const { code, documentId } = use(params);
+  const { documents } = usePatientDocumentsStore();
+  
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
+  const [fileType, setFileType] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [extractedData, setExtractedData] = useState<DocumentExtractedData | null>(null);
+  const [isExtracting, setIsExtracting] = useState(true);
 
-  // In a real app we would fetch the document details using the documentId
-  const documentName = "Cardiology prescription.pdf";
+  // Find document title from store
+  const documentInfo = documents.find(d => d.documentId === documentId);
+  const documentName = documentInfo?.title || "Document Preview";
+
+  useEffect(() => {
+    let url: string | null = null;
+    
+    const fetchContent = async () => {
+      try {
+        setIsLoading(true);
+        const blob = await getDocumentContent(documentId);
+        
+        console.log("Document Content Response:", blob);
+        
+        // Determine file type from blob
+        setFileType(blob.type);
+        
+        url = URL.createObjectURL(blob);
+        setBlobUrl(url);
+      } catch (err) {
+        console.error("Failed to load document content", err);
+        setError("Failed to load document content. It may have been deleted or is inaccessible.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    const fetchExtracted = async () => {
+      try {
+        setIsExtracting(true);
+        const res = await getDocumentExtractedFields(documentId);
+        
+        // Handle ApiResponse wrapper or raw data
+        const data = ('success' in res && 'data' in res) ? res.data : res;
+        setExtractedData(data as unknown as DocumentExtractedData);
+      } catch (err) {
+        console.error("Failed to load extracted data", err);
+      } finally {
+        setIsExtracting(false);
+      }
+    };
+
+    if (documentId) {
+      fetchContent();
+      fetchExtracted();
+    }
+    
+    // Cleanup URL object to avoid memory leaks
+    return () => {
+      if (url) {
+        URL.revokeObjectURL(url);
+      }
+    };
+  }, [documentId]);
+
+  const handleDownload = () => {
+    if (blobUrl) {
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      
+      // Try to determine extension
+      let ext = "";
+      if (fileType?.includes("pdf")) ext = ".pdf";
+      else if (fileType?.includes("jpeg") || fileType?.includes("jpg")) ext = ".jpg";
+      else if (fileType?.includes("png")) ext = ".png";
+      
+      a.download = `${documentName}${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  };
+
 
   return (
-    <div className="max-w-5xl mx-auto pt-4 pb-12 space-y-6 animate-in fade-in duration-300">
+    <div className="max-w-5xl mx-auto pt-4 pb-12 space-y-6 animate-in fade-in duration-300 relative">
+      <AnimatePresence>
+        {toastMessage && (
+          <Toast 
+            message={toastMessage.message} 
+            type={toastMessage.type} 
+            onClose={() => setToastMessage(null)} 
+          />
+        )}
+      </AnimatePresence>
+
       {/* Breadcrumbs */}
       <div className="flex items-center text-sm text-slate-500 mb-2">
         <Link href={`/doctor/patients/workspace/${code}/documents`} className="flex items-center hover:text-slate-800 transition">
@@ -27,88 +128,154 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
         <span className="font-medium text-primary-600">Preview</span>
       </div>
 
-      <div className="w-full border border-slate-100 rounded-2xl bg-surface shadow-sm overflow-hidden p-6 md:p-8">
+      <div className="w-full border border-slate-100 rounded-2xl bg-surface shadow-sm overflow-hidden p-6 md:p-8 flex flex-col min-h-[800px]">
         
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 shrink-0">
           <h1 className="text-2xl font-bold text-slate-900 font-heading">{documentName}</h1>
-          <Button variant="outline" className="border-primary-600 text-primary-600 hover:bg-primary-50 font-semibold flex items-center gap-2">
-            <HugeiconsIcon icon={Download01Icon} className="w-4 h-4" />
-            Download
-          </Button>
+          <div className="flex items-center gap-3">
+
+            <Button 
+              variant="outline" 
+              className="border-primary-600 text-primary-600 hover:bg-primary-50 font-semibold flex items-center gap-2 disabled:opacity-50"
+              onClick={handleDownload}
+              disabled={!blobUrl || isLoading}
+            >
+              <HugeiconsIcon icon={Download01Icon} className="w-4 h-4" />
+              Download
+            </Button>
+          </div>
         </div>
 
-        {/* Document Viewer Mockup */}
-        <div className="flex flex-col sm:flex-row border border-slate-100 rounded-xl overflow-hidden bg-white shadow-inner min-h-[600px]">
-          {/* Thumbnails Sidebar */}
-          <div className="w-full sm:w-24 bg-slate-50 border-r border-slate-100 flex sm:flex-col items-center py-4 px-4 sm:px-0 gap-4 overflow-x-auto sm:overflow-y-auto">
-            {/* Active Thumbnail */}
-            <div className="w-14 h-16 sm:w-16 sm:h-20 bg-white border-2 border-primary-100 shadow-sm rounded-md flex items-center justify-center shrink-0 cursor-pointer">
-              <span className="text-xs font-bold text-slate-700">1</span>
+        {/* Document Viewer Area */}
+        <div className="flex-1 border border-slate-200 rounded-xl overflow-hidden bg-slate-50 flex items-center justify-center relative">
+          
+          {isLoading ? (
+            <div className="flex flex-col items-center text-slate-500">
+              <div className="w-10 h-10 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+              <p className="font-medium">Loading document content...</p>
             </div>
-            {/* Inactive Thumbnail */}
-            <div className="w-14 h-16 sm:w-16 sm:h-20 bg-slate-100/50 border border-transparent rounded-md flex items-center justify-center shrink-0 cursor-pointer hover:bg-white hover:border-slate-200 transition">
-              <span className="text-xs font-bold text-slate-400">2</span>
+          ) : error ? (
+            <div className="flex flex-col items-center text-slate-500 max-w-md text-center p-8">
+              <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-4">
+                <HugeiconsIcon icon={File01Icon} className="w-8 h-8" />
+              </div>
+              <p className="font-semibold text-slate-900 mb-2">Could not display document</p>
+              <p className="text-sm">{error}</p>
             </div>
-          </div>
-
-          {/* Main Document Area */}
-          <div className="flex-1 p-8 md:p-16 flex flex-col justify-between">
-            <div className="space-y-8">
-              {/* Header block */}
-              <div>
-                <div className="h-3 w-48 bg-slate-200 rounded-full mb-3"></div>
-                <div className="h-2 w-64 bg-slate-200 rounded-full mb-8"></div>
-                <div className="h-0.5 w-full bg-slate-300"></div>
-                <div className="h-0.5 w-full bg-slate-300 mt-2 mb-12"></div>
+          ) : blobUrl ? (
+            fileType?.includes("pdf") ? (
+              <iframe 
+                src={blobUrl} 
+                className="w-full h-full min-h-[600px] border-0" 
+                title={documentName}
+              />
+            ) : fileType?.includes("image") ? (
+              <div className="w-full h-full min-h-[600px] p-4 flex items-center justify-center overflow-auto bg-slate-100/50">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
+                  src={blobUrl} 
+                  alt={documentName}
+                  className="max-w-full max-h-full object-contain rounded-md shadow-sm border border-slate-200 bg-white"
+                />
               </div>
-
-              {/* Data block rows */}
-              <div className="space-y-6">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="flex gap-12">
-                    <div className="h-2 w-12 bg-slate-300 rounded-full"></div>
-                    <div className="flex gap-4">
-                      <div className="h-2 w-16 bg-slate-200 rounded-full"></div>
-                      <div className="h-2 w-12 bg-slate-200 rounded-full"></div>
-                      <div className="h-2 w-24 bg-slate-200 rounded-full"></div>
-                      <div className="h-2 w-16 bg-slate-200 rounded-full"></div>
-                    </div>
-                  </div>
-                ))}
+            ) : (
+              <div className="flex flex-col items-center text-slate-500 max-w-md text-center p-8">
+                <div className="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-4">
+                  <HugeiconsIcon icon={File01Icon} className="w-8 h-8" />
+                </div>
+                <p className="font-semibold text-slate-900 mb-2">Unsupported file type</p>
+                <p className="text-sm mb-6">This document type ({fileType}) cannot be previewed directly in the browser.</p>
+                <Button 
+                  onClick={handleDownload}
+                  className="bg-primary-600 hover:bg-primary-700 text-white font-medium"
+                >
+                  Download to View
+                </Button>
               </div>
+            )
+          ) : null}
 
-              <div className="h-0.5 w-48 bg-slate-200 my-8"></div>
-
-              {/* More Data block rows */}
-              <div className="space-y-6">
-                {[...Array(4)].map((_, i) => (
-                  <div key={`bottom-${i}`} className="flex gap-12">
-                    <div className="h-2 w-12 bg-slate-300 rounded-full"></div>
-                    <div className="flex gap-4">
-                      <div className="h-2 w-20 bg-slate-200 rounded-full"></div>
-                      <div className="h-2 w-14 bg-slate-200 rounded-full"></div>
-                      <div className="h-2 w-32 bg-slate-200 rounded-full"></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Signature Block */}
-            <div className="self-end mt-16 pt-8 flex items-end gap-2">
-              <span className="text-xs font-bold text-slate-400">Dr.</span>
-              <div className="border-b border-slate-300 w-32 relative">
-                <svg className="absolute bottom-1 right-2 w-12 h-8 text-slate-400 opacity-60" viewBox="0 0 100 50" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M10,40 Q20,10 40,30 T70,20 T90,30" />
-                  <path d="M30,45 Q50,0 60,45" />
-                </svg>
-              </div>
-            </div>
-
-          </div>
         </div>
       </div>
+
+      {/* Extracted Data Section */}
+      {isExtracting ? (
+        <div className="w-full border border-slate-100 rounded-2xl bg-surface shadow-sm overflow-hidden p-6 md:p-8 flex flex-col items-center justify-center min-h-[200px]">
+          <div className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="font-medium text-slate-500">Extracting data...</p>
+        </div>
+      ) : extractedData && extractedData.items && extractedData.items.length > 0 ? (
+        <div className="w-full border border-slate-100 rounded-2xl bg-surface shadow-sm overflow-hidden mt-6">
+          <div className="bg-slate-50 px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 font-heading">Extracted Data</h2>
+              <p className="text-sm text-slate-500">AI has identified the following fields from this document.</p>
+            </div>
+          </div>
+          
+          <div className="p-6 md:p-8 space-y-8">
+            {extractedData.items.map((item, itemIdx) => (
+              <div key={item.extractedItemId || itemIdx} className="space-y-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="h-px bg-slate-200 flex-1"></div>
+                  <span className="text-xs font-semibold text-slate-400 tracking-wider uppercase px-2">
+                    {item.itemType} (Item {item.sequenceNumber})
+                  </span>
+                  <div className="h-px bg-slate-200 flex-1"></div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {item.fields.map((field, fieldIdx) => {
+                    // Determine confidence color
+                    let confidenceColor = "bg-green-100 text-green-700";
+                    let confidenceText = "High";
+                    if (field.confidence < 0.5) {
+                      confidenceColor = "bg-red-100 text-red-700";
+                      confidenceText = "Low";
+                    } else if (field.confidence < 0.8) {
+                      confidenceColor = "bg-amber-100 text-amber-700";
+                      confidenceText = "Medium";
+                    }
+
+                    return (
+                      <div key={field.extractedFieldId || fieldIdx} className="bg-slate-50 rounded-xl p-4 border border-slate-100 relative overflow-hidden group">
+                        <div className="flex items-start justify-between mb-2">
+                          <h4 className="font-bold text-slate-700 text-sm">{field.fieldName}</h4>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${confidenceColor}`}>
+                            {Math.round(field.confidence * 100)}% Match
+                          </span>
+                        </div>
+                        <p className="text-slate-900 font-medium break-words">
+                          {field.correctedValue || field.extractedValue || <span className="text-slate-400 italic">Not found</span>}
+                        </p>
+                        
+                        {field.issues && field.issues.length > 0 && (
+                          <div className="mt-3 pt-3 border-t border-slate-200">
+                            <p className="text-xs font-semibold text-red-600 flex items-center gap-1 mb-1">
+                              Issues identified:
+                            </p>
+                            <ul className="list-disc list-inside text-xs text-slate-600 space-y-1">
+                              {field.issues.map((issue, i) => (
+                                <li key={i}>{issue}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : extractedData ? (
+        <div className="w-full border border-slate-100 rounded-2xl bg-surface shadow-sm overflow-hidden p-6 md:p-8 flex flex-col items-center justify-center min-h-[200px] mt-6">
+          <p className="font-medium text-slate-500">No data could be extracted from this document.</p>
+        </div>
+      ) : null}
+
     </div>
   );
 }

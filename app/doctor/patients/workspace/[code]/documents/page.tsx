@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use } from "react";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -10,50 +10,120 @@ import {
   ArrowLeft01Icon,
   Search01Icon,
   FileUploadIcon,
-  FilterIcon
+  FilterIcon,
+  CheckmarkCircle02Icon,
+  Time02Icon
 } from "@hugeicons/core-free-icons";
-
-const documentsData = [
-  {
-    id: 1,
-    name: "Cardiology prescription.pdf",
-    type: "Prescription",
-    date: "10 Aug 2026",
-    status: "Completed",
-    statusColor: "bg-emerald-50 text-emerald-700",
-  },
-  {
-    id: 2,
-    name: "ECG Report.pdf",
-    type: "Lab Report",
-    date: "09 Aug 2026",
-    status: "Completed",
-    statusColor: "bg-emerald-50 text-emerald-700",
-  },
-  {
-    id: 3,
-    name: "Blood Test Results.pdf",
-    type: "Lab Report",
-    date: "08 Aug 2026",
-    status: "Processing",
-    statusColor: "bg-orange-50 text-orange-700",
-  },
-  {
-    id: 4,
-    name: "Chest X-Ray.pdf",
-    type: "Imaging",
-    date: "07 Aug 2026",
-    status: "Completed",
-    statusColor: "bg-emerald-50 text-emerald-700",
-  },
-];
+import { Toast } from "@/components/ui/Toast";
+import { AnimatePresence } from "framer-motion";
+import { usePatientDocumentsStore } from "@/store/usePatientDocumentsStore";
 
 export default function DocumentsPage({ params }: { params: Promise<{ code: string }> }) {
   const router = useRouter();
   const { code } = use(params);
   
+  const { documents, isLoading, error, fetchDocuments, clearError } = usePatientDocumentsStore();
+  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [toastMessage, setToastMessage] = useState<{ message: string; type: 'success' | 'error' | 'warning' } | null>(null);
+
+  useEffect(() => {
+    const dataStr = sessionStorage.getItem(`access_${code}`);
+    if (dataStr) {
+      try {
+        const accessData = JSON.parse(dataStr);
+        const patientId = accessData?.patientId || accessData?.patient?.patientId;
+        if (patientId) {
+          fetchDocuments(patientId);
+        } else {
+          setToastMessage({ message: "Could not find Patient ID for this workspace.", type: "error" });
+        }
+      } catch (e) {
+        console.error("Failed to parse access data");
+      }
+    }
+  }, [code, fetchDocuments]);
+
+  useEffect(() => {
+    if (error) {
+      setToastMessage({ message: error, type: 'error' });
+    }
+    return () => {
+      clearError();
+    };
+  }, [error, clearError]);
+
+  const filteredDocuments = (Array.isArray(documents) ? documents : []).filter(doc => {
+    return doc.title?.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
+  const getStatusBadge = (doc: any) => {
+    const extStatus = doc.extractionStatus?.toLowerCase() || '';
+    const revStatus = doc.reviewStatus?.toLowerCase() || '';
+
+    if (!extStatus) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-50 text-slate-700 border border-slate-200 uppercase tracking-wide">
+          Unknown
+        </span>
+      );
+    }
+    
+    if (extStatus === 'processing' || extStatus === 'queued') {
+      return (
+        <span className="flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-amber-100">
+          <HugeiconsIcon icon={Time02Icon} className="w-3.5 h-3.5" />
+          {doc.extractionStatus}
+        </span>
+      );
+    }
+    
+    if (extStatus === 'completed') {
+      if (revStatus === 'reviewed' || revStatus === 'confirmed') {
+        return (
+          <span className="flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-emerald-100">
+            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5" />
+            Reviewed
+          </span>
+        );
+      } else {
+        return (
+          <span className="flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-blue-100">
+            <HugeiconsIcon icon={Time02Icon} className="w-3.5 h-3.5" />
+            Waiting for Review
+          </span>
+        );
+      }
+    }
+
+    if (extStatus === 'uploaded') {
+      return (
+        <span className="flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-emerald-100">
+          <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5" />
+          Uploaded
+        </span>
+      );
+    }
+    
+    return (
+      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wide bg-slate-50 text-slate-700 border border-slate-200">
+        {doc.extractionStatus}
+      </span>
+    );
+  };
+
   return (
-    <div className="max-w-5xl mx-auto pt-4 pb-12 space-y-6 animate-in fade-in duration-300">
+    <div className="max-w-5xl mx-auto pt-4 pb-12 space-y-6 animate-in fade-in duration-300 relative">
+      <AnimatePresence>
+        {toastMessage && (
+          <Toast 
+            message={toastMessage.message} 
+            type={toastMessage.type} 
+            onClose={() => setToastMessage(null)} 
+          />
+        )}
+      </AnimatePresence>
+
       {/* Breadcrumbs */}
       <div className="flex items-center text-sm text-slate-500 mb-2">
         <Link href={`/doctor/patients/workspace/${code}`} className="flex items-center hover:text-slate-800 transition">
@@ -81,21 +151,14 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
         <div className="flex flex-col sm:flex-row items-end gap-4 mb-6">
           <div className="w-full sm:w-1/2 md:w-2/5">
             <Input
-              placeholder="Search documents"
+              placeholder="Search documents by title..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               iconLeft={<HugeiconsIcon icon={Search01Icon} className="w-5 h-5 text-slate-400" />}
               className="bg-slate-50 border-slate-200"
             />
           </div>
           <div className="flex items-center gap-4 w-full sm:w-auto">
-            <div className="w-full sm:w-32">
-              <label className="block text-xs font-medium text-slate-500 mb-1">Type</label>
-              <select className="w-full h-11 px-3 border border-slate-200 rounded-xl bg-slate-50 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 appearance-none">
-                <option>All</option>
-                <option>Prescription</option>
-                <option>Lab Report</option>
-                <option>Imaging</option>
-              </select>
-            </div>
             <div className="w-full sm:w-32">
               <label className="block text-xs font-medium text-slate-500 mb-1">Status</label>
               <select className="w-full h-11 px-3 border border-slate-200 rounded-xl bg-slate-50 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 appearance-none">
@@ -116,28 +179,55 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
             <thead className="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-100">
               <tr>
                 <th scope="col" className="px-6 py-4 font-bold">Document</th>
-                <th scope="col" className="px-6 py-4 font-bold">Type</th>
                 <th scope="col" className="px-6 py-4 font-bold">Date</th>
                 <th scope="col" className="px-6 py-4 font-bold">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {documentsData.map((doc) => (
-                <tr 
-                  key={doc.id} 
-                  className="bg-white hover:bg-slate-50 transition cursor-pointer"
-                  onClick={() => router.push(`/doctor/patients/workspace/${code}/documents/${doc.id}`)}
-                >
-                  <td className="px-6 py-5 font-semibold text-slate-900">{doc.name}</td>
-                  <td className="px-6 py-5">{doc.type}</td>
-                  <td className="px-6 py-5">{doc.date}</td>
-                  <td className="px-6 py-5">
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold ${doc.statusColor}`}>
-                      {doc.status}
-                    </span>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={3} className="px-6 py-8 text-center text-slate-500">
+                    <div className="flex justify-center mb-2">
+                      <div className="w-6 h-6 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                    Loading documents...
                   </td>
                 </tr>
-              ))}
+              ) : filteredDocuments.length > 0 ? (
+                filteredDocuments.map((doc) => {
+                  const formattedDate = doc.documentDate ? new Date(doc.documentDate).toLocaleDateString() : 'N/A';
+                  return (
+                    <tr 
+                      key={doc.documentId} 
+                      className="bg-white hover:bg-slate-50 transition cursor-pointer"
+                      onClick={() => {
+                        const status = doc.extractionStatus?.toLowerCase();
+                        if (status === 'completed' || status === 'waiting for review' || status === 'waiting_for_review') {
+                          router.push(`/doctor/patients/workspace/${code}/documents/${doc.documentId}/review`);
+                        } else {
+                          router.push(`/doctor/patients/workspace/${code}/documents/${doc.documentId}`);
+                        }
+                      }}
+                    >
+                      <td className="px-6 py-5 font-semibold text-slate-900">{doc.title}</td>
+                      <td className="px-6 py-5">{formattedDate}</td>
+                      <td className="px-6 py-5">
+                        {getStatusBadge(doc)}
+                      </td>
+                    </tr>
+                  )
+                })
+              ) : (
+                <tr>
+                  <td colSpan={3} className="px-6 py-12 text-center text-slate-500">
+                    <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <HugeiconsIcon icon={Search01Icon} className="w-6 h-6 text-slate-400" />
+                    </div>
+                    <p className="font-medium text-slate-900">No documents found</p>
+                    <p className="text-sm mt-1">Try adjusting your search filters or upload a new document.</p>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

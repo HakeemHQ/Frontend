@@ -36,7 +36,32 @@ export interface PatientMedicalCvVersion {
 export interface PatientMedicalCv {
   medicalCvId: string;
   title: string;
+  latestVersionNumber?: number;
+  createdByRole?: string;
+  verificationStatus?: string;
+  createdAt?: string;
+}
+
+export interface MedicalCvVersionDetail {
+  medicalCvVersionId: string;
+  versionNumber: number;
+  status: string;
+  createdAt: string;
+  approvedAt: string | null;
+  pdfAvailable: boolean;
+}
+
+export interface MedicalCvDetails {
+  medicalCvId: string;
+  title: string | null;
   scopeType: string;
   focus: string | null;
-  versions: PatientMedicalCvVersion[];
+  createdAt: string;
+  updatedAt: string;
+  versions: MedicalCvVersionDetail[] | null;
+}
+
+export interface PreviewLinkResponse {
+  pdfUrl: string | null;
+  previewExpiresAt: string;
 }

@@ -1,11 +1,5 @@
 import { api } from "./axios";
-import { MedicalCvListResponse, MedicalCv, PatientMedicalCv } from "@/types/medical-cv";
-
-export interface GetMedicalCvsParams {
-  Search?: string;
-  Page?: number;
-  PageSize?: number;
-}
+import { PatientMedicalCv, MedicalCvDetails, PreviewLinkResponse } from "@/types/medical-cv";
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -13,22 +7,6 @@ export interface ApiResponse<T> {
   errorList: any[];
   globalErrorCode: string;
   data: T;
-}
-
-export async function getMedicalCvs(params: GetMedicalCvsParams = {}): Promise<ApiResponse<MedicalCvListResponse>> {
-  const { data } = await api.get<ApiResponse<MedicalCvListResponse>>("/medical-cvs", {
-    params,
-  });
-  return data;
-}
-
-export interface CreateMedicalCvParams {
-  title: string;
-}
-
-export async function createMedicalCv(params: CreateMedicalCvParams): Promise<ApiResponse<MedicalCv>> {
-  const { data } = await api.post<ApiResponse<MedicalCv>>("/medical-cvs", params);
-  return data;
 }
 
 export async function getPatientMedicalCvs(patientId: string): Promise<ApiResponse<PatientMedicalCv[]> | PatientMedicalCv[]> {
@@ -42,5 +20,20 @@ export interface CreatePatientMedicalCvParams {
 
 export async function createPatientMedicalCv(patientId: string, params: CreatePatientMedicalCvParams): Promise<ApiResponse<PatientMedicalCv> | PatientMedicalCv> {
   const { data } = await api.post<ApiResponse<PatientMedicalCv> | PatientMedicalCv>(`/doctor/patients/${patientId}/medical-cvs`, params);
+  return data;
+}
+
+export async function getMedicalCvById(cvId: string): Promise<ApiResponse<MedicalCvDetails> | MedicalCvDetails> {
+  const { data } = await api.get<ApiResponse<MedicalCvDetails> | MedicalCvDetails>(`/medical-cvs/${cvId}`);
+  return data;
+}
+
+export async function getMedicalCvPreviewLink(versionId: string): Promise<ApiResponse<PreviewLinkResponse> | PreviewLinkResponse> {
+  const { data } = await api.post<ApiResponse<PreviewLinkResponse> | PreviewLinkResponse>(`/medical-cv-versions/${versionId}/preview-link`);
+  return data;
+}
+
+export async function approveMedicalCvVersion(versionId: string): Promise<ApiResponse<any> | any> {
+  const { data } = await api.post<ApiResponse<any> | any>(`/medical-cv-versions/${versionId}/approval`);
   return data;
 }
