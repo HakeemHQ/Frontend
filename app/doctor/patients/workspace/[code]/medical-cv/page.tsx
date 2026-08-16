@@ -185,13 +185,13 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
       ) : filteredCVs.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           <AnimatePresence>
-            {filteredCVs.map((cv) => {
+            {filteredCVs.map((cv, idx) => {
               const status = cv.verificationStatus || 'Unknown';
               const versionNumber = cv.latestVersionNumber || 1;
 
               return (
                 <motion.div
-                  key={cv.medicalCvId}
+                  key={`${cv.medicalCvId || 'cv'}-${idx}`}
                   variants={{
                     hidden: { opacity: 0, scale: 0.95 },
                     visible: { opacity: 1, scale: 1 }

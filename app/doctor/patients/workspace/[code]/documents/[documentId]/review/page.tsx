@@ -212,8 +212,20 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
 
       const response = await confirmExtractedData(documentId);
       if (response !== false) {
-        const confirmedCount = response?.confirmedItemCount ?? (extractedData?.items?.length || 0);
-        setToastMessage({ message: `Successfully confirmed ${confirmedCount} extracted item(s)!`, type: "success" });
+        const newlyConfirmed = response?.confirmedItemCount ?? 0;
+        const alreadyConfirmed = response?.skippedAlreadyConfirmedItemCount ?? 0;
+        const totalItems = extractedData?.items?.length || (newlyConfirmed + alreadyConfirmed);
+
+        let msg = "All extracted items have been confirmed!";
+        if (newlyConfirmed > 0 && alreadyConfirmed > 0) {
+          msg = `Confirmed ${newlyConfirmed} item(s) (${alreadyConfirmed} were already confirmed).`;
+        } else if (newlyConfirmed > 0) {
+          msg = `Successfully confirmed ${newlyConfirmed} extracted item(s)!`;
+        } else if (alreadyConfirmed > 0 || totalItems > 0) {
+          msg = `All ${totalItems} extracted item(s) are already confirmed.`;
+        }
+
+        setToastMessage({ message: msg, type: "success" });
         setIsConfirmed(true);
         
         // Mark all items as saved

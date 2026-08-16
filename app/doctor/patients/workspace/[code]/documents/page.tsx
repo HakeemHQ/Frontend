@@ -208,11 +208,11 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
                   </td>
                 </tr>
               ) : filteredDocuments.length > 0 ? (
-                filteredDocuments.map((doc) => {
+                filteredDocuments.map((doc, index) => {
                   const formattedDate = doc.documentDate ? new Date(doc.documentDate).toLocaleDateString() : 'N/A';
                   return (
                     <tr 
-                      key={doc.documentId} 
+                      key={`${doc.documentId || 'doc'}-${index}`} 
                       className="bg-white hover:bg-slate-50 transition cursor-pointer"
                       onClick={() => {
                         const revStatus = (doc.reviewStatus || doc.documentReviewStatus || '').toLowerCase();
