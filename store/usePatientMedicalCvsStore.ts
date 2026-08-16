@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { PatientMedicalCv, MedicalCvDetails } from "@/types/medical-cv";
-import { getPatientMedicalCvs, createPatientMedicalCv, getMedicalCvById, getMedicalCvPreviewLink, approveMedicalCvVersion } from "@/lib/api/medical-cvs";
+import { getPatientMedicalCvs, createPatientMedicalCv, getMedicalCvById, getMedicalCvPreviewLink, approveMedicalCvVersion, getMedicalCvPdf } from "@/lib/api/medical-cvs";
 
 export type PatientMedicalCvsState = {
   cvs: PatientMedicalCv[];
@@ -16,6 +16,7 @@ export type PatientMedicalCvsState = {
   fetchCvDetails: (cvId: string) => Promise<void>;
   createCv: (title: string, patientId?: string) => Promise<boolean>;
   generatePreviewLink: (versionId: string) => Promise<string | null>;
+  fetchVersionPdf: (versionId: string) => Promise<string | null>;
   approveVersion: (versionId: string, cvId: string) => Promise<boolean>;
   clearError: () => void;
 };
@@ -143,6 +144,31 @@ export const usePatientMedicalCvsStore = create<PatientMedicalCvsState>((set, ge
         error: error?.response?.data?.message || "An unexpected error occurred while fetching CV details", 
         isFetchingDetails: false 
       });
+    }
+  },
+
+  fetchVersionPdf: async (versionId: string) => {
+    try {
+      const blob = await getMedicalCvPdf(versionId);
+      if (blob && blob.size > 0) {
+        const url = URL.createObjectURL(blob);
+        return url;
+      }
+      set({ error: "Empty PDF content received" });
+      return null;
+    } catch (error: any) {
+      let errMsg = "Failed to load PDF preview";
+      if (error.response?.data instanceof Blob) {
+        try {
+          const text = await error.response.data.text();
+          const json = JSON.parse(text);
+          errMsg = json.message || errMsg;
+        } catch (e) {}
+      } else if (error.response?.data?.message) {
+        errMsg = error.response.data.message;
+      }
+      set({ error: errMsg });
+      return null;
     }
   },
 

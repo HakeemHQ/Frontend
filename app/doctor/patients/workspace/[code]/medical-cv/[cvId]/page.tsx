@@ -21,11 +21,12 @@ import { MedicalCvVersionDetail } from "@/types/medical-cv";
 
 export default function MedicalCVDetailsPage({ params }: { params: Promise<{ code: string; cvId: string }> }) {
   const { code, cvId } = use(params);
-  const { currentCvDetails, isFetchingDetails, error, fetchCvDetails, generatePreviewLink, approveVersion } = usePatientMedicalCvsStore();
+  const { currentCvDetails, isFetchingDetails, error, fetchCvDetails, fetchVersionPdf, approveVersion } = usePatientMedicalCvsStore();
   
   const [toastMessage, setToastMessage] = useState<{ message: string; type: 'success' | 'error' | 'warning' } | null>(null);
   const [approvingVersionId, setApprovingVersionId] = useState<string | null>(null);
   const [previewingVersionId, setPreviewingVersionId] = useState<string | null>(null);
+  const [downloadingVersionId, setDownloadingVersionId] = useState<string | null>(null);
 
   useEffect(() => {
     if (cvId) {
@@ -41,14 +42,32 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
 
   const handlePreview = async (versionId: string) => {
     setPreviewingVersionId(versionId);
-    const url = await generatePreviewLink(versionId);
+    const url = await fetchVersionPdf(versionId);
     setPreviewingVersionId(null);
 
     if (url) {
       window.open(url, "_blank");
     } else {
       const currentError = usePatientMedicalCvsStore.getState().error;
-      setToastMessage({ message: currentError || "Failed to generate preview link.", type: "error" });
+      setToastMessage({ message: currentError || "Failed to load PDF preview.", type: "error" });
+    }
+  };
+
+  const handleDownload = async (versionId: string, versionNumber: number) => {
+    setDownloadingVersionId(versionId);
+    const url = await fetchVersionPdf(versionId);
+    setDownloadingVersionId(null);
+
+    if (url) {
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Medical_CV_${code}_v${versionNumber}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      const currentError = usePatientMedicalCvsStore.getState().error;
+      setToastMessage({ message: currentError || "Failed to download PDF.", type: "error" });
     }
   };
 
@@ -239,10 +258,11 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
                   <Button 
                     variant="outline" 
                     className="rounded-xl flex items-center gap-2"
-                    onClick={() => window.open(`/api/v1/medical-cv-versions/${version.medicalCvVersionId}/pdf`, "_blank")}
+                    disabled={downloadingVersionId === version.medicalCvVersionId}
+                    onClick={() => handleDownload(version.medicalCvVersionId, version.versionNumber)}
                   >
                     <HugeiconsIcon icon={Download04Icon} className="w-4 h-4" />
-                    Download
+                    {downloadingVersionId === version.medicalCvVersionId ? 'Downloading...' : 'Download'}
                   </Button>
                 )}
               </div>

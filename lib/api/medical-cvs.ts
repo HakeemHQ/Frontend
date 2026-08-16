@@ -28,6 +28,13 @@ export async function getMedicalCvById(cvId: string): Promise<ApiResponse<Medica
   return data;
 }
 
+export async function getMedicalCvPdf(versionId: string): Promise<Blob> {
+  const { data } = await api.get<Blob>(`/medical-cv-versions/${versionId}/pdf`, {
+    responseType: "blob",
+  });
+  return data;
+}
+
 export async function getMedicalCvPreviewLink(versionId: string): Promise<ApiResponse<PreviewLinkResponse> | PreviewLinkResponse> {
   const { data } = await api.post<ApiResponse<PreviewLinkResponse> | PreviewLinkResponse>(`/medical-cv-versions/${versionId}/preview-link`);
   return data;
