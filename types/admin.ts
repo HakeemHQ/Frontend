@@ -69,11 +69,9 @@ export interface GetAuditLogsParams {
 
 export interface CreateDoctorPayload {
   email: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
   specialty: string;
-  licenseNumber: string;
-  temporaryPassword?: string;
+  temporaryPassword: string;
 }
 
 export interface UpdateDoctorStatusPayload {

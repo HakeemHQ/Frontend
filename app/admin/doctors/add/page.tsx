@@ -74,11 +74,9 @@ export default function AddDoctorPage() {
   } = useForm<CreateDoctorInput>({
     resolver: zodResolver(createDoctorSchema),
     defaultValues: {
+      fullName: "",
       email: "",
-      firstName: "",
-      lastName: "",
       specialty: "",
-      licenseNumber: "",
       temporaryPassword: "TempPassword!1",
     },
   });
@@ -146,24 +144,13 @@ export default function AddDoctorPage() {
 
       <div className="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm">
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-slate-700">{t('admin.doctors.firstName')}</label>
-              <Input 
-                {...register("firstName")}
-                placeholder="Ahmed" 
-                error={errors.firstName?.message}
-              />
-            </div>
-            
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-slate-700">{t('admin.doctors.lastName')}</label>
-              <Input 
-                {...register("lastName")}
-                placeholder="Hassan" 
-                error={errors.lastName?.message}
-              />
-            </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-slate-700">{t('admin.doctors.fullName')}</label>
+            <Input 
+              {...register("fullName")}
+              placeholder="Dr. Ahmed Hassan" 
+              error={errors.fullName?.message}
+            />
           </div>
           
           <div className="space-y-1.5">
@@ -184,15 +171,6 @@ export default function AddDoctorPage() {
               onChange={(v) => setValue("specialty", v, { shouldValidate: true })}
               placeholder={t('admin.doctors.selectSpecialty')}
               error={errors.specialty?.message}
-            />
-          </div>
-          
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium text-slate-700">{t('admin.doctors.licenseNumber')}</label>
-            <Input 
-              {...register("licenseNumber")}
-              placeholder="EG-12345" 
-              error={errors.licenseNumber?.message}
             />
           </div>
           

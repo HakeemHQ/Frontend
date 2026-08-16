@@ -15,9 +15,7 @@ import {
 
 export const adminApi = {
   createDoctor: async (payload: CreateDoctorPayload): Promise<Doctor> => {
-    const { temporaryPassword, ...restData } = payload;
-    const body = { ...restData, password: temporaryPassword };
-    const { data } = await api.post<Doctor>("/admin/doctors", body);
+    const { data } = await api.post<Doctor>("/admin/doctors", payload);
     return data;
   },
 

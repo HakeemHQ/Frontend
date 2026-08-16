@@ -1,11 +1,9 @@
 import { z } from "zod";
 
 export const createDoctorSchema = z.object({
-  firstName: z.string().min(2, "First name must be at least 2 characters").max(50, "First name is too long").trim(),
-  lastName: z.string().min(2, "Last name must be at least 2 characters").max(50, "Last name is too long").trim(),
+  fullName: z.string().min(2, "Full name must be at least 2 characters").max(100, "Full name is too long").trim(),
   email: z.string().min(1, "Email is required").email("Please enter a valid email address").trim(),
   specialty: z.string().min(1, "Please select a medical specialty"),
-  licenseNumber: z.string().min(3, "License number must be at least 3 characters").max(20, "License number is too long").trim(),
   temporaryPassword: z.string()
     .min(8, "Password must be at least 8 characters")
     .regex(/[A-Z]/, "Password must contain at least one uppercase letter")

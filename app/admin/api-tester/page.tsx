@@ -47,10 +47,8 @@ export default function ApiTesterPage() {
     try {
       const doc = await adminApi.createDoctor({
         email: `test-${Date.now()}@hakeem.test`,
-        firstName: "Test",
-        lastName: "Doctor",
+        fullName: "Test Doctor",
         specialty: "Cardiology",
-        licenseNumber: `TEST-${Date.now()}`,
         temporaryPassword: "Password123!"
       });
       createdDoctorId = doc.id;
