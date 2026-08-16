@@ -20,7 +20,10 @@ import { Toast } from "@/components/ui/Toast";
 import { AnimatePresence, motion } from "framer-motion";
 import { Input } from "@/components/ui/Input";
 
+import { useLanguage } from "@/localization/LanguageContext";
+
 export default function DocumentReviewPage({ params }: { params: Promise<{ code: string, documentId: string }> }) {
+  const { t } = useLanguage();
   const router = useRouter();
   const { code, documentId } = use(params);
   const { reviewExtractedItem, confirmExtractedData, deleteDocument } = usePatientDocumentsStore();
@@ -68,8 +71,10 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
       try {
         setIsExtracting(true);
         const res = await getDocumentExtractedFields(documentId);
-        const data = ('success' in res && 'data' in res) ? res.data : res;
-        const typedData = data as unknown as DocumentExtractedData;
+        
+        // Handle ApiResponse wrapper or raw data
+        const rawData = ('success' in res && 'data' in res) ? res.data : res;
+        const typedData = rawData as unknown as DocumentExtractedData;
         setExtractedData(typedData);
         
         // Initialize state
@@ -85,8 +90,12 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
             }
 
             item.fields.forEach(field => {
-              initialDecisions[field.extractedFieldId] = "approved";
-              initialValues[field.extractedFieldId] = field.correctedValue || field.extractedValue || "";
+              const fieldDecision = (field.decision || '').toLowerCase();
+              initialDecisions[field.extractedFieldId] = (fieldDecision === "corrected" || fieldDecision === "rejected" || fieldDecision === "approved") 
+                ? fieldDecision 
+                : "approved";
+
+              initialValues[field.extractedFieldId] = field.confirmedValue || field.correctedValue || field.extractedValue || field.originalExtractedValue || "";
             });
           });
         }
@@ -115,130 +124,94 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
     }
     
     return () => {
-      if (url) URL.revokeObjectURL(url);
+      if (url) {
+        URL.revokeObjectURL(url);
+      }
     };
   }, [documentId]);
 
-  const markFieldUnsaved = (fieldId: string) => {
-    if (!extractedData?.items) return;
-    for (const item of extractedData.items) {
-      if (item.fields.some(f => f.extractedFieldId === fieldId)) {
-        if (savedItems[item.extractedItemId]) {
-          setSavedItems(prev => ({ ...prev, [item.extractedItemId]: false }));
-        }
-        break;
-      }
-    }
-  };
-
   const handleDecisionChange = (fieldId: string, decision: "approved" | "rejected" | "corrected") => {
-    setFieldDecisions(prev => ({ ...prev, [fieldId]: decision }));
-    markFieldUnsaved(fieldId);
+    setFieldDecisions(prev => ({
+      ...prev,
+      [fieldId]: decision
+    }));
   };
 
-  const handleValueChange = (fieldId: string, value: string) => {
-    setFieldValues(prev => ({ ...prev, [fieldId]: value }));
-    setFieldDecisions(prev => ({ ...prev, [fieldId]: "corrected" }));
-    markFieldUnsaved(fieldId);
+  const handleValueChange = (fieldId: string, val: string) => {
+    setFieldValues(prev => ({
+      ...prev,
+      [fieldId]: val
+    }));
+    // If the user starts typing/editing a value, mark its decision as 'corrected'
+    setFieldDecisions(prev => ({
+      ...prev,
+      [fieldId]: "corrected"
+    }));
   };
 
   const handleSaveItem = async (item: ExtractedItem) => {
-    setSavingItems(prev => ({ ...prev, [item.extractedItemId]: true }));
-    
-    const fieldsPayload: ReviewFieldPayload[] = item.fields.map(field => {
-      const decision = fieldDecisions[field.extractedFieldId] || "approved";
-      
-      let csharpDecision = "Approved";
-      if (decision === "corrected") csharpDecision = "Corrected";
-      if (decision === "rejected") csharpDecision = "Rejected";
-
-      return {
-        extractedFieldId: field.extractedFieldId,
-        decision: csharpDecision as any,
-        correctedValue: decision === "corrected" ? fieldValues[field.extractedFieldId] : undefined
-      };
-    });
-
-    const payload: ReviewItemPayload = {
-      extractedItemId: item.extractedItemId,
-      fields: fieldsPayload
-    };
-
     try {
-      const success = await reviewExtractedItem(item.extractedItemId, payload);
+      setSavingItems(prev => ({ ...prev, [item.extractedItemId]: true }));
       
-      if (success !== false) {
-        setToastMessage({ message: `Successfully saved ${item.itemType} review!`, type: "success" });
+      const payload: ReviewItemPayload = {
+        extractedItemId: item.extractedItemId,
+        fields: item.fields.map(field => {
+          const rawDecision = fieldDecisions[field.extractedFieldId] || "approved";
+          const lowerDecision = rawDecision.toLowerCase() as "approved" | "rejected" | "corrected";
+          
+          return {
+            extractedFieldId: field.extractedFieldId,
+            decision: lowerDecision,
+            correctedValue: lowerDecision === "corrected" ? (fieldValues[field.extractedFieldId] || field.extractedValue) : undefined
+          };
+        })
+      };
+
+      const res = await reviewExtractedItem(item.extractedItemId, payload);
+      if (res) {
         setSavedItems(prev => ({ ...prev, [item.extractedItemId]: true }));
-      } else {
-        setToastMessage({ message: `Failed to save ${item.itemType} review.`, type: "error" });
+        setToastMessage({
+          message: `${item.itemType} ${t('doctor.documents.approvedAndSaved')}`,
+          type: "success"
+        });
       }
-    } catch (e: any) {
-      setToastMessage({ message: e?.response?.data?.message || `Failed to save ${item.itemType} review.`, type: "error" });
-    }
-    
-    setSavingItems(prev => ({ ...prev, [item.extractedItemId]: false }));
-  };
-
-  const handleDelete = () => {
-    setIsDeleteModalOpen(true);
-  };
-
-  const confirmDelete = async () => {
-    setIsDeleting(true);
-    const success = await deleteDocument(documentId);
-    if (success) {
-      router.push(`/doctor/patients/workspace/${code}/documents`);
-    } else {
-      setToastMessage({ message: "Failed to delete the document.", type: "error" });
-      setIsDeleting(false);
-      setIsDeleteModalOpen(false);
+    } catch (err: any) {
+      console.error("Failed to save item review", err);
+      setToastMessage({
+        message: err.message || t('ui.somethingWentWrong'),
+        type: "error"
+      });
+    } finally {
+      setSavingItems(prev => ({ ...prev, [item.extractedItemId]: false }));
     }
   };
 
   const handleConfirmAll = async () => {
-    setIsConfirming(true);
+    if (!extractedData?.items || extractedData.items.length === 0) return;
     
     try {
-      // Auto-save any items that haven't been explicitly saved yet
-      if (extractedData?.items) {
-        const unsavedItems = extractedData.items.filter(item => !savedItems[item.extractedItemId]);
-        if (unsavedItems.length > 0) {
-          for (const item of unsavedItems) {
-            await handleSaveItem(item);
-          }
-        }
+      setIsConfirming(true);
+
+      // Auto-save any unsaved items first
+      const unsavedItems = extractedData.items.filter(it => !savedItems[it.extractedItemId]);
+      for (const item of unsavedItems) {
+        await handleSaveItem(item);
       }
 
-      const response = await confirmExtractedData(documentId);
-      if (response !== false) {
-        const newlyConfirmed = response?.confirmedItemCount ?? 0;
-        const alreadyConfirmed = response?.skippedAlreadyConfirmedItemCount ?? 0;
-        const totalItems = extractedData?.items?.length || (newlyConfirmed + alreadyConfirmed);
-
-        let msg = "All extracted items have been confirmed!";
-        if (newlyConfirmed > 0 && alreadyConfirmed > 0) {
-          msg = `Confirmed ${newlyConfirmed} item(s) (${alreadyConfirmed} were already confirmed).`;
-        } else if (newlyConfirmed > 0) {
-          msg = `Successfully confirmed ${newlyConfirmed} extracted item(s)!`;
-        } else if (alreadyConfirmed > 0 || totalItems > 0) {
-          msg = `All ${totalItems} extracted item(s) are already confirmed.`;
-        }
-
-        setToastMessage({ message: msg, type: "success" });
+      const res = await confirmExtractedData(documentId);
+      if (res !== null) {
         setIsConfirmed(true);
-        
-        // Mark all items as saved
-        if (extractedData?.items) {
-          const allSaved: Record<string, boolean> = {};
-          extractedData.items.forEach(it => { allSaved[it.extractedItemId] = true; });
-          setSavedItems(allSaved);
-        }
-      } else {
-        setToastMessage({ message: "Failed to confirm extracted data.", type: "error" });
+        setToastMessage({
+          message: t('doctor.documents.allItemsConfirmed'),
+          type: "success"
+        });
       }
-    } catch (e: any) {
-      setToastMessage({ message: e?.response?.data?.message || "Failed to confirm extracted data.", type: "error" });
+    } catch (err: any) {
+      console.error("Failed to confirm all items", err);
+      setToastMessage({
+        message: err.message || t('ui.somethingWentWrong'),
+        type: "error"
+      });
     } finally {
       setIsConfirming(false);
     }
@@ -248,10 +221,32 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
     router.push(`/doctor/patients/workspace/${code}/documents`);
   };
 
+  const handleDelete = () => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      setIsDeleting(true);
+      await deleteDocument(documentId);
+      setIsDeleteModalOpen(false);
+      router.push(`/doctor/patients/workspace/${code}/documents`);
+    } catch (err: any) {
+      console.error("Failed to delete document", err);
+      setIsDeleteModalOpen(false);
+      setToastMessage({
+        message: err?.response?.data?.message || err.message || t('doctor.documents.uploadFailed'),
+        type: "error"
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const allItemsSaved = extractedData?.items && extractedData.items.length > 0 && extractedData.items.every(it => savedItems[it.extractedItemId]);
 
   return (
-    <div className="max-w-[1400px] mx-auto pt-4 pb-12 animate-in fade-in duration-300 relative">
+    <div className="max-w-6xl mx-auto pt-4 pb-12 space-y-6 animate-in fade-in duration-300 relative">
       <AnimatePresence>
         {toastMessage && (
           <Toast 
@@ -260,51 +255,56 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
             onClose={() => setToastMessage(null)} 
           />
         )}
+      </AnimatePresence>
 
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
         {isDeleteModalOpen && (
           <>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50"
               onClick={() => !isDeleting && setIsDeleteModalOpen(false)}
+              className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 transition-opacity"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 z-50 overflow-hidden"
+              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-3xl p-6 md:p-8 shadow-2xl z-50 border border-slate-100"
             >
-              <div className="p-6 md:p-8 text-center">
-                <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <HugeiconsIcon icon={Alert02Icon} className="w-8 h-8" />
+              <div className="flex flex-col items-center text-center">
+                <div className="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mb-4 border border-red-100 shadow-xs">
+                  <HugeiconsIcon icon={Alert02Icon} className="w-7 h-7" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2 font-heading">Delete Document?</h3>
-                <p className="text-slate-500 text-sm mb-8 leading-relaxed">
-                  Are you sure you want to delete this document? This action cannot be undone and you will lose access to this file permanently.
+                <h3 className="text-xl font-bold text-slate-900 mb-2 font-heading">
+                  {t('doctor.documents.deleteConfirmTitle')}
+                </h3>
+                <p className="text-slate-500 text-sm mb-6 leading-relaxed">
+                  {t('doctor.documents.deleteConfirmDesc')}
                 </p>
                 <div className="flex items-center gap-3 w-full">
                   <Button
                     variant="outline"
-                    className="flex-1 border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold disabled:opacity-50"
+                    className="flex-1 border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold"
                     onClick={() => setIsDeleteModalOpen(false)}
                     disabled={isDeleting}
                   >
-                    Cancel
+                    {t('doctor.profile.cancel')}
                   </Button>
                   <Button
-                    className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold disabled:opacity-50"
+                    className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold shadow-xs"
                     onClick={confirmDelete}
                     disabled={isDeleting}
                   >
                     {isDeleting ? (
                       <div className="flex items-center gap-2">
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Deleting...</span>
+                        <span>{t('doctor.documents.deleting')}</span>
                       </div>
                     ) : (
-                      "Yes, Delete"
+                      t('doctor.documents.yesDelete')
                     )}
                   </Button>
                 </div>
@@ -317,8 +317,12 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 font-heading">Data Extraction Review</h1>
-          <p className="text-slate-500">Please review the AI-extracted fields against the original document.</p>
+          <h1 className="text-3xl font-bold text-slate-900 font-heading">
+            {t('doctor.documents.reviewTitle')}
+          </h1>
+          <p className="text-slate-500">
+            {t('doctor.documents.reviewSubtitle')}
+          </p>
         </div>
         
         <div className="flex items-center gap-3 flex-wrap">
@@ -333,7 +337,7 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
             ) : (
               <HugeiconsIcon icon={Delete02Icon} className="w-4 h-4" />
             )}
-            {isDeleting ? "Deleting..." : "Delete"}
+            {isDeleting ? t('doctor.documents.deleting') : t('doctor.documents.delete')}
           </Button>
 
           {!isConfirmed && !allItemsSaved ? (
@@ -345,19 +349,19 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
               {isConfirming ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Confirming All...
+                  {t('doctor.documents.confirmingAll')}
                 </>
               ) : (
                 <>
                   <HugeiconsIcon icon={Tick02Icon} className="w-4 h-4" />
-                  Confirm All Items
+                  {t('doctor.documents.confirmAllItems')}
                 </>
               )}
             </Button>
           ) : (
             <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-xl font-bold border border-emerald-200 shadow-sm">
               <HugeiconsIcon icon={Tick02Icon} className="w-4 h-4" />
-              All Items Confirmed
+              {t('doctor.documents.allItemsConfirmed')}
             </div>
           )}
 
@@ -365,8 +369,8 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
             onClick={handleFinishReview}
             className="bg-slate-900 hover:bg-slate-800 text-white font-semibold flex items-center gap-2 shadow-sm"
           >
-            Finish Review
-            <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4" />
+            {t('doctor.documents.finishReview')}
+            <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 rtl:rotate-180" />
           </Button>
         </div>
       </div>
@@ -376,7 +380,7 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
         {/* Left Side: Document Preview */}
         <div className="border border-slate-200 rounded-2xl bg-white shadow-sm overflow-hidden flex flex-col lg:sticky lg:top-6 h-[600px] lg:h-[800px]">
           <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
-            <h3 className="font-bold text-slate-700">Document Evidence</h3>
+            <h3 className="font-bold text-slate-700">{t('doctor.documents.documentEvidence')}</h3>
             {fileType && <span className="text-xs text-slate-400 font-mono uppercase">{fileType.split('/')[1] || fileType}</span>}
           </div>
           
@@ -392,11 +396,11 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
               ) : (
                 <div className="text-center text-slate-500 p-8">
                   <HugeiconsIcon icon={File01Icon} className="w-12 h-12 mx-auto mb-2 text-slate-400" />
-                  <p>Document type cannot be previewed.</p>
+                  <p>{t('doctor.documents.previewNotAvailable')}</p>
                 </div>
               )
             ) : (
-              <p className="text-slate-500">Failed to load preview.</p>
+              <p className="text-slate-500">{t('doctor.documents.previewNotAvailable')}</p>
             )}
           </div>
         </div>
@@ -406,7 +410,7 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
           {isExtracting ? (
             <div className="border border-slate-200 rounded-2xl bg-white p-12 text-center shadow-sm">
               <div className="w-10 h-10 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-              <p className="text-slate-500 font-medium">Loading extracted data...</p>
+              <p className="text-slate-500 font-medium">{t('doctor.documents.loadingDocuments')}</p>
             </div>
           ) : extractedData?.items && extractedData.items.length > 0 ? (
             extractedData.items.map((item, itemIdx) => {
@@ -428,17 +432,17 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
                   }`}>
                     <div className="flex items-center gap-3">
                       <h2 className="text-base font-bold text-slate-900 font-heading uppercase">
-                        {item.itemType} <span className="text-slate-400 text-sm font-normal normal-case">(Item {item.sequenceNumber || itemIdx + 1})</span>
+                        {item.itemType} <span className="text-slate-400 text-sm font-normal normal-case">({t('doctor.documents.item')} {item.sequenceNumber || itemIdx + 1})</span>
                       </h2>
                     </div>
                     {isItemSaved ? (
                       <div className="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-xs">
                         <HugeiconsIcon icon={Tick02Icon} className="w-3.5 h-3.5" />
-                        Approved & Saved
+                        {t('doctor.documents.approvedAndSaved')}
                       </div>
                     ) : (
                       <div className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-bold">
-                        Pending Review
+                        {t('doctor.documents.pendingReview')}
                       </div>
                     )}
                   </div>
@@ -473,12 +477,12 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
                                 <h4 className="font-bold text-slate-800 text-sm">{field.fieldName}</h4>
                                 {isCorrected && (
                                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 uppercase">
-                                    Modified
+                                    {t('doctor.documents.modified')}
                                   </span>
                                 )}
                                 {isRejected && (
                                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-800 uppercase">
-                                    Rejected
+                                    {t('doctor.documents.rejected')}
                                   </span>
                                 )}
                               </div>
@@ -486,7 +490,7 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
                                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
                                   field.confidence > 0.8 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
                                 }`}>
-                                  {Math.round(field.confidence * 100)}% Confident
+                                  {Math.round(field.confidence * 100)}% {t('doctor.documents.confident')}
                                 </span>
                               </div>
                             </div>
@@ -502,7 +506,7 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
                                     ? 'bg-emerald-600 text-white shadow-xs font-bold' 
                                     : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'
                                 } ${isItemSaved ? 'cursor-default' : 'cursor-pointer'}`}
-                                title="Approve Field"
+                                title={t('doctor.documents.approveField')}
                               >
                                 <HugeiconsIcon icon={Tick02Icon} className="w-4 h-4" />
                               </button>
@@ -515,7 +519,7 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
                                     ? 'bg-amber-500 text-white shadow-xs font-bold' 
                                     : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'
                                 } ${isItemSaved ? 'cursor-default' : 'cursor-pointer'}`}
-                                title="Correct manually"
+                                title={t('doctor.documents.correctManually')}
                               >
                                 <HugeiconsIcon icon={Edit02Icon} className="w-4 h-4" />
                               </button>
@@ -528,7 +532,7 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
                                     ? 'bg-red-600 text-white shadow-xs font-bold' 
                                     : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'
                                 } ${isItemSaved ? 'cursor-default' : 'cursor-pointer'}`}
-                                title="Reject completely"
+                                title={t('doctor.documents.rejectCompletely')}
                               >
                                 <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
                               </button>
@@ -550,7 +554,7 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
                           {/* Issues */}
                           {field.issues && field.issues.length > 0 && (
                             <div className="mt-3 text-xs text-red-700 bg-red-50 p-2.5 rounded-lg border border-red-100">
-                              <span className="font-bold block mb-1">AI Flagged Issue:</span>
+                              <span className="font-bold block mb-1">{t('doctor.documents.aiFlaggedIssue')}:</span>
                               <ul className="list-disc list-inside space-y-0.5">
                                 {field.issues.map((issue, i) => <li key={i}>{issue}</li>)}
                               </ul>
@@ -564,7 +568,7 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
                   {/* Save Button for Item */}
                   <div className="bg-slate-50/80 px-6 py-4 border-t border-slate-200 flex items-center justify-between">
                     <p className="text-xs text-slate-400">
-                      {isItemSaved ? "Item locked after review" : "Save individual item or click Confirm All above"}
+                      {isItemSaved ? t('doctor.documents.itemLocked') : t('doctor.documents.saveItemHint')}
                     </p>
                     <Button
                       className={`font-semibold transition-all ${
@@ -578,15 +582,15 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
                       {savingItems[item.extractedItemId] ? (
                         <div className="flex items-center gap-2">
                           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          Saving...
+                          {t('doctor.documents.savingItem')}
                         </div>
                       ) : isItemSaved ? (
                         <div className="flex items-center gap-1.5">
                           <HugeiconsIcon icon={Tick02Icon} className="w-4 h-4" />
-                          Saved & Approved
+                          {t('doctor.documents.approvedAndSaved')}
                         </div>
                       ) : (
-                        "Save Item Review"
+                        t('doctor.documents.saveItem')
                       )}
                     </Button>
                   </div>
@@ -596,7 +600,7 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
             })
           ) : extractedData ? (
             <div className="border border-slate-200 rounded-2xl bg-white p-12 text-center shadow-sm">
-              <p className="text-slate-500 font-medium">No extraction data found to review.</p>
+              <p className="text-slate-500 font-medium">{t('doctor.documents.noResultsDesc')}</p>
             </div>
           ) : null}
         </div>

@@ -17,8 +17,10 @@ import {
 import { usePatientDocumentsStore } from "@/store/usePatientDocumentsStore";
 import { Toast } from "@/components/ui/Toast";
 import { AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/localization/LanguageContext";
 
 export default function AddDocumentPage({ params }: { params: Promise<{ code: string }> }) {
+  const { t } = useLanguage();
   const router = useRouter();
   const { code } = use(params);
   
@@ -44,15 +46,15 @@ export default function AddDocumentPage({ params }: { params: Promise<{ code: st
   const uploadMethods = [
     {
       id: "images",
-      title: "Upload Image",
-      description: "Select an image from your device's photo gallery.",
+      title: t('doctor.documents.chooseFile'),
+      description: t('doctor.documents.fileLimit'),
       icon: Image01Icon,
       accept: "image/*"
     },
     {
       id: "pdfs",
-      title: "Upload PDF",
-      description: "Select PDF documents from your device.",
+      title: "PDF",
+      description: t('doctor.documents.fileLimit'),
       icon: Folder01Icon,
       accept: "application/pdf"
     },
@@ -74,15 +76,15 @@ export default function AddDocumentPage({ params }: { params: Promise<{ code: st
 
   const handleSubmit = async () => {
     if (!selectedFile) {
-      setToastMessage({ message: "Please select a file to upload.", type: "error" });
+      setToastMessage({ message: t('doctor.documents.chooseFile'), type: "error" });
       return;
     }
     if (!title.trim()) {
-      setToastMessage({ message: "Please enter a document title.", type: "error" });
+      setToastMessage({ message: t('doctor.documents.documentTitlePlaceholder'), type: "error" });
       return;
     }
     if (!documentDate) {
-      setToastMessage({ message: "Please select a document date.", type: "error" });
+      setToastMessage({ message: t('doctor.documents.date'), type: "error" });
       return;
     }
 
@@ -140,8 +142,12 @@ export default function AddDocumentPage({ params }: { params: Promise<{ code: st
           <div className="w-16 h-16 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center mb-6">
             <HugeiconsIcon icon={DocumentAttachmentIcon} className="w-8 h-8" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 font-heading mb-3">Add document</h1>
-          <p className="text-slate-500 text-lg">Choose how you'd like to add your document.</p>
+          <h1 className="text-3xl font-bold text-slate-900 font-heading mb-3">
+            {t('doctor.documents.uploadTitle')}
+          </h1>
+          <p className="text-slate-500 text-lg">
+            {t('doctor.documents.uploadSubtitle')}
+          </p>
         </div>
 
         {/* Upload Methods Grid */}
@@ -175,16 +181,20 @@ export default function AddDocumentPage({ params }: { params: Promise<{ code: st
         {/* Divider */}
         <div className="flex items-center justify-center gap-4 mb-10">
           <div className="h-px bg-slate-200 flex-1"></div>
-          <span className="text-xs font-semibold text-slate-400 tracking-wider uppercase">Document Details</span>
+          <span className="text-xs font-semibold text-slate-400 tracking-wider uppercase">
+            {t('doctor.documents.document')}
+          </span>
           <div className="h-px bg-slate-200 flex-1"></div>
         </div>
 
         {/* Form Fields */}
         <div className="space-y-6 max-w-2xl mx-auto mb-16">
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">Document Title</label>
+            <label className="block text-sm font-bold text-slate-700 mb-2">
+              {t('doctor.documents.documentTitle')}
+            </label>
             <Input 
-              placeholder="e.g., Blood Test Results - Q1"
+              placeholder={t('doctor.documents.documentTitlePlaceholder')}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               iconLeft={<HugeiconsIcon icon={AiLockIcon} className="w-5 h-5 text-slate-400" />}
@@ -192,7 +202,9 @@ export default function AddDocumentPage({ params }: { params: Promise<{ code: st
             />
           </div>
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">Document Date</label>
+            <label className="block text-sm font-bold text-slate-700 mb-2">
+              {t('doctor.documents.date')}
+            </label>
             <Input 
               type="date"
               value={documentDate}
@@ -211,7 +223,7 @@ export default function AddDocumentPage({ params }: { params: Promise<{ code: st
             onClick={() => router.back()}
             disabled={isLoading}
           >
-            Cancel
+            {t('doctor.profile.cancel')}
           </Button>
           <Button 
             className="w-full sm:w-auto bg-primary-600 hover:bg-primary-700 text-white font-semibold px-8 flex items-center justify-center gap-2 disabled:opacity-50"
@@ -221,17 +233,16 @@ export default function AddDocumentPage({ params }: { params: Promise<{ code: st
             {isLoading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Uploading...
+                {t('doctor.documents.uploading')}
               </>
             ) : (
               <>
-                Upload Document
-                <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4" />
+                {t('doctor.documents.uploadButton')}
+                <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 rtl:rotate-180" />
               </>
             )}
           </Button>
         </div>
-
       </div>
     </div>
   );

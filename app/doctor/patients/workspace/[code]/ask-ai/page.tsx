@@ -9,6 +9,7 @@ import {
   UserIcon,
 } from "@hugeicons/core-free-icons";
 import { askAiQuestion, AiSource } from "@/lib/api/ai";
+import { useLanguage } from "@/localization/LanguageContext";
 
 type Message = {
   id: string;
@@ -20,6 +21,7 @@ type Message = {
 };
 
 export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code: string }> }) {
+  const { t } = useLanguage();
   const { code } = use(params);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -77,13 +79,13 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
         };
         setMessages((prev) => [...prev, newBotMsg]);
       } else {
-        throw new Error((response as any).message || "Failed to get an answer.");
+        throw new Error((response as any).message || t('ui.somethingWentWrong'));
       }
     } catch (err: any) {
       const errorMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: "bot",
-        text: err.message || "An error occurred while connecting to H-bot.",
+        text: err.message || t('ui.somethingWentWrong'),
         isError: true,
         timestamp: new Date(),
       };
@@ -110,10 +112,10 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
             <HugeiconsIcon icon={AiMagicIcon} className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="font-bold text-slate-900 leading-tight">H-bot AI Assistant</h1>
+            <h1 className="font-bold text-slate-900 leading-tight">{t('doctor.askAi.title')}</h1>
             <p className="text-xs font-medium text-emerald-600 flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              Patient Context: {code}
+              {t('doctor.workspace.patientCode')}: {code}
             </p>
           </div>
         </div>
@@ -127,9 +129,11 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
               <div className="absolute inset-0 bg-blue-100/50 rounded-full animate-ping opacity-75 duration-1000"></div>
               <HugeiconsIcon icon={Chemistry01Icon} className="w-10 h-10 text-blue-600 relative z-10" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-2 font-heading">How can I assist you with this patient?</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mb-2 font-heading">
+              {t('doctor.askAi.title')}
+            </h2>
             <p className="text-slate-500 max-w-md mx-auto mb-8">
-              I have access to patient {code}&apos;s medical history. I can help analyze records, check for drug interactions, or summarize their case.
+              {t('doctor.askAi.subtitle')}
             </p>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
@@ -139,7 +143,7 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
                   onClick={() => {
                     handleSendMessage(undefined, prompt);
                   }}
-                  className="px-4 py-3 bg-white border border-slate-200 hover:border-blue-300 hover:shadow-sm hover:bg-blue-50/50 rounded-xl text-sm font-medium text-slate-700 transition-all text-left flex items-center gap-2"
+                  className="px-4 py-3 bg-white border border-slate-200 hover:border-blue-300 hover:shadow-sm hover:bg-blue-50/50 rounded-xl text-sm font-medium text-slate-700 transition-all text-left rtl:text-right flex items-center gap-2"
                 >
                   <HugeiconsIcon icon={AiMagicIcon} className="w-4 h-4 text-blue-500" />
                   {prompt}
@@ -171,7 +175,9 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
                       {msg.text}
                       {msg.sources && msg.sources.length > 0 && (
                         <div className="mt-3 pt-3 border-t border-slate-100/60 flex flex-col gap-1.5">
-                          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Sources referenced</span>
+                          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
+                            {t('doctor.askAi.sources')}
+                          </span>
                           <div className="flex flex-wrap gap-1.5">
                             {msg.sources.map((src, i) => (
                               <span key={i} className="inline-flex items-center px-2 py-1 bg-slate-50 text-slate-600 text-[11px] rounded-md border border-slate-200" title={src.recordType}>
@@ -222,22 +228,21 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder={`Ask H-bot anything about patient ${code}...`}
-            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-base rounded-full pl-6 pr-14 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
+            placeholder={t('doctor.askAi.inputPlaceholder')}
+            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-base rounded-full pl-6 pr-14 rtl:pl-14 rtl:pr-6 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
           />
           <button
             type="submit"
             disabled={!inputValue.trim() || isTyping}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-full transition-colors shadow-sm"
+            className="absolute right-2 rtl:right-auto rtl:left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-full transition-colors shadow-sm"
           >
-            <HugeiconsIcon icon={ArrowRight01Icon} className="w-5 h-5" />
+            <HugeiconsIcon icon={ArrowRight01Icon} className="w-5 h-5 rtl:rotate-180" />
           </button>
         </form>
         <p className="text-center text-[11px] font-medium text-slate-400 mt-3">
-          H-bot can make mistakes. Consider verifying critical clinical information.
+          {t('doctor.askAi.disclaimer')}
         </p>
       </div>
-
     </div>
   );
 }

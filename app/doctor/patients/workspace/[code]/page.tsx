@@ -12,8 +12,10 @@ import {
   AiChat02Icon
 } from "@hugeicons/core-free-icons";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/localization/LanguageContext";
 
 export default function WorkspacePage({ params }: { params: Promise<{ code: string }> }) {
+  const { t } = useLanguage();
   const { code } = use(params);
   
   const [accessData, setAccessData] = useState<any>(null);
@@ -68,34 +70,34 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
   }, [accessData?.expiresAt]);
 
   const tabs = [
-    { name: "Overview", active: true, href: `/doctor/patients/workspace/${code}` },
-    { name: "Documents", active: false, href: `/doctor/patients/workspace/${code}/documents` },
-    { name: "Medical CV", active: false, href: `/doctor/patients/workspace/${code}/medical-cv` },
-    { name: "AI Assistant", active: false, href: `/doctor/patients/workspace/${code}/ask-ai` },
+    { name: t('doctor.workspace.overview'), active: true, href: `/doctor/patients/workspace/${code}` },
+    { name: t('doctor.workspace.documents'), active: false, href: `/doctor/patients/workspace/${code}/documents` },
+    { name: t('doctor.workspace.medicalCvs'), active: false, href: `/doctor/patients/workspace/${code}/medical-cv` },
+    { name: t('doctor.workspace.askAi'), active: false, href: `/doctor/patients/workspace/${code}/ask-ai` },
   ];
 
   const quickActions = [
     {
-      title: "Upload Document",
-      description: "Upload new medical document",
+      title: t('doctor.documents.upload'),
+      description: t('doctor.workspace.uploadDesc'),
       icon: FileUploadIcon,
       href: `/doctor/patients/workspace/${code}/documents/upload`
     },
     {
-      title: "View Documents",
-      description: "See all uploaded documents",
+      title: t('doctor.workspace.documents'),
+      description: t('doctor.workspace.documentsDesc'),
       icon: DocumentValidationIcon,
       href: `/doctor/patients/workspace/${code}/documents`
     },
     {
-      title: "New Medical CV",
-      description: "Generate new medical CV",
+      title: t('doctor.medicalCvs.generateNew'),
+      description: t('doctor.workspace.medicalCvsDesc'),
       icon: FileAddIcon,
       href: `/doctor/patients/workspace/${code}/medical-cv/new`
     },
     {
-      title: "Ask AI Assistant",
-      description: "Ask questions about patient data",
+      title: t('doctor.workspace.askAi'),
+      description: t('doctor.workspace.askAiDesc'),
       icon: AiChat02Icon,
       href: `/doctor/patients/workspace/${code}/ask-ai`
     },
@@ -108,11 +110,11 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
       {/* Breadcrumbs */}
       <div className="flex items-center text-sm font-medium text-slate-500 mb-6">
         <Link href="/doctor/patients" className="flex items-center hover:text-slate-900 transition-colors">
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 mr-1.5" />
-          <span>Patients</span>
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 rtl:rotate-180 mr-1.5 rtl:mr-0 rtl:ml-1.5" />
+          <span>{t('doctor.workspace.breadcrumbPatients')}</span>
         </Link>
         <span className="mx-3 text-slate-300">/</span>
-        <span className="text-slate-900 font-semibold">Workspace</span>
+        <span className="text-slate-900 font-semibold">{t('doctor.workspace.title')}</span>
       </div>
 
       <motion.div 
@@ -130,10 +132,12 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
               </div>
               <div>
                 <h2 className="text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">{patientName}</h2>
-                <div className="flex items-center gap-4 text-sm font-medium">
-                  <span className="text-slate-500 bg-slate-100/80 px-3 py-1 rounded-lg">Code: {code}</span>
+                <div className="flex items-center gap-4 text-sm font-medium flex-wrap">
+                  <span className="text-slate-500 bg-slate-100/80 px-3 py-1 rounded-lg">
+                    {t('doctor.workspace.patientCode')}: {code}
+                  </span>
                   <div className={`flex items-center gap-2 px-3 py-1 rounded-lg text-xs tracking-wide font-bold uppercase ${isExpired ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600'}`}>
-                    {isExpired ? 'Access Expired' : 'Active Access'}
+                    {isExpired ? t('doctor.workspace.sessionExpired') : t('doctor.workspace.activeAccess')}
                   </div>
                 </div>
               </div>
@@ -141,9 +145,9 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
 
             <div className="text-sm font-semibold text-slate-500 bg-white px-5 py-3 rounded-2xl shadow-sm border border-slate-100">
               {isExpired ? (
-                <span className="text-rose-600 font-bold ml-1 uppercase tracking-wide">Expired</span>
+                <span className="text-rose-600 font-bold ml-1 uppercase tracking-wide">{t('doctor.workspace.expired')}</span>
               ) : (
-                <>Expires in <span className="text-emerald-600 font-bold ml-2 text-lg tabular-nums">{timeLeft}</span></>
+                <>{t('doctor.workspace.sessionExpires')} <span className="text-emerald-600 font-bold ml-2 rtl:ml-0 rtl:mr-2 text-lg tabular-nums">{timeLeft}</span></>
               )}
             </div>
           </div>
@@ -151,7 +155,7 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
 
         {/* Tabs */}
         <div className="px-8 bg-white/50 backdrop-blur-sm">
-          <nav className="flex space-x-8 overflow-x-auto hide-scrollbar">
+          <nav className="flex space-x-8 rtl:space-x-reverse overflow-x-auto hide-scrollbar">
             {tabs.map((tab) => (
               <Link
                 key={tab.name}
@@ -175,7 +179,9 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
       >
-        <h3 className="text-xl font-extrabold text-slate-900 mb-6 tracking-tight px-1">Quick Actions</h3>
+        <h3 className="text-xl font-extrabold text-slate-900 mb-6 tracking-tight px-1">
+          {t('doctor.patients.actions') || "Quick Actions"}
+        </h3>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {quickActions.map((action, index) => (

@@ -12,7 +12,10 @@ export type MedicalDocument = {
 export interface ExtractedField {
   extractedFieldId: string;
   fieldName: string;
-  extractedValue: string;
+  extractedValue?: string;
+  originalExtractedValue?: string;
+  confirmedValue?: string;
+  decision?: string;
   confidence: number;
   evidenceText: string;
   issues: string[];

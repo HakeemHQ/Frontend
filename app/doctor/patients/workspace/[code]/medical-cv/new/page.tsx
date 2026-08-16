@@ -17,8 +17,10 @@ import { Button } from "@/components/ui/Button";
 import { usePatientMedicalCvsStore } from "@/store/usePatientMedicalCvsStore";
 import { Toast } from "@/components/ui/Toast";
 import { AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/localization/LanguageContext";
 
 export default function NewMedicalCVPage({ params }: { params: Promise<{ code: string }> }) {
+  const { t } = useLanguage();
   const router = useRouter();
   const { code } = use(params);
 
@@ -82,8 +84,8 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
           onClick={() => router.back()}
           className="flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 transition"
         >
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 mr-1.5" />
-          Back to Workspace
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 rtl:rotate-180 mr-1.5 rtl:mr-0 rtl:ml-1.5" />
+          {t('doctor.workspace.breadcrumbPatients')}
         </button>
       </div>
 
@@ -93,10 +95,10 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
             <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-10 h-10 text-emerald-500" />
           </div>
           <h2 className="text-3xl font-bold text-slate-900 mb-4 font-heading">
-            Medical CV Generated Successfully!
+            {t('doctor.medicalCvs.approved')}
           </h2>
           <p className="text-slate-500 text-lg max-w-lg mx-auto mb-10">
-            The Medical CV &quot;{title}&quot; has been created and is now available in the patient&apos;s records.
+            {title}
           </p>
           <div className="flex items-center justify-center gap-4">
             <button
@@ -106,13 +108,13 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
               }}
               className="px-6 py-3 border-2 border-slate-200 text-slate-700 font-semibold rounded-xl hover:border-slate-300 hover:bg-slate-50 transition"
             >
-              Create Another
+              {t('doctor.medicalCvs.generateNew')}
             </button>
             <Link
               href={`/doctor/patients/workspace/${code}/medical-cv`}
               className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 shadow-sm shadow-blue-200 transition"
             >
-              View All CVs
+              {t('doctor.medicalCvs.title')}
             </Link>
           </div>
         </div>
@@ -125,10 +127,10 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
             </div>
             <div>
               <h1 className="text-3xl font-bold text-slate-900 font-heading tracking-tight mb-2">
-                Generate Medical CV
+                {t('doctor.medicalCvs.generateNew')}
               </h1>
               <p className="text-slate-500 leading-relaxed text-sm max-w-xl">
-                Create a structured summary of the patient&apos;s medical history. Name it descriptively to easily find it later.
+                {t('doctor.medicalCvs.generateDesc')}
               </p>
             </div>
           </div>
@@ -138,7 +140,7 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
             {/* Title Field */}
             <div className="space-y-3">
               <label htmlFor="cv-title" className="block text-sm font-bold text-slate-900">
-                Title <span className="text-red-500">*</span>
+                {t('doctor.medicalCvs.titleLabel')} <span className="text-red-500">*</span>
               </label>
               <Input
                 id="cv-title"
@@ -146,7 +148,7 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Cardiology Medical CV or My Diabetes Summary"
+                placeholder="e.g. Cardiology Medical CV or Diabetes Summary"
                 iconLeft={<HugeiconsIcon icon={TextIcon} className="w-5 h-5 text-slate-400" />}
                 className="font-medium"
               />
@@ -160,13 +162,13 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
                 className="relative overflow-hidden group"
               >
                 <span className={`transition-opacity duration-300 ${isCreating ? "opacity-0" : "opacity-100"}`}>
-                  Generate Medical CV
+                  {t('doctor.medicalCvs.generateCv')}
                 </span>
                 
                 {isCreating && (
                   <div className="absolute inset-0 flex items-center justify-center bg-blue-700">
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    <span className="ml-2">Generating...</span>
+                    <span className="ml-2 rtl:ml-0 rtl:mr-2">{t('doctor.medicalCvs.generating')}</span>
                   </div>
                 )}
               </Button>

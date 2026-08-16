@@ -19,7 +19,10 @@ import { usePatientMedicalCvsStore } from "@/store/usePatientMedicalCvsStore";
 import { Toast } from "@/components/ui/Toast";
 import { MedicalCvVersionDetail } from "@/types/medical-cv";
 
+import { useLanguage } from "@/localization/LanguageContext";
+
 export default function MedicalCVDetailsPage({ params }: { params: Promise<{ code: string; cvId: string }> }) {
+  const { t } = useLanguage();
   const { code, cvId } = use(params);
   const { currentCvDetails, isFetchingDetails, error, fetchCvDetails, fetchVersionPdf, approveVersion } = usePatientMedicalCvsStore();
   
@@ -77,9 +80,9 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
     setApprovingVersionId(null);
 
     if (success) {
-      setToastMessage({ message: "Version approved successfully!", type: "success" });
+      setToastMessage({ message: t('doctor.medicalCvs.approved'), type: "success" });
     } else {
-      setToastMessage({ message: "Failed to approve version.", type: "error" });
+      setToastMessage({ message: t('ui.somethingWentWrong'), type: "error" });
     }
   };
 
@@ -90,14 +93,14 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
         return (
           <span className="flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-emerald-100">
             <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5" />
-            Approved
+            {t('doctor.medicalCvs.approved')}
           </span>
         );
       case 'draft':
         return (
           <span className="flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-blue-100">
             <HugeiconsIcon icon={DocumentValidationIcon} className="w-3.5 h-3.5" />
-            Draft
+            {t('doctor.medicalCvs.unreviewed')}
           </span>
         );
       case 'failed':
@@ -143,10 +146,10 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
   if (!currentCvDetails && !isFetchingDetails) {
     return (
       <div className="max-w-4xl mx-auto pt-4 pb-12 text-center">
-        <h2 className="text-2xl font-bold text-slate-900 mb-2 font-heading">CV Not Found</h2>
-        <p className="text-slate-500 mb-6">We couldn&apos;t load the details for this Medical CV.</p>
+        <h2 className="text-2xl font-bold text-slate-900 mb-2 font-heading">{t('doctor.medicalCvs.noResults')}</h2>
+        <p className="text-slate-500 mb-6">{t('doctor.medicalCvs.noResultsDesc')}</p>
         <Link href={`/doctor/patients/workspace/${code}/medical-cv`}>
-          <Button variant="outline" className="rounded-xl">Go Back</Button>
+          <Button variant="outline" className="rounded-xl">{t('doctor.medicalCvs.breadcrumbMedicalCv')}</Button>
         </Link>
       </div>
     );
@@ -173,8 +176,8 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
           href={`/doctor/patients/workspace/${code}/medical-cv`}
           className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 transition"
         >
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 mr-1.5" />
-          Back to Medical CVs
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 rtl:rotate-180 mr-1.5 rtl:mr-0 rtl:ml-1.5" />
+          {t('doctor.medicalCvs.breadcrumbMedicalCv')}
         </Link>
       </div>
 
@@ -184,21 +187,21 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
         </div>
         
         <div className="relative z-10">
-          <h1 className="text-3xl font-bold text-slate-900 font-heading mb-3 pr-12">
+          <h1 className="text-3xl font-bold text-slate-900 font-heading mb-3 pr-12 rtl:pr-0 rtl:pl-12">
             {cv.title || "Untitled Medical CV"}
           </h1>
           <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500 font-medium">
             <span className="capitalize bg-slate-100 px-3 py-1 rounded-lg">Type: {cv.scopeType}</span>
             {cv.focus && <span className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-lg border border-emerald-100">Focus: {cv.focus}</span>}
             <span>•</span>
-            <span>Created: {new Date(cv.createdAt).toLocaleDateString()}</span>
+            <span>{t('doctor.documents.date')}: {new Date(cv.createdAt).toLocaleDateString()}</span>
           </div>
         </div>
       </div>
 
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-slate-900 font-heading">Version History</h2>
-        <p className="text-slate-500 text-sm">Review drafts, preview PDFs, and approve versions.</p>
+        <h2 className="text-xl font-bold text-slate-900 font-heading">{t('doctor.medicalCvs.version')} History</h2>
+        <p className="text-slate-500 text-sm">{t('doctor.medicalCvs.description')}</p>
       </div>
 
       <div className="space-y-4">
@@ -215,15 +218,15 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
             >
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <h3 className="font-bold text-slate-900 text-lg">Version {version.versionNumber}</h3>
+                  <h3 className="font-bold text-slate-900 text-lg">{t('doctor.medicalCvs.version')} {version.versionNumber}</h3>
                   {getStatusBadge(version.status)}
                 </div>
                 <div className="text-sm text-slate-500 font-medium flex flex-wrap items-center gap-x-4 gap-y-1">
-                  <span>Generated on: {new Date(version.createdAt).toLocaleString()}</span>
+                  <span>{new Date(version.createdAt).toLocaleString()}</span>
                   {version.approvedAt && (
                     <span className="text-emerald-600 flex items-center gap-1">
                       <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5" />
-                      Approved on: {new Date(version.approvedAt).toLocaleDateString()}
+                      {t('doctor.medicalCvs.approved')}: {new Date(version.approvedAt).toLocaleDateString()}
                     </span>
                   )}
                 </div>
@@ -238,7 +241,7 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
                   onClick={() => handlePreview(version.medicalCvVersionId)}
                 >
                   <HugeiconsIcon icon={EyeIcon} className="w-4 h-4" />
-                  {previewingVersionId === version.medicalCvVersionId ? 'Loading...' : 'Preview PDF'}
+                  {previewingVersionId === version.medicalCvVersionId ? 'Loading...' : t('doctor.medicalCvs.previewPdf')}
                 </Button>
 
                 {/* Approve Button */}
@@ -250,7 +253,7 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
                     onClick={() => handleApprove(version.medicalCvVersionId)}
                   >
                     <HugeiconsIcon icon={TickDouble01Icon} className="w-4 h-4" />
-                    {approvingVersionId === version.medicalCvVersionId ? 'Approving...' : 'Approve Draft'}
+                    {approvingVersionId === version.medicalCvVersionId ? t('doctor.medicalCvs.approving') : t('doctor.medicalCvs.approveVersion')}
                   </Button>
                 )}
                 
@@ -262,7 +265,7 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
                     onClick={() => handleDownload(version.medicalCvVersionId, version.versionNumber)}
                   >
                     <HugeiconsIcon icon={Download04Icon} className="w-4 h-4" />
-                    {downloadingVersionId === version.medicalCvVersionId ? 'Downloading...' : 'Download'}
+                    {downloadingVersionId === version.medicalCvVersionId ? t('doctor.documents.downloading') : t('doctor.medicalCvs.downloadPdf')}
                   </Button>
                 )}
               </div>
@@ -270,7 +273,7 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
           ))
         ) : (
           <div className="bg-slate-50 border border-slate-200 rounded-2xl p-8 text-center">
-            <p className="text-slate-500">No versions generated yet.</p>
+            <p className="text-slate-500">{t('doctor.medicalCvs.noMedicalCvs')}</p>
           </div>
         )}
       </div>

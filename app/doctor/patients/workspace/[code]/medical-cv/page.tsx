@@ -20,7 +20,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePatientMedicalCvsStore } from "@/store/usePatientMedicalCvsStore";
 import { Toast } from "@/components/ui/Toast";
 
+import { useLanguage } from "@/localization/LanguageContext";
+
 export default function MedicalCVsPage({ params }: { params: Promise<{ code: string }> }) {
+  const { t } = useLanguage();
   const { code } = use(params);
   const { cvs, isLoading, error, fetchCvs } = usePatientMedicalCvsStore();
   
@@ -70,7 +73,7 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
         return (
           <span className="flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-emerald-100">
             <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5" />
-            Ready
+            {t('doctor.medicalCvs.ready')}
           </span>
         );
       case 'draft':
@@ -133,21 +136,23 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
           href={`/doctor/patients/workspace/${code}`}
           className="flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 transition"
         >
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 mr-1.5" />
-          Back to Workspace
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 rtl:rotate-180 mr-1.5 rtl:mr-0 rtl:ml-1.5" />
+          {t('doctor.workspace.breadcrumbPatients')}
         </Link>
         <Link href={`/doctor/patients/workspace/${code}/medical-cv/new`}>
           <Button className="flex items-center gap-2 rounded-xl">
             <HugeiconsIcon icon={FileAddIcon} className="w-4 h-4" />
-            New Medical CV
+            {t('doctor.medicalCvs.generateNew')}
           </Button>
         </Link>
       </div>
 
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 font-heading mb-2">Medical CVs</h1>
+        <h1 className="text-3xl font-bold text-slate-900 font-heading mb-2">
+          {t('doctor.medicalCvs.title')}
+        </h1>
         <p className="text-slate-500">
-          View and manage the structured summaries of the patient&apos;s medical history.
+          {t('doctor.medicalCvs.description')}
         </p>
       </div>
 
@@ -155,7 +160,7 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
       <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="w-full md:w-96">
           <Input 
-            placeholder="Search by title..." 
+            placeholder={t('doctor.medicalCvs.searchPlaceholder')} 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             iconLeft={<HugeiconsIcon icon={SearchIcon} className="w-5 h-5" />}
@@ -164,14 +169,14 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
         <div className="w-full md:w-auto flex items-center gap-3">
           <div className="flex items-center gap-2 text-sm font-medium text-slate-600">
             <HugeiconsIcon icon={FilterIcon} className="w-5 h-5" />
-            Status:
+            {t('doctor.medicalCvs.statusLabel')}:
           </div>
           <div className="w-48">
             <Select 
               options={[
-                { value: "All", label: "All Statuses" },
-                { value: "Draft", label: "Draft" },
-                { value: "Ready", label: "Ready" }
+                { value: "All", label: t('doctor.medicalCvs.allStatuses') },
+                { value: "Draft", label: t('doctor.medicalCvs.unreviewed') },
+                { value: "Ready", label: t('doctor.medicalCvs.ready') }
               ]}
               value={verificationFilter}
               onChange={setVerificationFilter}
@@ -222,10 +227,10 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
                           {cv.title || "Untitled CV"}
                         </h3>
                         <p className="text-xs font-semibold text-slate-500 mb-1 capitalize">
-                          Medical CV <span className="font-medium">({cv.createdByRole || "Doctor"})</span>
+                          {t('doctor.medicalCvs.title')} <span className="font-medium">({cv.createdByRole || "Doctor"})</span>
                         </p>
                         <p className="text-[11px] font-bold text-slate-400 mb-4 bg-slate-50 inline-block px-2 py-0.5 rounded">
-                          Version {versionNumber}
+                          {t('doctor.medicalCvs.version')} {versionNumber}
                         </p>
                       </div>
 
@@ -250,16 +255,20 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
           <div className="w-20 h-20 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-5">
             <HugeiconsIcon icon={SearchIcon} className="w-10 h-10" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2 font-heading">No CVs Found</h2>
+          <h2 className="text-2xl font-bold text-slate-900 mb-2 font-heading">
+            {t('doctor.medicalCvs.noResults')}
+          </h2>
           <p className="text-slate-500 mb-8 max-w-md mx-auto">
-            We couldn&apos;t find any Medical CVs matching your current filters.
+            {t('doctor.medicalCvs.noResultsDesc')}
           </p>
           <div className="flex items-center justify-center gap-4">
             <Button onClick={() => { setSearchQuery(""); setVerificationFilter("All"); }} variant="outline" className="rounded-xl">
-              Clear Filters
+              {t('doctor.medicalCvs.clearFilters')}
             </Button>
             <Link href={`/doctor/patients/workspace/${code}/medical-cv/new`}>
-              <Button className="rounded-xl">Generate Medical CV</Button>
+              <Button className="rounded-xl">
+                {t('doctor.medicalCvs.generateNew')}
+              </Button>
             </Link>
           </div>
         </motion.div>

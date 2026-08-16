@@ -19,11 +19,14 @@ import { Toast } from "@/components/ui/Toast";
 import { AnimatePresence, motion } from "framer-motion";
 import { DocumentExtractedData } from "@/types/document";
 
-export default function DocumentPreviewPage({ params }: { params: Promise<{ code: string, documentId: string }> }) {
+import { useLanguage } from "@/localization/LanguageContext";
+
+export default function DocumentPreviewPage({ params }: { params: Promise<{ code: string; documentId: string }> }) {
+  const { t } = useLanguage();
   const router = useRouter();
   const { code, documentId } = use(params);
-  const { documents } = usePatientDocumentsStore();
   
+  const { documents } = usePatientDocumentsStore();
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [fileType, setFileType] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -34,7 +37,7 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
 
   // Find document title from store
   const documentInfo = documents.find(d => d.documentId === documentId);
-  const documentName = documentInfo?.title || "Document Preview";
+  const documentName = documentInfo?.title || t('doctor.documents.breadcrumbPreview');
 
   useEffect(() => {
     let url: string | null = null;
@@ -121,11 +124,11 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
       {/* Breadcrumbs */}
       <div className="flex items-center text-sm text-slate-500 mb-2">
         <Link href={`/doctor/patients/workspace/${code}/documents`} className="flex items-center hover:text-slate-800 transition">
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 mr-1" />
-          <span>Documents</span>
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 rtl:rotate-180 mr-1 rtl:mr-0 rtl:ml-1" />
+          <span>{t('doctor.documents.title')}</span>
         </Link>
-        <span className="mx-2">&gt;</span>
-        <span className="font-medium text-primary-600">Preview</span>
+        <span className="mx-2">/</span>
+        <span className="font-medium text-primary-600">{t('doctor.documents.breadcrumbPreview')}</span>
       </div>
 
       <div className="w-full border border-slate-100 rounded-2xl bg-surface shadow-sm overflow-hidden p-6 md:p-8 flex flex-col min-h-[800px]">
@@ -142,7 +145,7 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
               disabled={!blobUrl || isLoading}
             >
               <HugeiconsIcon icon={Download01Icon} className="w-4 h-4" />
-              Download
+              {t('doctor.documents.download')}
             </Button>
           </div>
         </div>
@@ -153,14 +156,14 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
           {isLoading ? (
             <div className="flex flex-col items-center text-slate-500">
               <div className="w-10 h-10 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-              <p className="font-medium">Loading document content...</p>
+              <p className="font-medium">{t('doctor.documents.loadingPreview')}</p>
             </div>
           ) : error ? (
             <div className="flex flex-col items-center text-slate-500 max-w-md text-center p-8">
               <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-4">
                 <HugeiconsIcon icon={File01Icon} className="w-8 h-8" />
               </div>
-              <p className="font-semibold text-slate-900 mb-2">Could not display document</p>
+              <p className="font-semibold text-slate-900 mb-2">{t('doctor.documents.previewNotAvailable')}</p>
               <p className="text-sm">{error}</p>
             </div>
           ) : blobUrl ? (
@@ -184,13 +187,12 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
                 <div className="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-4">
                   <HugeiconsIcon icon={File01Icon} className="w-8 h-8" />
                 </div>
-                <p className="font-semibold text-slate-900 mb-2">Unsupported file type</p>
-                <p className="text-sm mb-6">This document type ({fileType}) cannot be previewed directly in the browser.</p>
+                <p className="font-semibold text-slate-900 mb-2">{t('doctor.documents.previewNotAvailable')}</p>
                 <Button 
                   onClick={handleDownload}
-                  className="bg-primary-600 hover:bg-primary-700 text-white font-medium"
+                  className="bg-primary-600 hover:bg-primary-700 text-white font-medium mt-4"
                 >
-                  Download to View
+                  {t('doctor.documents.download')}
                 </Button>
               </div>
             )
@@ -203,14 +205,14 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
       {isExtracting ? (
         <div className="w-full border border-slate-100 rounded-2xl bg-surface shadow-sm overflow-hidden p-6 md:p-8 flex flex-col items-center justify-center min-h-[200px]">
           <div className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p className="font-medium text-slate-500">Extracting data...</p>
+          <p className="font-medium text-slate-500">{t('doctor.documents.processing')}</p>
         </div>
       ) : extractedData && extractedData.items && extractedData.items.length > 0 ? (
         <div className="w-full border border-slate-100 rounded-2xl bg-surface shadow-sm overflow-hidden mt-6">
           <div className="bg-slate-50 px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-xl font-bold text-slate-900 font-heading">Extracted Data</h2>
-              <p className="text-sm text-slate-500">AI has identified the following fields from this document.</p>
+              <h2 className="text-xl font-bold text-slate-900 font-heading">{t('doctor.documents.extractedData')}</h2>
+              <p className="text-sm text-slate-500">{t('doctor.documents.extractedDataSubtitle')}</p>
             </div>
           </div>
           
@@ -220,7 +222,7 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
                 <div className="flex items-center gap-2 mb-4">
                   <div className="h-px bg-slate-200 flex-1"></div>
                   <span className="text-xs font-semibold text-slate-400 tracking-wider uppercase px-2">
-                    {item.itemType} (Item {item.sequenceNumber})
+                    {item.itemType} ({t('doctor.documents.item')} {item.sequenceNumber})
                   </span>
                   <div className="h-px bg-slate-200 flex-1"></div>
                 </div>
@@ -229,13 +231,10 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
                   {item.fields.map((field, fieldIdx) => {
                     // Determine confidence color
                     let confidenceColor = "bg-green-100 text-green-700";
-                    let confidenceText = "High";
                     if (field.confidence < 0.5) {
                       confidenceColor = "bg-red-100 text-red-700";
-                      confidenceText = "Low";
                     } else if (field.confidence < 0.8) {
                       confidenceColor = "bg-amber-100 text-amber-700";
-                      confidenceText = "Medium";
                     }
 
                     return (
@@ -243,17 +242,17 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
                         <div className="flex items-start justify-between mb-2">
                           <h4 className="font-bold text-slate-700 text-sm">{field.fieldName}</h4>
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${confidenceColor}`}>
-                            {Math.round(field.confidence * 100)}% Match
+                            {Math.round(field.confidence * 100)}% {t('doctor.documents.match')}
                           </span>
                         </div>
                         <p className="text-slate-900 font-medium break-words">
-                          {field.correctedValue || field.extractedValue || <span className="text-slate-400 italic">Not found</span>}
+                          {field.confirmedValue || field.correctedValue || field.extractedValue || field.originalExtractedValue || <span className="text-slate-400 italic">{t('doctor.documents.notFound')}</span>}
                         </p>
                         
                         {field.issues && field.issues.length > 0 && (
                           <div className="mt-3 pt-3 border-t border-slate-200">
                             <p className="text-xs font-semibold text-red-600 flex items-center gap-1 mb-1">
-                              Issues identified:
+                              {t('doctor.documents.aiFlaggedIssue')}:
                             </p>
                             <ul className="list-disc list-inside text-xs text-slate-600 space-y-1">
                               {field.issues.map((issue, i) => (
@@ -272,7 +271,7 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
         </div>
       ) : extractedData ? (
         <div className="w-full border border-slate-100 rounded-2xl bg-surface shadow-sm overflow-hidden p-6 md:p-8 flex flex-col items-center justify-center min-h-[200px] mt-6">
-          <p className="font-medium text-slate-500">No data could be extracted from this document.</p>
+          <p className="font-medium text-slate-500">{t('doctor.documents.noResultsDesc')}</p>
         </div>
       ) : null}
 
