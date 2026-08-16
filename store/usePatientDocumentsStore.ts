@@ -43,26 +43,28 @@ export const usePatientDocumentsStore = create<PatientDocumentsState>((set, get)
       const response = await getPatientDocuments(patientId, params);
 
       const isArray = Array.isArray(response);
-      const actualData: any = isArray ? response : (response as any).data;
-      const isSuccess = isArray ? true : (response as any).success;
+      const isFailed = typeof response === 'object' && response !== null && 'success' in response && (response as any).success === false;
+
+      if (isFailed) {
+        set({ error: (response as any).message || "Failed to fetch patient documents", isLoading: false });
+        return;
+      }
+
+      const rawData: any = isArray ? response : ((response as any).data !== undefined ? (response as any).data : response);
 
       let docsArray: MedicalDocument[] = [];
-      if (Array.isArray(actualData)) {
-        docsArray = actualData;
-      } else if (actualData && Array.isArray(actualData.items)) {
-        docsArray = actualData.items;
-      } else if (actualData && Array.isArray(actualData.data)) {
-        docsArray = actualData.data;
+      if (Array.isArray(rawData)) {
+        docsArray = rawData;
+      } else if (rawData && Array.isArray(rawData.items)) {
+        docsArray = rawData.items;
+      } else if (rawData && Array.isArray(rawData.data)) {
+        docsArray = rawData.data;
       }
 
-      if (isSuccess) {
-        set({
-          documents: docsArray,
-          isLoading: false,
-        });
-      } else {
-        set({ error: (response as any).message || "Failed to fetch patient documents", isLoading: false });
-      }
+      set({
+        documents: docsArray,
+        isLoading: false,
+      });
     } catch (error: any) {
       set({ 
         error: error?.response?.data?.message || "An unexpected error occurred", 
@@ -76,17 +78,25 @@ export const usePatientDocumentsStore = create<PatientDocumentsState>((set, get)
     try {
       const response = await uploadPatientDocument(patientId, params);
       
-      const isSuccess = 'success' in response ? (response as any).success : true;
-      const actualData = 'success' in response ? (response as any).data : response;
+      const isFailed = typeof response === 'object' && response !== null && 'success' in response && (response as any).success === false;
 
-      if (isSuccess && actualData) {
+      if (isFailed) {
+        set({ error: (response as any).message || "Failed to upload document", isLoading: false });
+        return false;
+      }
+
+      const actualData = typeof response === 'object' && response !== null && 'data' in response && (response as any).data !== undefined
+        ? (response as any).data 
+        : response;
+
+      if (actualData) {
         set((state) => ({
           documents: [actualData as MedicalDocument, ...state.documents],
           isLoading: false,
         }));
         return actualData as MedicalDocument;
       } else {
-        set({ error: (response as any).message || "Failed to upload document", isLoading: false });
+        set({ error: "Failed to upload document", isLoading: false });
         return false;
       }
     } catch (error: any) {
