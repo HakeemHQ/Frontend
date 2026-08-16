@@ -47,7 +47,8 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
     if (url) {
       window.open(url, "_blank");
     } else {
-      setToastMessage({ message: "Failed to generate preview link.", type: "error" });
+      const currentError = usePatientMedicalCvsStore.getState().error;
+      setToastMessage({ message: currentError || "Failed to generate preview link.", type: "error" });
     }
   };
 

@@ -148,33 +148,51 @@ export const usePatientMedicalCvsStore = create<PatientMedicalCvsState>((set, ge
 
   generatePreviewLink: async (versionId: string) => {
     try {
-      const response = await getMedicalCvPreviewLink(versionId);
-      const isSuccess = 'success' in response ? response.success : true;
-      const actualData = 'success' in response ? response.data : response;
+      const response: any = await getMedicalCvPreviewLink(versionId);
+      
+      const isFailed = typeof response === 'object' && response !== null && 'success' in response && response.success === false;
+      if (isFailed) {
+        set({ error: response.message || "Failed to generate preview link" });
+        return null;
+      }
 
-      if (isSuccess && actualData?.pdfUrl) {
+      const actualData = typeof response === 'object' && response !== null && 'data' in response && response.data !== undefined
+        ? response.data 
+        : response;
+
+      if (actualData?.pdfUrl) {
         return actualData.pdfUrl;
       }
+      
+      // If pdfUrl is a direct string or token URL
+      if (typeof actualData === 'string' && (actualData.startsWith('http') || actualData.startsWith('/'))) {
+        return actualData;
+      }
+
       return null;
     } catch (error: any) {
-      console.error("Failed to generate preview link:", error);
+      const errMsg = error?.response?.data?.message || "Failed to generate preview link";
+      set({ error: errMsg });
       return null;
     }
   },
 
   approveVersion: async (versionId: string, cvId: string) => {
     try {
-      const response = await approveMedicalCvVersion(versionId);
-      const isSuccess = 'success' in response ? response.success : true;
+      const response: any = await approveMedicalCvVersion(versionId);
+      const isFailed = typeof response === 'object' && response !== null && 'success' in response && response.success === false;
       
-      if (isSuccess) {
-        // Refresh details after approval
-        await get().fetchCvDetails(cvId);
-        return true;
+      if (isFailed) {
+        set({ error: response.message || "Failed to approve CV version" });
+        return false;
       }
-      return false;
+
+      // Refresh details after approval
+      await get().fetchCvDetails(cvId);
+      return true;
     } catch (error: any) {
-      console.error("Failed to approve CV version:", error);
+      const errMsg = error?.response?.data?.message || "Failed to approve CV version";
+      set({ error: errMsg });
       return false;
     }
   },
