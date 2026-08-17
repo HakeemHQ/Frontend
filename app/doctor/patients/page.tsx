@@ -146,7 +146,7 @@ export default function PatientsPage() {
               <button
                 key={status}
                 onClick={() => setStatusFilter(status)}
-                className={`px-8 py-4 text-base font-black rounded-full whitespace-nowrap transition-all duration-300 shadow-sm ${
+                className={`px-8 py-4 text-base font-black rounded-full whitespace-nowrap transition-all duration-300 shadow-sm cursor-pointer ${
                   statusFilter === status 
                     ? "bg-primary text-white shadow-lg shadow-primary/30 -translate-y-1" 
                     : "bg-white text-slate-500 hover:bg-slate-100 hover:text-slate-700"
@@ -296,18 +296,18 @@ export default function PatientsPage() {
             variant="outline" 
             disabled={page === 1} 
             onClick={() => setPage(page - 1)}
-            className="rounded-full border-2 border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 font-bold px-8 py-5 h-auto text-lg transition-all"
+            className="rounded-full border-2 border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 font-bold px-8 py-5 h-auto text-lg transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
           >
             {t('doctor.patients.previous')}
           </Button>
-          <span className="text-lg text-slate-900 font-black bg-slate-50 px-6 py-3 rounded-full border-2 border-slate-100 shadow-sm">
+          <span className="text-lg text-slate-900 font-black bg-slate-50 px-6 py-3 rounded-full border-2 border-slate-100 shadow-sm select-none">
             {t('doctor.patients.page')} {page}
           </span>
           <Button 
             variant="outline" 
             onClick={() => setPage(page + 1)}
             disabled={patients.length < 10}
-            className="rounded-full border-2 border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 font-bold px-8 py-5 h-auto text-lg transition-all"
+            className="rounded-full border-2 border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 font-bold px-8 py-5 h-auto text-lg transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
           >
             {t('doctor.patients.next')}
           </Button>

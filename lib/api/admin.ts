@@ -35,7 +35,15 @@ export const adminApi = {
   },
 
   getUsers: async (params?: GetUsersParams): Promise<PaginatedResponse<User>> => {
-    const { data } = await api.get<PaginatedResponse<User>>("/admin/users", { params });
+    const cleanParams: Record<string, any> = {};
+    if (params) {
+      if (params.search?.trim()) cleanParams.search = params.search.trim();
+      if (params.userType?.trim()) cleanParams.userType = params.userType.trim();
+      if (params.status?.trim()) cleanParams.status = params.status.trim();
+      if (params.page !== undefined && params.page !== null) cleanParams.page = params.page;
+      if (params.pageSize !== undefined && params.pageSize !== null) cleanParams.pageSize = params.pageSize;
+    }
+    const { data } = await api.get<PaginatedResponse<User>>("/admin/users", { params: cleanParams });
     return data;
   },
 

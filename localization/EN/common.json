@@ -208,6 +208,8 @@
       "passwordsDoNotMatch": "Passwords do not match",
       "createSuccess": "Admin created successfully",
       "createFailed": "Failed to create admin",
+      "active": "Active",
+      "subtitle": "Manage all system users",
       "suspended": "Suspended"
     },
     "auditLogs": {

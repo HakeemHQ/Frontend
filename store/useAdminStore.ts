@@ -148,12 +148,34 @@ export const useAdminStore = create<AdminState>((set, get) => ({
         identityVerificationStatus: u.identityVerificationStatus || "Unverified",
         ...u,
       }));
+      const pageSize = params?.pageSize || 10;
+      const currentPage = params?.page || 1;
+      
+      const hasExplicitTotal = data?.totalCount !== undefined || data?.total !== undefined || data?.totalItems !== undefined;
+      const explicitTotal = data?.totalCount ?? data?.total ?? data?.totalItems;
+      
+      let totalCount: number;
+      let totalPages: number;
+
+      if (hasExplicitTotal && typeof explicitTotal === 'number') {
+        totalCount = explicitTotal;
+        totalPages = data?.totalPages ?? Math.max(1, Math.ceil(totalCount / pageSize));
+      } else {
+        if (normalizedUsers.length < pageSize) {
+          totalCount = (currentPage - 1) * pageSize + normalizedUsers.length;
+          totalPages = currentPage;
+        } else {
+          totalCount = currentPage * pageSize + 1;
+          totalPages = currentPage + 1;
+        }
+      }
+
       set({ 
         users: { 
           items: normalizedUsers, 
-          totalCount: data?.totalCount ?? data?.total ?? normalizedUsers.length,
-          totalPages: data?.totalPages ?? 1,
-          total: data?.total ?? normalizedUsers.length
+          totalCount,
+          totalPages,
+          total: totalCount
         }, 
         isUsersLoading: false 
       });
