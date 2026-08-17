@@ -109,9 +109,9 @@ export default function PatientsPage() {
         <div className="absolute top-10 right-10 z-20">
           <Link 
             href="/doctor/patients/verify-identity"
-            className="inline-flex bg-white text-primary hover:text-primary hover:bg-slate-50 hover:-translate-y-1 transition-all rounded-full px-8 py-4 font-black shadow-lg shadow-black/10 items-center gap-2 border-none text-lg"
+            className="inline-flex items-center text-sm font-bold text-white/90 hover:text-white transition-all bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md border border-white/10 shadow-lg hover:shadow-xl hover:-translate-y-0.5 gap-2"
           >
-            <HugeiconsIcon icon={UserAdd01Icon} className="w-6 h-6" />
+            <HugeiconsIcon icon={UserAdd01Icon} className="w-5 h-5" />
             {t('doctor.patients.verifyNewPatient')}
           </Link>
         </div>

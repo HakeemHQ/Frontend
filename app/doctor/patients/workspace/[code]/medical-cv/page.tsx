@@ -142,16 +142,17 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
         <div className="absolute top-10 left-10 right-10 z-20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <Link 
             href={`/doctor/patients/workspace/${code}`}
-            className="inline-flex items-center text-sm font-bold text-white/80 hover:text-white transition bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md"
+            className="inline-flex items-center text-sm font-bold text-white/90 hover:text-white transition-all bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md border border-white/10 shadow-lg hover:shadow-xl hover:-translate-y-0.5 gap-2"
           >
             <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 rtl:rotate-180 mr-2 rtl:mr-0 rtl:ml-2" />
             {t('doctor.workspace.breadcrumbPatients')}
           </Link>
-          <Link href={`/doctor/patients/workspace/${code}/medical-cv/new`}>
-            <Button className="flex items-center gap-2 rounded-full bg-white text-primary hover:bg-slate-50 border-none shadow-lg shadow-black/10 hover:-translate-y-1 transition-all px-8 py-4 font-black">
-              <HugeiconsIcon icon={FileAddIcon} className="w-5 h-5" />
-              {t('doctor.medicalCvs.generateNew')}
-            </Button>
+          <Link 
+            href={`/doctor/patients/workspace/${code}/medical-cv/new`}
+            className="inline-flex items-center text-sm font-bold text-white/90 hover:text-white transition-all bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md border border-white/10 shadow-lg hover:shadow-xl hover:-translate-y-0.5 gap-2"
+          >
+            <HugeiconsIcon icon={FileAddIcon} className="w-5 h-5" />
+            {t('doctor.medicalCvs.generateNew')}
           </Link>
         </div>
         

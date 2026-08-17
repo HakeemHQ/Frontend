@@ -468,6 +468,7 @@
       "generateDesc": "Generate a unified Medical CV from uploaded patient documents.",
       "generating": "Generating...",
       "titleLabel": "Title",
+      "titlePlaceholder": "e.g. Cardiology Medical CV or Diabetes Summary",
       "selectDocuments": "Select documents to include",
       "generateCv": "Generate CV",
       "searchPlaceholder": "Search by title...",

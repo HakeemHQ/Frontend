@@ -110,36 +110,36 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
           </div>
         </div>
       ) : (
-      {/* Massive Hero Section */}
-      <div className="mb-12 bg-primary rounded-[48px] p-6 sm:p-10 lg:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px]">
-        {/* Background Graphic */}
-        <div className="absolute -top-24 -right-10 opacity-10 text-white transform rotate-12">
-          <HugeiconsIcon icon={FileAddIcon} className="w-[500px] h-[500px]" />
-        </div>
-        
-        {/* Back Navigation */}
-        <div className="absolute top-10 left-10 z-20 rtl:left-auto rtl:right-10">
-          <button 
-            onClick={() => router.back()}
-            className="inline-flex items-center text-sm font-bold text-white/80 hover:text-white transition bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md cursor-pointer border-none"
-          >
-            <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 rtl:rotate-180 mr-2 rtl:mr-0 rtl:ml-2" />
-            {t('doctor.workspace.breadcrumbPatients')}
-          </button>
-        </div>
-        
-        <div className="relative z-10 mt-24">
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
-            {t('doctor.medicalCvs.generateNew')}
-          </h1>
-          <p className="text-white/80 text-xl font-medium max-w-2xl">
-            {t('doctor.medicalCvs.generateDesc')}
-          </p>
-        </div>
-      </div>
-
-      {!showSuccess && (
-        <div className="bg-white border-0 rounded-[40px] shadow-2xl shadow-slate-200/50 p-8 md:p-12 relative z-30 -mt-20 mx-4 md:mx-8">
+        <>
+          {/* Massive Hero Section */}
+          <div className="mb-12 bg-primary rounded-[48px] p-6 sm:p-10 lg:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px]">
+            {/* Background Graphic */}
+            <div className="absolute -top-24 -right-10 opacity-10 text-white transform rotate-12">
+              <HugeiconsIcon icon={FileAddIcon} className="w-[500px] h-[500px]" />
+            </div>
+            
+            {/* Back Navigation */}
+            <div className="absolute top-10 left-10 z-20 rtl:left-auto rtl:right-10">
+              <button 
+                onClick={() => router.back()}
+                className="inline-flex items-center text-sm font-bold text-white/90 hover:text-white transition-all bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md cursor-pointer border-none"
+              >
+                <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 rtl:rotate-180 mr-2 rtl:mr-0 rtl:ml-2" />
+                {t('doctor.workspace.breadcrumbPatients')}
+              </button>
+            </div>
+            
+            <div className="relative z-10 mt-24">
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
+                {t('doctor.medicalCvs.generateNew')}
+              </h1>
+              <p className="text-white/80 text-xl font-medium max-w-2xl">
+                {t('doctor.medicalCvs.generateDesc')}
+              </p>
+            </div>
+          </div>
+    
+          <div className="bg-white border-0 rounded-[40px] shadow-2xl shadow-slate-200/50 p-8 md:p-12 relative z-30 -mt-20 mx-4 md:mx-8">
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-10">
@@ -154,7 +154,7 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Cardiology Medical CV or Diabetes Summary"
+                placeholder={t('doctor.medicalCvs.titlePlaceholder')}
                 iconLeft={<HugeiconsIcon icon={TextIcon} className="w-6 h-6 text-slate-400" />}
                 className="font-bold text-lg h-16 rounded-[20px]"
               />
@@ -181,6 +181,7 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
             </div>
           </form>
         </div>
+        </>
       )}
     </div>
   );
