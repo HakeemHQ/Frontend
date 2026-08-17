@@ -171,7 +171,7 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
       </AnimatePresence>
 
       {/* Massive Hero Section */}
-      <div className="mb-16 bg-primary rounded-[48px] p-10 md:p-16 lg:p-20 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[450px]">
+      <div className="mb-16 bg-primary rounded-[48px] p-6 sm:p-10 lg:p-16 lg:p-20 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[450px]">
         {/* Background Graphic */}
         <div className="absolute -top-20 -right-20 opacity-10 text-white transform rotate-12">
           <HugeiconsIcon icon={DocumentValidationIcon} className="w-[600px] h-[600px]" />
@@ -189,7 +189,7 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
         </div>
         
         <div className="relative z-10 mt-20">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black font-heading tracking-tighter mb-8 pr-12 rtl:pr-0 rtl:pl-12 leading-[1.1]">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl lg:text-8xl font-black font-heading tracking-tighter mb-8 pr-12 rtl:pr-0 rtl:pl-12 leading-[1.1]">
             {cv.title || "Untitled Medical CV"}
           </h1>
           <div className="flex flex-wrap items-center gap-4 text-sm md:text-lg font-bold">

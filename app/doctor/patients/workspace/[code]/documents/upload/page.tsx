@@ -138,7 +138,7 @@ export default function AddDocumentPage({ params }: { params: Promise<{ code: st
       />
 
       {/* Massive Hero Section */}
-      <div className="mb-12 bg-primary rounded-[48px] p-10 md:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px] mx-4 md:mx-auto max-w-5xl">
+      <div className="mb-12 bg-primary rounded-[48px] p-6 sm:p-10 lg:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px] mx-4 md:mx-auto max-w-5xl">
         {/* Background Graphic */}
         <div className="absolute -top-24 -right-10 opacity-10 text-white transform rotate-12 pointer-events-none">
           <HugeiconsIcon icon={DocumentAttachmentIcon} className="w-[500px] h-[500px]" />
@@ -156,7 +156,7 @@ export default function AddDocumentPage({ params }: { params: Promise<{ code: st
         </div>
         
         <div className="relative z-10 mt-24">
-          <h1 className="text-5xl md:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
             {t('doctor.documents.uploadTitle')}
           </h1>
           <p className="text-white/80 text-xl font-medium max-w-2xl">

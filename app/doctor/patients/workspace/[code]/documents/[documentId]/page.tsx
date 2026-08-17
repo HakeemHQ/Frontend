@@ -123,7 +123,7 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
       </AnimatePresence>
 
       {/* Massive Hero Section */}
-      <div className="mb-12 bg-primary rounded-[48px] p-10 md:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px]">
+      <div className="mb-12 bg-primary rounded-[48px] p-6 sm:p-10 lg:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px]">
         {/* Background Graphic */}
         <div className="absolute -top-24 -right-10 opacity-10 text-white transform rotate-12 pointer-events-none">
           <HugeiconsIcon icon={DocumentValidationIcon} className="w-[500px] h-[500px]" />
@@ -149,7 +149,7 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
         </div>
         
         <div className="relative z-10 mt-24">
-          <h1 className="text-5xl md:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
             {documentName}
           </h1>
         </div>

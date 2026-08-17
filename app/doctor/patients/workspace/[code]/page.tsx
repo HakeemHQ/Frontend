@@ -116,7 +116,7 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
         className="w-full rounded-[48px] overflow-hidden relative"
       >
         {/* Massive Hero Section for Profile */}
-        <div className="bg-primary p-10 md:p-16 lg:p-20 shadow-2xl shadow-primary/40 relative overflow-hidden text-white min-h-[350px]">
+        <div className="bg-primary p-6 sm:p-10 lg:p-16 lg:p-20 shadow-2xl shadow-primary/40 relative overflow-hidden text-white min-h-[350px]">
           {/* Background Graphic */}
           <div className="absolute -top-20 -right-20 opacity-10 text-white transform -rotate-12">
             <HugeiconsIcon icon={UserIcon} className="w-[600px] h-[600px]" />
@@ -135,7 +135,7 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
 
           <div className="relative z-10 mt-20 flex flex-col md:flex-row md:items-end justify-between gap-8">
             <div>
-              <h2 className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter font-heading mb-4 leading-[1.1]">{patientName}</h2>
+              <h2 className="text-4xl sm:text-5xl lg:text-7xl lg:text-8xl font-black text-white tracking-tighter font-heading mb-4 leading-[1.1]">{patientName}</h2>
               <div className="flex flex-wrap items-center gap-4 text-sm md:text-lg font-bold">
                 <span className="text-white/80 bg-white/10 backdrop-blur-md px-6 py-3 rounded-full border border-white/10 shadow-lg">
                   {t('doctor.workspace.patientCode')}: {code}

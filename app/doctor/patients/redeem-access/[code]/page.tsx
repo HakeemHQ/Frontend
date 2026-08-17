@@ -74,7 +74,7 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
       </AnimatePresence>
 
       {/* Massive Hero Section */}
-      <div className="mb-12 bg-primary rounded-[48px] p-10 md:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px] mx-4 md:mx-auto max-w-5xl mt-4">
+      <div className="mb-12 bg-primary rounded-[48px] p-6 sm:p-10 lg:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px] mx-4 md:mx-auto max-w-5xl mt-4">
         {/* Background Graphic */}
         <div className="absolute -top-24 -right-10 opacity-10 text-white transform rotate-12 pointer-events-none">
           <HugeiconsIcon icon={UserIcon} className="w-[500px] h-[500px]" />
@@ -92,7 +92,7 @@ export default function RedeemAccessPage({ params }: { params: Promise<{ code: s
         </div>
         
         <div className="relative z-10 mt-24 text-center">
-          <h1 className="text-5xl md:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
             {t('doctor.redeemAccess.title')}
           </h1>
           <p className="text-white/80 text-xl font-medium max-w-2xl mx-auto">

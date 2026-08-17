@@ -66,7 +66,7 @@ export default function AccessGrantedPage({ params }: { params: Promise<{ code: 
   return (
     <div className="max-w-2xl mx-auto pt-4 pb-8 space-y-6 relative animate-in fade-in duration-300">
       {/* Massive Hero Section */}
-      <div className="mb-12 bg-primary rounded-[48px] p-10 md:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px] mx-4 md:mx-auto max-w-5xl mt-4">
+      <div className="mb-12 bg-primary rounded-[48px] p-6 sm:p-10 lg:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px] mx-4 md:mx-auto max-w-5xl mt-4">
         {/* Background Graphic */}
         <div className="absolute -top-24 -right-10 opacity-10 text-white transform rotate-12 pointer-events-none">
           <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-[500px] h-[500px]" />
@@ -87,7 +87,7 @@ export default function AccessGrantedPage({ params }: { params: Promise<{ code: 
           <div className="w-20 h-20 bg-white text-primary rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
             <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-12 h-12" />
           </div>
-          <h1 className="text-5xl md:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
             {t('doctor.accessGranted.title')}
           </h1>
           <p className="text-white/80 text-xl font-medium max-w-2xl mx-auto">

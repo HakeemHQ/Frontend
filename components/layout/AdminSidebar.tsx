@@ -58,68 +58,81 @@ const navItems = [
   { label: "Audit Logs", href: "/admin/logs", icon: <LogsIcon /> },
 ];
 
+import { useSidebarStore } from "@/store/useSidebarStore";
+
 export function AdminSidebar() {
   const pathname = usePathname();
   const { logout } = useAuth();
+  const { isMobileMenuOpen, closeMobileMenu } = useSidebarStore();
 
   return (
-    <aside className="fixed left-0 top-0 hidden h-screen w-[260px] border-r-2 border-slate-100 bg-white/80 backdrop-blur-2xl md:block z-50 shadow-[4px_0_24px_-12px_rgba(0,0,0,0.1)]">
-      <div className="flex h-full flex-col">
-        <div className="flex items-center gap-3 px-6 py-8">
-          <div className="flex h-10 w-10 items-center justify-center shrink-0 overflow-hidden rounded-xl">
-            <Image 
-              src="/icon.png" 
-              alt="Hakeem Logo" 
-              width={40} 
-              height={40} 
-              className="object-contain w-full h-full"
-              priority
-            />
+    <>
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40 md:hidden"
+          onClick={closeMobileMenu}
+        />
+      )}
+      <aside className={`fixed ltr:left-0 rtl:right-0 top-0 h-screen w-[260px] ltr:border-r-2 rtl:border-l-2 border-slate-100 bg-white/80 backdrop-blur-2xl z-50 shadow-[4px_0_24px_-12px_rgba(0,0,0,0.1)] transition-transform duration-300 ltr:md:translate-x-0 rtl:md:translate-x-0 ${isMobileMenuOpen ? "translate-x-0" : "ltr:-translate-x-full rtl:translate-x-full"}`}>
+        <div className="flex h-full flex-col">
+          <div className="flex items-center gap-3 px-6 py-8">
+            <div className="flex h-10 w-10 items-center justify-center shrink-0 overflow-hidden rounded-xl">
+              <Image 
+                src="/icon.png" 
+                alt="Hakeem Logo" 
+                width={40} 
+                height={40} 
+                className="object-contain w-full h-full"
+                priority
+              />
+            </div>
+            <div>
+              <div className="text-lg font-bold font-heading tracking-tight text-primary">
+                Hakeem
+              </div>
+              <div className="text-[10px] uppercase font-bold text-slate-400">
+                Premium Medical SaaS
+              </div>
+            </div>
           </div>
-          <div>
-            <div className="text-lg font-bold font-heading tracking-tight text-primary">
-              Hakeem
+
+          <nav className="mt-4 flex-1 px-4">
+            <div className="space-y-1">
+              {navItems.map((item) => {
+                const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/');
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    onClick={closeMobileMenu}
+                    className={`flex items-center gap-3 rounded-[24px] px-6 py-4 text-[15px] font-bold transition-all duration-300 mx-2 ${
+                      isActive
+                        ? "bg-primary text-white shadow-xl shadow-primary/30 -translate-y-1"
+                        : "text-slate-500 hover:bg-white hover:shadow-md hover:text-slate-900"
+                    }`}
+                  >
+                    <span className={isActive ? "text-white" : "text-slate-400"}>
+                      {item.icon}
+                    </span>
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
             </div>
-            <div className="text-[10px] uppercase font-bold text-slate-400">
-              Premium Medical SaaS
-            </div>
+          </nav>
+
+          <div className="px-4 py-6">
+            <button 
+              onClick={() => { closeMobileMenu(); logout(); }}
+              className="flex w-auto mx-2 items-center gap-3 rounded-[20px] px-6 py-4 text-[15px] font-bold text-rose-500 transition-all hover:bg-rose-50 hover:shadow-sm cursor-pointer"
+            >
+              <LogoutIcon />
+              <span>Logout</span>
+            </button>
           </div>
         </div>
-
-        <nav className="mt-4 flex-1 px-4">
-          <div className="space-y-1">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/');
-              return (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className={`flex items-center gap-3 rounded-[24px] px-6 py-4 text-[15px] font-bold transition-all duration-300 mx-2 ${
-                    isActive
-                      ? "bg-primary text-white shadow-xl shadow-primary/30 -translate-y-1"
-                      : "text-slate-500 hover:bg-white hover:shadow-md hover:text-slate-900"
-                  }`}
-                >
-                  <span className={isActive ? "text-white" : "text-slate-400"}>
-                    {item.icon}
-                  </span>
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </div>
-        </nav>
-
-        <div className="px-4 py-6">
-          <button 
-            onClick={logout}
-            className="flex w-auto mx-2 items-center gap-3 rounded-[20px] px-6 py-4 text-[15px] font-bold text-rose-500 transition-all hover:bg-rose-50 hover:shadow-sm cursor-pointer"
-          >
-            <LogoutIcon />
-            <span>Logout</span>
-          </button>
-        </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }

@@ -81,7 +81,7 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
 
 
       {showSuccess ? (
-        <div className="bg-white border border-emerald-100 rounded-3xl p-10 md:p-16 text-center shadow-sm animate-in zoom-in-95 duration-500">
+        <div className="bg-white border border-emerald-100 rounded-3xl p-6 sm:p-10 lg:p-16 text-center shadow-sm animate-in zoom-in-95 duration-500">
           <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6">
             <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-10 h-10 text-emerald-500" />
           </div>
@@ -111,7 +111,7 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
         </div>
       ) : (
       {/* Massive Hero Section */}
-      <div className="mb-12 bg-primary rounded-[48px] p-10 md:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px]">
+      <div className="mb-12 bg-primary rounded-[48px] p-6 sm:p-10 lg:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px]">
         {/* Background Graphic */}
         <div className="absolute -top-24 -right-10 opacity-10 text-white transform rotate-12">
           <HugeiconsIcon icon={FileAddIcon} className="w-[500px] h-[500px]" />
@@ -129,7 +129,7 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
         </div>
         
         <div className="relative z-10 mt-24">
-          <h1 className="text-5xl md:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
             {t('doctor.medicalCvs.generateNew')}
           </h1>
           <p className="text-white/80 text-xl font-medium max-w-2xl">
