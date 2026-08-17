@@ -61,7 +61,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen w-full items-center justify-center bg-slate-50 text-gray-900 font-sans relative p-4 sm:p-6 lg:p-8">
+    <main className="flex min-h-screen h-screen w-full bg-white text-gray-900 font-sans relative overflow-hidden">
       <AnimatePresence>
         {toast && (
           <Toast
@@ -72,45 +72,45 @@ export default function LoginPage() {
         )}
       </AnimatePresence>
 
-      <div className="flex w-full max-w-5xl bg-white rounded-3xl shadow-xl shadow-slate-200/60 overflow-hidden border border-slate-100 min-h-[580px]">
-        {/* Left Side: Hero Panel */}
-        <section className="hidden lg:flex relative w-1/2 flex-col justify-between bg-primary p-10 xl:p-12 text-white">
+      <div className="flex w-full h-full">
+        {/* Left Side: Hero Panel (Full Height, Edge-to-Edge) */}
+        <section className="hidden lg:flex relative w-1/2 h-full flex-col justify-between bg-primary p-12 xl:p-16 text-white shrink-0">
           <div className="relative z-10">
-            <div className="mb-10 flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-primary font-bold">
+            <div className="mb-12 flex items-center gap-2.5">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-primary font-bold text-lg">
                 H
               </div>
-              <span className="text-xl font-bold tracking-tight text-white font-heading">{t('common.appName')}</span>
+              <span className="text-2xl font-bold tracking-tight text-white font-heading">{t('common.appName')}</span>
             </div>
 
-            <h1 className="text-3xl xl:text-4xl font-black leading-tight tracking-tight text-white font-heading mb-4">
+            <h1 className="text-3xl xl:text-5xl font-black leading-tight tracking-tight text-white font-heading mb-6 max-w-lg">
               {t('auth.login.heroTitle')}
             </h1>
-            <p className="text-sm xl:text-base text-white/80 leading-relaxed font-medium">
+            <p className="text-base xl:text-lg text-white/80 leading-relaxed font-medium max-w-md">
               {t('auth.login.heroSubtitle')}
             </p>
           </div>
 
-          <div className="relative z-10 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/15">
-            <div className="flex items-center gap-2 text-xs font-semibold text-white/90">
-              <HugeiconsIcon icon={Shield01Icon} className="w-4 h-4 text-emerald-300" />
+          <div className="relative z-10 bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/15 max-w-md">
+            <div className="flex items-center gap-2.5 text-xs font-semibold text-white/90">
+              <HugeiconsIcon icon={Shield01Icon} className="w-4 h-4 text-emerald-300 shrink-0" />
               <span>Enterprise grade encryption & HIPAA compliance</span>
             </div>
           </div>
         </section>
 
-        {/* Right Side: Form */}
-        <section className="flex w-full lg:w-1/2 flex-col justify-between p-8 sm:p-12 relative">
-          <div className="flex justify-end w-full mb-4">
+        {/* Right Side: Form (Full Height, Edge-to-Edge) */}
+        <section className="flex w-full lg:w-1/2 h-full flex-col justify-between p-8 sm:p-12 xl:p-16 relative overflow-y-auto bg-white">
+          <div className="flex justify-end w-full">
             <LanguageSwitcher />
           </div>
 
-          <div className="w-full max-w-sm mx-auto my-auto space-y-6">
+          <div className="w-full max-w-md mx-auto my-auto py-8 space-y-6">
             <div>
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900 font-heading">
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 font-heading">
                 {t('auth.login.title')}
               </h2>
-              <p className="mt-1 text-xs sm:text-sm text-slate-500">
+              <p className="mt-1.5 text-xs sm:text-sm text-slate-500 font-medium">
                 {t('auth.login.subtitle')}
               </p>
             </div>
@@ -173,7 +173,7 @@ export default function LoginPage() {
             </form>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-center gap-2 text-xs font-medium text-slate-500">
+          <div className="pt-4 border-t border-slate-100 flex items-center justify-center gap-2 text-xs font-medium text-slate-500">
             <HugeiconsIcon icon={Shield01Icon} className="h-4 w-4 text-primary" />
             <span>{t('auth.login.securityNote')}</span>
           </div>

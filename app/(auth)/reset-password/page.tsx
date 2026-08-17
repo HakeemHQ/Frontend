@@ -3,128 +3,90 @@
 import { useLanguage } from "@/localization/LanguageContext";
 import LanguageSwitcher from "@/components/layout/LanguageSwitcher";
 import Link from "next/link";
-
-const FileIcon = ({ className }: { className?: string }) => (
-  <svg className={className} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-    <polyline points="14 2 14 8 20 8" />
-    <line x1="16" x2="8" y1="13" y2="13" />
-    <line x1="16" x2="8" y1="17" y2="17" />
-    <line x1="10" x2="8" y1="9" y2="9" />
-  </svg>
-);
-
-const HistoryIcon = ({ className }: { className?: string }) => (
-  <svg className={className} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-    <path d="M3 3v5h5" />
-    <path d="M12 7v5l4 2" />
-  </svg>
-);
+import { HugeiconsIcon } from "@hugeicons/react";
+import { LockIcon, ArrowLeft01Icon } from "@hugeicons/core-free-icons";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 
 export default function ResetPasswordPage() {
   const { t } = useLanguage();
 
   return (
-    <main className="flex min-h-screen w-full bg-slate-50 text-gray-900 font-sans relative p-4 lg:p-8">
-      <div className="absolute top-8 right-8 z-50">
-        <LanguageSwitcher />
-      </div>
-
-      <div className="flex w-full max-w-[1600px] mx-auto bg-white rounded-[48px] shadow-2xl shadow-slate-200/50 overflow-hidden min-h-[calc(100vh-4rem)]">
-        {/* Left Side: Massive Hero Panel */}
-        <section className="hidden lg:flex relative w-1/2 flex-col justify-between bg-primary p-16 xl:p-24 overflow-hidden text-white">
-          <div className="absolute right-0 top-0 h-full w-[1px] bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
-          
+    <main className="flex min-h-screen h-screen w-full bg-white text-gray-900 font-sans relative overflow-hidden">
+      <div className="flex w-full h-full">
+        {/* Left Side: Hero Panel (Edge-to-Edge) */}
+        <section className="hidden lg:flex relative w-1/2 h-full flex-col justify-between bg-primary p-12 xl:p-16 text-white shrink-0">
           <div className="relative z-10">
-            <div className="mb-16 flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-primary">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 4v16" />
-                  <path d="M4 12h16" />
-                </svg>
+            <div className="mb-12 flex items-center gap-2.5">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-primary font-bold text-lg">
+                H
               </div>
-              <span className="text-3xl font-black tracking-tighter text-white font-heading">{t('common.appName')}</span>
+              <span className="text-2xl font-bold tracking-tight text-white font-heading">{t('common.appName')}</span>
             </div>
 
-            <h1 className="mb-8 text-6xl xl:text-7xl font-black leading-none tracking-tighter text-white font-heading">
+            <h1 className="text-3xl xl:text-5xl font-black leading-tight tracking-tight text-white font-heading mb-6 max-w-lg">
               {t('auth.resetPassword.title')}
             </h1>
-            <p className="text-2xl text-white/80 leading-relaxed max-w-lg font-medium">
+            <p className="text-base xl:text-lg text-white/80 leading-relaxed font-medium max-w-md">
               {t('auth.resetPassword.subtitle')}
             </p>
           </div>
-
-          <div className="relative w-full h-48 mt-12">
-            <div className="absolute left-0 top-0 flex w-72 items-center gap-4 rounded-3xl bg-white/10 p-5 shadow-xl backdrop-blur-md border border-white/20">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[20px] bg-white text-primary">
-                <FileIcon className="h-7 w-7" />
-              </div>
-              <div className="space-y-3 w-full">
-                <div className="h-3 w-full rounded-full bg-white/30"></div>
-                <div className="h-3 w-2/3 rounded-full bg-white/20"></div>
-              </div>
-            </div>
-            
-            <div className="absolute right-0 top-24 flex w-72 items-center gap-4 rounded-3xl bg-white/10 p-5 shadow-xl backdrop-blur-md border border-white/20">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[20px] bg-white text-primary">
-                <HistoryIcon className="h-7 w-7" />
-              </div>
-              <div className="space-y-3 w-full">
-                <div className="h-3 w-full rounded-full bg-white/30"></div>
-                <div className="h-3 w-1/2 rounded-full bg-white/20"></div>
-              </div>
-            </div>
-          </div>
         </section>
 
-        {/* Right Side: Massive Form */}
-        <section className="flex w-full lg:w-1/2 flex-col items-center justify-center p-8 sm:p-16 lg:p-24 relative">
-          <div className="w-full max-w-lg space-y-10">
-            <div className="text-left">
-              <h2 className="text-5xl font-black tracking-tighter text-slate-900 font-heading">
+        {/* Right Side: Form (Edge-to-Edge) */}
+        <section className="flex w-full lg:w-1/2 h-full flex-col justify-between p-8 sm:p-12 xl:p-16 relative overflow-y-auto bg-white">
+          <div className="flex justify-end w-full">
+            <LanguageSwitcher />
+          </div>
+
+          <div className="w-full max-w-md mx-auto my-auto py-8 space-y-6">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 font-heading">
                 {t('auth.resetPassword.title')}
               </h2>
-              <p className="mt-4 text-xl text-slate-500 font-medium">
+              <p className="mt-1.5 text-xs sm:text-sm text-slate-500 font-medium">
                 {t('auth.resetPassword.subtitle')}
               </p>
             </div>
 
-            <form className="space-y-6">
-              <div className="space-y-3">
-                <label className="text-lg font-bold text-slate-900">
+            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-700">
                   {t('auth.resetPassword.newPasswordLabel')}
                 </label>
-                <input
+                <Input
                   type="password"
-                  className="w-full bg-slate-50 border-2 border-slate-100 outline-none focus:border-primary rounded-[24px] h-20 text-xl font-bold px-6 transition-all"
                   placeholder={t('auth.resetPassword.newPasswordPlaceholder')}
+                  iconLeft={<HugeiconsIcon icon={LockIcon} className="h-4 w-4 text-slate-400" />}
                 />
               </div>
 
-              <div className="space-y-3">
-                <label className="text-lg font-bold text-slate-900">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-700">
                   {t('auth.resetPassword.confirmPasswordLabel')}
                 </label>
-                <input
+                <Input
                   type="password"
-                  className="w-full bg-slate-50 border-2 border-slate-100 outline-none focus:border-primary rounded-[24px] h-20 text-xl font-bold px-6 transition-all"
                   placeholder={t('auth.resetPassword.confirmPasswordPlaceholder')}
+                  iconLeft={<HugeiconsIcon icon={LockIcon} className="h-4 w-4 text-slate-400" />}
                 />
               </div>
               
-              <button className="w-full bg-primary hover:bg-primary/90 text-white font-black h-20 rounded-full shadow-2xl shadow-primary/30 hover:shadow-primary/40 hover:-translate-y-1 transition-all text-2xl border-none mt-4">
+              <Button type="submit" fullWidth className="py-2.5 text-sm font-semibold mt-2">
                 {t('auth.resetPassword.submitButton')}
-              </button>
+              </Button>
             </form>
 
-            <div className="text-center pt-6">
-              <p className="text-lg font-bold text-slate-500">
-                <Link href="/login" className="text-primary hover:underline">
-                  Back to login
-                </Link>
-              </p>
+            <div className="text-center pt-2">
+              <Link href="/login" className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline">
+                <HugeiconsIcon icon={ArrowLeft01Icon} className="w-3.5 h-3.5 rtl:rotate-180" />
+                <span>Back to login</span>
+              </Link>
             </div>
+          </div>
+
+          <div className="pt-4 border-t border-slate-100 text-center text-xs text-slate-400">
+            {t('common.brandTagline')}
           </div>
         </section>
       </div>
