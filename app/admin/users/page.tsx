@@ -100,15 +100,8 @@ export default function UsersListPage() {
   return (
     <div className="space-y-6 pb-12 max-w-7xl mx-auto px-4 sm:px-6">
       {/* Hero Header */}
-      <div className="bg-primary rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-primary/20 relative min-h-[160px] flex flex-col justify-center z-30">
-        {/* Background Graphic Container */}
-        <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
-          <div className="absolute -top-16 -right-10 opacity-10 text-white transform rotate-12">
-            <HugeiconsIcon icon={UserGroupIcon} className="w-[360px] h-[360px]" />
-          </div>
-        </div>
-
-        <div className="relative z-10 flex flex-col gap-6 max-w-4xl">
+      <div className="bg-primary rounded-2xl p-6 sm:p-8 text-white shadow-sm mb-6">
+        <div className="flex flex-col gap-6 max-w-4xl">
           <div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight font-heading">
               {t('admin.users.title')}
@@ -119,7 +112,7 @@ export default function UsersListPage() {
           </div>
           
           {/* Filters Bar inside Hero */}
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-white/10 p-3 sm:p-4 rounded-2xl backdrop-blur-md border border-white/20 relative z-50">
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-white/10 p-3 sm:p-4 rounded-xl backdrop-blur-md border border-white/20">
             {/* Search Input */}
             <div className="sm:col-span-6">
               <span className="text-xs font-bold text-white/70 mb-1 uppercase tracking-wider pl-1 block">
@@ -130,7 +123,7 @@ export default function UsersListPage() {
                 <input
                   type="text"
                   placeholder={t('admin.users.searchPlaceholder')}
-                  className="w-full bg-white/20 border border-white/10 text-white rounded-xl pl-10 pr-8 py-2.5 text-sm font-medium focus:ring-2 focus:ring-white outline-none placeholder-white/50 transition-all"
+                  className="w-full bg-white/20 border border-white/10 text-white rounded-lg pl-10 pr-8 py-2.5 text-sm font-medium focus:ring-2 focus:ring-white outline-none placeholder-white/50 transition-all"
                   value={search}
                   onChange={handleSearchChange}
                 />
@@ -145,7 +138,7 @@ export default function UsersListPage() {
               </div>
             </div>
 
-            {/* Role / UserType Filter */}
+            {/* Role Filter */}
             <div className="sm:col-span-3">
               <Select
                 variant="hero"
@@ -171,7 +164,7 @@ export default function UsersListPage() {
       </div>
 
       {/* Main Content Area */}
-      <div className="-mt-6 relative z-10">
+      <div>
         <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
           {/* Header Info Bar */}
           <div className="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-3 bg-slate-50/75">

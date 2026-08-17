@@ -117,14 +117,8 @@ export default function PatientsPage() {
       </AnimatePresence>
 
       {/* Hero Header */}
-      <div className="bg-primary rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-primary/20 relative min-h-[160px] flex flex-col justify-center z-20">
-        <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
-          <div className="absolute -top-16 -right-10 opacity-10 text-white transform rotate-12">
-            <HugeiconsIcon icon={UserGroupIcon} className="w-[360px] h-[360px]" />
-          </div>
-        </div>
-
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+      <div className="bg-primary rounded-2xl p-6 sm:p-8 text-white shadow-sm mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight font-heading">
               {t('doctor.patients.title')}
@@ -145,7 +139,7 @@ export default function PatientsPage() {
       </div>
 
       {/* Main Content Card */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 sm:p-6 relative z-30 -mt-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 sm:p-6">
         {/* Search & Filters */}
         <div className="flex flex-col md:flex-row gap-3 items-center bg-slate-50 p-2.5 sm:p-3 rounded-xl border border-slate-100 mb-6">
           <div className="w-full md:flex-1 relative">

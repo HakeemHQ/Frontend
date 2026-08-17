@@ -72,8 +72,8 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-6 pb-12 max-w-7xl mx-auto px-4 sm:px-6">
       {/* Hero Header */}
-      <div className="bg-primary rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-primary/20 relative min-h-[160px] flex flex-col justify-center">
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <div className="bg-primary rounded-2xl p-6 sm:p-8 text-white shadow-sm mb-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight font-heading">
               {t('admin.dashboard.title')}
@@ -83,14 +83,14 @@ export default function AdminDashboardPage() {
             </p>
           </div>
           
-          <div className="flex flex-wrap items-center gap-3 bg-white/10 p-2.5 sm:p-3 rounded-2xl backdrop-blur-md border border-white/20">
+          <div className="flex flex-wrap items-center gap-3 bg-white/10 p-2.5 sm:p-3 rounded-xl backdrop-blur-md border border-white/20">
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-white/70 uppercase tracking-wider pl-1">{t('admin.dashboard.from')}</span>
               <input 
                 type="date" 
                 value={fromDate}
                 onChange={(e) => setFromDate(e.target.value)}
-                className="bg-white/20 border border-white/10 text-white rounded-xl px-3 py-1.5 text-xs sm:text-sm font-semibold outline-none focus:ring-2 focus:ring-white/40 cursor-pointer"
+                className="bg-white/20 border border-white/10 text-white rounded-lg px-3 py-1.5 text-xs sm:text-sm font-semibold outline-none focus:ring-2 focus:ring-white/40 cursor-pointer"
                 style={{ colorScheme: 'dark' }}
               />
             </div>
@@ -101,7 +101,7 @@ export default function AdminDashboardPage() {
                 type="date" 
                 value={toDate}
                 onChange={(e) => setToDate(e.target.value)}
-                className="bg-white/20 border border-white/10 text-white rounded-xl px-3 py-1.5 text-xs sm:text-sm font-semibold outline-none focus:ring-2 focus:ring-white/40 cursor-pointer"
+                className="bg-white/20 border border-white/10 text-white rounded-lg px-3 py-1.5 text-xs sm:text-sm font-semibold outline-none focus:ring-2 focus:ring-white/40 cursor-pointer"
                 style={{ colorScheme: 'dark' }}
               />
             </div>
@@ -110,7 +110,7 @@ export default function AdminDashboardPage() {
       </div>
       
       {/* Content Section */}
-      <div className="-mt-6 relative z-10">
+      <div>
         {dateError && (
           <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-red-600 font-bold text-sm">
             {dateError}

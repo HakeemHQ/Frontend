@@ -90,14 +90,16 @@ export default function DoctorsListPage() {
   return (
     <div className="space-y-6 pb-12 max-w-7xl mx-auto px-4 sm:px-6">
       {/* Hero Header */}
-      <div className="bg-primary rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-primary/20 relative min-h-[160px] flex flex-col justify-center z-30">
-        <div className="relative z-10 flex flex-col gap-6">
+      <div className="bg-primary rounded-2xl p-6 sm:p-8 text-white shadow-sm mb-6">
+        <div className="flex flex-col gap-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl font-black tracking-tight font-heading">
                 {t('admin.doctors.title')}
               </h1>
-              <p className="mt-1 text-sm sm:text-base text-white/80 font-medium">{t('admin.doctors.subtitle')}</p>
+              <p className="mt-1 text-sm sm:text-base text-white/80 font-medium">
+                {t('admin.doctors.subtitle') || "Manage and oversee all registered doctors"}
+              </p>
             </div>
             <Link 
               href="/admin/doctors/add"
@@ -109,14 +111,14 @@ export default function DoctorsListPage() {
           </div>
           
           {/* Filters inside Hero */}
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-white/10 p-3 sm:p-4 rounded-2xl backdrop-blur-md border border-white/20 relative z-50">
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-white/10 p-3 sm:p-4 rounded-xl backdrop-blur-md border border-white/20">
             <div className="sm:col-span-6">
               <span className="text-xs font-bold text-white/70 mb-1 uppercase tracking-wider pl-1 block">{t('nav.search')}</span>
               <div className="relative">
                 <HugeiconsIcon icon={Search01Icon} className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white/60" />
                 <input
                   placeholder={t('admin.doctors.searchPlaceholder')}
-                  className="w-full bg-white/20 border border-white/10 text-white rounded-xl pl-10 pr-8 py-2.5 text-sm font-medium focus:ring-2 focus:ring-white outline-none placeholder-white/50 transition-all"
+                  className="w-full bg-white/20 border border-white/10 text-white rounded-lg pl-10 pr-8 py-2.5 text-sm font-medium focus:ring-2 focus:ring-white outline-none placeholder-white/50 transition-all"
                   value={search}
                   onChange={handleSearchChange}
                 />
@@ -155,7 +157,7 @@ export default function DoctorsListPage() {
       </div>
 
       {/* Main Content Area */}
-      <div className="-mt-6 relative z-10">
+      <div>
         <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
         {isDoctorsLoading ? (
           <div className="flex justify-center items-center h-40">

@@ -141,15 +141,9 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
       </AnimatePresence>
 
       {/* Hero Header */}
-      <div className="bg-primary rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-primary/20 relative min-h-[160px] flex flex-col justify-center z-20">
-        <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
-          <div className="absolute -top-16 -right-10 opacity-10 text-white transform rotate-12">
-            <HugeiconsIcon icon={FileUploadIcon} className="w-[360px] h-[360px]" />
-          </div>
-        </div>
-        
+      <div className="bg-primary rounded-2xl p-6 sm:p-8 text-white shadow-sm mb-6">
         {/* Back Navigation & Actions */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 relative z-20">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <Link 
             href={`/doctor/patients/workspace/${code}`}
             className="inline-flex items-center text-xs font-semibold text-white/80 hover:text-white transition bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-lg backdrop-blur-md self-start"
@@ -166,7 +160,7 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
           </Link>
         </div>
         
-        <div className="relative z-10">
+        <div>
           <h1 className="text-2xl sm:text-3xl font-black text-white font-heading tracking-tight">
             {t('doctor.documents.title')}
           </h1>
@@ -174,7 +168,7 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
       </div>
 
       {/* Main Content Card */}
-      <div className="w-full rounded-2xl bg-white shadow-sm border border-slate-100 p-5 sm:p-6 relative z-30 -mt-6">
+      <div className="w-full rounded-2xl bg-white shadow-sm border border-slate-100 p-5 sm:p-6">
         {/* Search Bar */}
         <div className="mb-5 max-w-sm">
           <Input

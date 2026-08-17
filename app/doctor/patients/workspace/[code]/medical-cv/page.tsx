@@ -131,15 +131,9 @@ export default function MedicalCvListPage({ params }: { params: Promise<{ code: 
       </AnimatePresence>
 
       {/* Hero Header */}
-      <div className="bg-primary rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-primary/20 relative min-h-[160px] flex flex-col justify-center z-20">
-        <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
-          <div className="absolute -top-16 -right-10 opacity-10 text-white transform rotate-12">
-            <HugeiconsIcon icon={FileAddIcon} className="w-[360px] h-[360px]" />
-          </div>
-        </div>
-        
+      <div className="bg-primary rounded-2xl p-6 sm:p-8 text-white shadow-sm mb-6">
         {/* Back Navigation & Actions */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 relative z-20">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <Link 
             href={`/doctor/patients/workspace/${code}`}
             className="inline-flex items-center text-xs font-semibold text-white/80 hover:text-white transition bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-lg backdrop-blur-md self-start"
@@ -156,7 +150,7 @@ export default function MedicalCvListPage({ params }: { params: Promise<{ code: 
           </Link>
         </div>
         
-        <div className="relative z-10">
+        <div>
           <h1 className="text-2xl sm:text-3xl font-black text-white font-heading tracking-tight">
             {t('doctor.medicalCvs.title')}
           </h1>
@@ -167,7 +161,7 @@ export default function MedicalCvListPage({ params }: { params: Promise<{ code: 
       </div>
 
       {/* Filters Section */}
-      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm mb-6 flex flex-col md:flex-row gap-3 items-center justify-between relative z-30 -mt-6">
+      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm mb-6 flex flex-col md:flex-row gap-3 items-center justify-between">
         <div className="w-full md:w-80">
           <Input 
             placeholder={t('doctor.medicalCvs.searchPlaceholder')} 

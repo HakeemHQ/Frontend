@@ -78,8 +78,8 @@ export default function AuditLogsPage() {
   return (
     <div className="space-y-6 pb-12 max-w-7xl mx-auto px-4 sm:px-6">
       {/* Hero Header */}
-      <div className="bg-primary rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-primary/20 relative min-h-[160px] flex flex-col justify-center z-30">
-        <div className="relative z-10 flex flex-col gap-6">
+      <div className="bg-primary rounded-2xl p-6 sm:p-8 text-white shadow-sm mb-6">
+        <div className="flex flex-col gap-6">
           <div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight font-heading">
               {t('admin.auditLogs.systemLogs')}
@@ -88,13 +88,13 @@ export default function AuditLogsPage() {
           </div>
           
           {/* Filters */}
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-white/10 p-3 sm:p-4 rounded-2xl backdrop-blur-md border border-white/20">
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-white/10 p-3 sm:p-4 rounded-xl backdrop-blur-md border border-white/20">
             <div className="sm:col-span-3">
               <span className="text-xs font-bold text-white/70 mb-1 uppercase tracking-wider pl-1 block">{t('admin.auditLogs.action')}</span>
               <input
                 dir="auto"
                 placeholder={t('admin.auditLogs.actionPlaceholder')}
-                className="w-full bg-white/20 border border-white/10 text-white rounded-xl px-3.5 py-2 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-white outline-none placeholder-white/50"
+                className="w-full bg-white/20 border border-white/10 text-white rounded-lg px-3.5 py-2 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-white outline-none placeholder-white/50"
                 value={actionFilter}
                 onChange={handleActionChange}
               />
@@ -103,7 +103,7 @@ export default function AuditLogsPage() {
               <span className="text-xs font-bold text-white/70 mb-1 uppercase tracking-wider pl-1 block">{t('admin.auditLogs.actorUserId')}</span>
               <input
                 placeholder={t('admin.auditLogs.filterByUser')}
-                className="w-full bg-white/20 border border-white/10 text-white rounded-xl px-3.5 py-2 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-white outline-none placeholder-white/50"
+                className="w-full bg-white/20 border border-white/10 text-white rounded-lg px-3.5 py-2 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-white outline-none placeholder-white/50"
                 value={actorUserIdFilter}
                 onChange={handleActorChange}
               />
@@ -115,7 +115,7 @@ export default function AuditLogsPage() {
                 type="date" 
                 value={fromDate}
                 onChange={handleFromDateChange}
-                className="w-full bg-white/20 border border-white/10 text-white rounded-xl px-3 py-2 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-white outline-none cursor-pointer"
+                className="w-full bg-white/20 border border-white/10 text-white rounded-lg px-3 py-2 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-white outline-none cursor-pointer"
                 style={{ colorScheme: 'dark' }}
               />
             </div>
@@ -125,7 +125,7 @@ export default function AuditLogsPage() {
                 type="date" 
                 value={toDate}
                 onChange={handleToDateChange}
-                className="w-full bg-white/20 border border-white/10 text-white rounded-xl px-3 py-2 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-white outline-none cursor-pointer"
+                className="w-full bg-white/20 border border-white/10 text-white rounded-lg px-3 py-2 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-white outline-none cursor-pointer"
                 style={{ colorScheme: 'dark' }}
               />
             </div>
@@ -133,10 +133,10 @@ export default function AuditLogsPage() {
         </div>
       </div>
       
-      {dateError && <p className="text-sm text-red-500 font-semibold px-2">{dateError}</p>}
+      {dateError && <p className="text-sm text-red-500 font-semibold px-2 mb-4">{dateError}</p>}
 
       {/* Main Table */}
-      <div className="-mt-6 relative z-10">
+      <div>
         <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
         {isAuditLogsLoading ? (
           <div className="flex justify-center items-center h-40">

@@ -24,7 +24,7 @@ export default function DoctorLayout({
     <div className="min-h-screen bg-slate-50 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-100 via-slate-50 to-slate-100 selection:bg-emerald-500/30">
       <DoctorSidebar />
       <div className={`flex flex-col min-h-screen transition-all duration-300 ltr:pl-0 rtl:pr-0 ${isCollapsed ? "ltr:md:pl-[80px] rtl:md:pr-[80px]" : "ltr:md:pl-[80px] rtl:md:pr-[80px] ltr:lg:pl-[260px] rtl:lg:pr-[260px]"}`}>
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between md:justify-end px-4 sm:px-8 bg-white/80 backdrop-blur border-b border-slate-100">
+        <header className="sticky top-0 z-40 flex h-16 items-center justify-between md:justify-end px-4 sm:px-8 bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-sm">
           <button 
             onClick={toggleMobileMenu}
             className="md:hidden p-2 text-slate-600 hover:text-primary hover:bg-slate-100 rounded-lg transition-colors"
