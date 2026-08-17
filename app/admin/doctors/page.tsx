@@ -110,7 +110,7 @@ export default function DoctorsListPage() {
   return (
     <div className="space-y-8 pb-8 max-w-7xl mx-auto">
       {/* Hero Header */}
-      <div className="bg-primary rounded-[48px] p-12 md:p-16 text-white shadow-2xl shadow-primary/30 relative overflow-hidden min-h-[350px] flex flex-col justify-center">
+      <div className="bg-primary rounded-[48px] p-12 md:p-16 text-white shadow-2xl shadow-primary/30 relative min-h-[350px] flex flex-col justify-center z-30">
         <div className="relative z-10 flex flex-col gap-8">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
             <div>
@@ -129,7 +129,7 @@ export default function DoctorsListPage() {
           </div>
           
           {/* Filters inside Hero */}
-          <div className="flex flex-col sm:flex-row items-center gap-4 bg-white/10 p-5 rounded-[32px] backdrop-blur-md border border-white/20 shadow-xl w-full max-w-5xl">
+          <div className="flex flex-col sm:flex-row items-center gap-4 bg-white/10 p-5 rounded-[32px] backdrop-blur-md border border-white/20 shadow-xl w-full max-w-5xl relative z-50">
             <div className="w-full sm:flex-1">
               <span className="text-xs font-bold text-white/60 mb-2 uppercase tracking-wider pl-2 block">{t('nav.search')}</span>
               <div className="relative">
@@ -144,39 +144,29 @@ export default function DoctorsListPage() {
             </div>
             
             <div className="w-full sm:w-64">
-              <span className="text-xs font-bold text-white/60 mb-2 uppercase tracking-wider pl-2 block">{t('admin.doctors.specialty')}</span>
-              <select 
-                className="w-full bg-white/20 border-none text-white rounded-[20px] px-6 py-4 text-lg font-bold focus:ring-2 focus:ring-white outline-none appearance-none"
+              <Select
+                variant="hero"
+                label={t('admin.doctors.specialty')}
+                options={specialtyOptions}
                 value={specialtyFilter}
-                onChange={(e) => handleSpecialtyChange(e.target.value)}
-              >
-                {specialtyOptions.map(opt => (
-                  <option key={opt.value} value={opt.value} className="text-slate-900 bg-white">
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+                onChange={handleSpecialtyChange}
+              />
             </div>
 
             <div className="w-full sm:w-64">
-              <span className="text-xs font-bold text-white/60 mb-2 uppercase tracking-wider pl-2 block">{t('admin.doctors.status')}</span>
-              <select 
-                className="w-full bg-white/20 border-none text-white rounded-[20px] px-6 py-4 text-lg font-bold focus:ring-2 focus:ring-white outline-none appearance-none"
+              <Select
+                variant="hero"
+                label={t('admin.doctors.status')}
+                options={statusOptions}
                 value={statusFilter}
-                onChange={(e) => handleStatusChangeFilter(e.target.value)}
-              >
-                {statusOptions.map(opt => (
-                  <option key={opt.value} value={opt.value} className="text-slate-900 bg-white">
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+                onChange={handleStatusChangeFilter}
+              />
             </div>
           </div>
         </div>
       </div>
 
-      <div className="-mt-16 relative z-20 px-4 md:px-8">
+      <div className="-mt-16 relative z-10 px-4 md:px-8">
         <div className="overflow-hidden rounded-[40px] border border-slate-100 bg-white shadow-2xl shadow-slate-200/50">
         {isDoctorsLoading ? (
           <div className="flex justify-center items-center h-48">

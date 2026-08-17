@@ -12,6 +12,10 @@ export type PatientsState = {
   setPage: (page: number) => void;
   statusFilter: string;
   setStatusFilter: (status: string) => void;
+  hasNextPage: boolean;
+  setHasNextPage: (hasNextPage: boolean) => void;
+  totalCount: number | null;
+  setTotalCount: (totalCount: number | null) => void;
 };
 
 export const usePatientsStore = create<PatientsState>((set) => ({
@@ -25,4 +29,8 @@ export const usePatientsStore = create<PatientsState>((set) => ({
   setPage: (page) => set({ page }),
   statusFilter: "Active",
   setStatusFilter: (status) => set({ statusFilter: status, page: 1 }),
+  hasNextPage: false,
+  setHasNextPage: (hasNextPage) => set({ hasNextPage }),
+  totalCount: null,
+  setTotalCount: (totalCount) => set({ totalCount }),
 }));

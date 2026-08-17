@@ -159,8 +159,8 @@ export function DoctorSidebar() {
           <button 
             onClick={() => { closeMobileMenu(); logout(); }}
             title={isCollapsed ? t('nav.logout') : undefined}
-            className={`flex w-full items-center rounded-[20px] py-4 font-bold text-rose-500 transition-all hover:bg-rose-50 hover:shadow-sm cursor-pointer mx-2 ${
-              isCollapsed ? "justify-start md:justify-center px-6 md:px-0 w-auto" : "gap-3 px-6 text-[15px] w-auto"
+            className={`flex w-[calc(100%-16px)] items-center rounded-[24px] py-4 font-bold text-rose-500 transition-all duration-300 hover:bg-rose-50 hover:shadow-sm cursor-pointer mx-2 ${
+              isCollapsed ? "justify-start md:justify-center px-6 md:px-0" : "gap-3 px-6 text-[15px]"
             }`}
           >
             <span className="shrink-0"><LogoutIcon /></span>

@@ -19,13 +19,6 @@ const ChevronLeftIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const InfoIcon = ({ className }: { className?: string }) => (
-  <svg className={className} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10" />
-    <path d="M12 16v-4" />
-    <path d="M12 8h.01" />
-  </svg>
-);
 
 const RefreshIcon = ({ className }: { className?: string }) => (
   <svg className={className} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -49,6 +42,31 @@ const EyeOffIcon = ({ className }: { className?: string }) => (
     <line x1="2" y1="2" x2="22" y2="22" />
   </svg>
 );
+
+const generateSecurePassword = () => {
+  const uppers = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+  const lowers = "abcdefghijkmnopqrstuvwxyz";
+  const numbers = "23456789";
+  const specials = "!@#$%^&*";
+  const all = uppers + lowers + numbers + specials;
+
+  let pwd = [
+    uppers[Math.floor(Math.random() * uppers.length)],
+    uppers[Math.floor(Math.random() * uppers.length)],
+    lowers[Math.floor(Math.random() * lowers.length)],
+    lowers[Math.floor(Math.random() * lowers.length)],
+    numbers[Math.floor(Math.random() * numbers.length)],
+    numbers[Math.floor(Math.random() * numbers.length)],
+    specials[Math.floor(Math.random() * specials.length)],
+    specials[Math.floor(Math.random() * specials.length)],
+  ];
+
+  for (let i = 0; i < 4; i++) {
+    pwd.push(all[Math.floor(Math.random() * all.length)]);
+  }
+
+  return pwd.sort(() => Math.random() - 0.5).join("");
+};
 
 export default function AddDoctorPage() {
   const { t } = useLanguage();
@@ -77,19 +95,12 @@ export default function AddDoctorPage() {
       fullName: "",
       email: "",
       specialty: "",
-      temporaryPassword: "TempPassword!1",
+      temporaryPassword: generateSecurePassword(),
     },
   });
 
   const generatePassword = () => {
-    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
-    let password = "";
-    for (let i = 0; i < 12; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    // Ensure at least one number and special char to pass typical rules
-    password += "1!"; 
-    setValue("temporaryPassword", password, { shouldValidate: true });
+    setValue("temporaryPassword", generateSecurePassword(), { shouldValidate: true });
   };
 
   const onSubmit = async (data: CreateDoctorInput) => {
@@ -192,22 +203,15 @@ export default function AddDoctorPage() {
               className="bg-slate-50 border-slate-100 focus-visible:ring-primary/20 focus-visible:border-primary rounded-[24px] h-20 text-xl font-bold px-6"
               iconRight={
                 <div className="flex items-center gap-4 pr-2">
-                  <button type="button" onClick={generatePassword} className="text-slate-400 hover:text-primary transition-colors">
+                  <button type="button" onClick={generatePassword} title="Generate new password" className="text-slate-400 hover:text-primary transition-colors cursor-pointer p-1">
                     <RefreshIcon className="w-7 h-7" />
                   </button>
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-slate-400 hover:text-primary transition-colors">
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} title={showPassword ? "Hide password" : "Show password"} className="text-slate-400 hover:text-primary transition-colors cursor-pointer p-1">
                     {showPassword ? <EyeOffIcon className="w-7 h-7" /> : <EyeIcon className="w-7 h-7" />}
                   </button>
                 </div>
               } 
             />
-          </div>
-          
-          <div className="flex items-center gap-4 rounded-[24px] bg-primary/5 p-6 text-primary">
-            <InfoIcon className="shrink-0 w-8 h-8" />
-            <p className="text-lg font-bold leading-relaxed">
-              {t('admin.doctors.passwordHelpText')}
-            </p>
           </div>
 
           <div className="flex items-center justify-end gap-6 pt-8 border-t-2 border-slate-50">

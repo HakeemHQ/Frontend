@@ -127,7 +127,7 @@ export function AdminSidebar() {
           <div className="px-4 py-6">
             <button 
               onClick={() => { closeMobileMenu(); logout(); }}
-              className="flex w-auto mx-2 items-center gap-3 rounded-[20px] px-6 py-4 text-[15px] font-bold text-rose-500 transition-all hover:bg-rose-50 hover:shadow-sm cursor-pointer"
+              className="flex w-[calc(100%-16px)] items-center gap-3 rounded-[24px] px-6 py-4 text-[15px] font-bold text-rose-500 transition-all duration-300 hover:bg-rose-50 hover:shadow-sm cursor-pointer mx-2"
             >
               <LogoutIcon />
               <span>{t('nav.logout')}</span>

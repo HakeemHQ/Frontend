@@ -36,7 +36,10 @@ export default function PatientsPage() {
     page, 
     setPage,
     statusFilter,
-    setStatusFilter
+    setStatusFilter,
+    hasNextPage,
+    setHasNextPage,
+    setTotalCount
   } = usePatientsStore();
   
   const [searchQuery, setSearchQuery] = useState("");
@@ -45,17 +48,32 @@ export default function PatientsPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await getPatients(pageNum, 10, status);
+      const response = await getPatients(pageNum, 11, status);
       const actualData = (response as any).data || response;
+      let rawItems: any[] = [];
       if (actualData && actualData.items) {
-        setPatients(actualData.items);
+        rawItems = actualData.items;
       } else if (Array.isArray(actualData)) {
-        setPatients(actualData);
+        rawItems = actualData;
+      }
+
+      if (actualData && typeof actualData.hasNextPage === 'boolean') {
+        setHasNextPage(actualData.hasNextPage);
+        setPatients(rawItems.slice(0, 10));
+      } else if (actualData && (actualData.totalCount !== undefined || actualData.total !== undefined)) {
+        const total = actualData.totalCount ?? actualData.total;
+        setTotalCount(total);
+        setHasNextPage(pageNum * 10 < total);
+        setPatients(rawItems.slice(0, 10));
       } else {
-        setPatients([]);
+        const hasMore = rawItems.length > 10;
+        setHasNextPage(hasMore);
+        setPatients(rawItems.slice(0, 10));
       }
     } catch (err: any) {
       setError(err.response?.data?.message || t('ui.somethingWentWrong'));
+      setPatients([]);
+      setHasNextPage(false);
     } finally {
       setIsLoading(false);
     }
@@ -136,7 +154,10 @@ export default function PatientsPage() {
               iconLeft={<HugeiconsIcon icon={Search01Icon} className="h-6 w-6 text-slate-400" />}
               className="border-none shadow-none focus-visible:ring-0 bg-transparent text-lg font-bold h-14"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(1);
+              }}
             />
           </div>
           <div className="h-10 w-0.5 bg-slate-200 hidden md:block rounded-full"></div>
@@ -145,7 +166,10 @@ export default function PatientsPage() {
             {STATUS_FILTERS.map((status) => (
               <button
                 key={status}
-                onClick={() => setStatusFilter(status)}
+                onClick={() => {
+                  setStatusFilter(status);
+                  setPage(1);
+                }}
                 className={`px-8 py-4 text-base font-black rounded-full whitespace-nowrap transition-all duration-300 shadow-sm cursor-pointer ${
                   statusFilter === status 
                     ? "bg-primary text-white shadow-lg shadow-primary/30 -translate-y-1" 
@@ -285,12 +309,21 @@ export default function PatientsPage() {
                 ? t('doctor.patients.noResultsDescription')
                 : t('doctor.patients.noResultsWithStatus').replace('{status}', getStatusLabel(statusFilter))}
             </p>
+            {page > 1 && (
+              <Button
+                variant="outline"
+                onClick={() => setPage(1)}
+                className="mt-6 rounded-full border-2 border-primary text-primary hover:bg-primary/5 font-bold px-6 py-2.5 h-auto text-sm cursor-pointer"
+              >
+                {t('doctor.patients.previous') ? `${t('doctor.patients.previous')} (Page 1)` : "Back to Page 1"}
+              </Button>
+            )}
           </motion.div>
         )}
       </div>
       
       {/* Premium Pagination Controls */}
-      {!isLoading && filteredPatients.length > 0 && (
+      {!isLoading && (filteredPatients.length > 0 || page > 1) && (
         <div className="flex justify-between items-center pt-10 mt-6 border-t border-slate-100">
           <Button 
             variant="outline" 
@@ -306,7 +339,7 @@ export default function PatientsPage() {
           <Button 
             variant="outline" 
             onClick={() => setPage(page + 1)}
-            disabled={patients.length < 10}
+            disabled={!hasNextPage || filteredPatients.length === 0}
             className="rounded-full border-2 border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 font-bold px-8 py-5 h-auto text-lg transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
           >
             {t('doctor.patients.next')}

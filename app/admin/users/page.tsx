@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Spinner } from "@/components/ui/Spinner";
 import { useAdminStore } from "@/store/useAdminStore";
 import { useLanguage } from "@/localization/LanguageContext";
+import { Select } from "@/components/ui/Select";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { 
   UserGroupIcon, 
@@ -102,10 +102,12 @@ export default function UsersListPage() {
   return (
     <div className="space-y-8 pb-12 max-w-7xl mx-auto px-4 sm:px-6">
       {/* Hero Header */}
-      <div className="bg-primary rounded-[48px] p-8 sm:p-12 md:p-16 text-white shadow-2xl shadow-primary/30 relative overflow-hidden min-h-[340px] flex flex-col justify-center">
-        {/* Background Graphic */}
-        <div className="absolute -top-20 -right-10 opacity-10 text-white transform rotate-12 pointer-events-none">
-          <HugeiconsIcon icon={UserGroupIcon} className="w-[450px] h-[450px]" />
+      <div className="bg-primary rounded-[48px] p-8 sm:p-12 md:p-16 text-white shadow-2xl shadow-primary/30 relative min-h-[340px] flex flex-col justify-center z-30">
+        {/* Background Graphic Container with overflow-hidden */}
+        <div className="absolute inset-0 rounded-[48px] overflow-hidden pointer-events-none">
+          <div className="absolute -top-20 -right-10 opacity-10 text-white transform rotate-12">
+            <HugeiconsIcon icon={UserGroupIcon} className="w-[450px] h-[450px]" />
+          </div>
         </div>
 
         <div className="relative z-10 flex flex-col gap-8 max-w-4xl">
@@ -119,7 +121,7 @@ export default function UsersListPage() {
           </div>
           
           {/* Filters Bar inside Hero */}
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 bg-white/10 p-4 sm:p-5 rounded-[32px] backdrop-blur-md border border-white/20 shadow-xl">
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 bg-white/10 p-4 sm:p-5 rounded-[32px] backdrop-blur-md border border-white/20 shadow-xl relative z-50">
             {/* Search Input */}
             <div className="sm:col-span-6">
               <span className="text-xs font-bold text-white/70 mb-1.5 uppercase tracking-wider pl-2 block">
@@ -147,45 +149,31 @@ export default function UsersListPage() {
 
             {/* Role / UserType Filter */}
             <div className="sm:col-span-3">
-              <span className="text-xs font-bold text-white/70 mb-1.5 uppercase tracking-wider pl-2 block">
-                {t('admin.users.role')}
-              </span>
-              <select 
-                className="w-full bg-white/20 border border-white/10 text-white rounded-[20px] px-4 py-3.5 text-base font-bold focus:ring-2 focus:ring-white outline-none cursor-pointer appearance-none transition-all"
+              <Select
+                variant="hero"
+                label={t('admin.users.role')}
+                options={roleOptions}
                 value={userTypeFilter}
-                onChange={(e) => handleRoleChangeFilter(e.target.value)}
-              >
-                {roleOptions.map(opt => (
-                  <option key={opt.value} value={opt.value} className="text-slate-900 bg-white">
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+                onChange={handleRoleChangeFilter}
+              />
             </div>
 
             {/* Status Filter */}
             <div className="sm:col-span-3">
-              <span className="text-xs font-bold text-white/70 mb-1.5 uppercase tracking-wider pl-2 block">
-                {t('admin.users.status')}
-              </span>
-              <select 
-                className="w-full bg-white/20 border border-white/10 text-white rounded-[20px] px-4 py-3.5 text-base font-bold focus:ring-2 focus:ring-white outline-none cursor-pointer appearance-none transition-all"
+              <Select
+                variant="hero"
+                label={t('admin.users.status')}
+                options={statusOptions}
                 value={statusFilter}
-                onChange={(e) => handleStatusChangeFilter(e.target.value)}
-              >
-                {statusOptions.map(opt => (
-                  <option key={opt.value} value={opt.value} className="text-slate-900 bg-white">
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+                onChange={handleStatusChangeFilter}
+              />
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="-mt-14 relative z-20 px-2 sm:px-4 md:px-6">
+      <div className="-mt-14 relative z-10 px-2 sm:px-4 md:px-6">
         <div className="overflow-hidden rounded-[36px] sm:rounded-[40px] border border-slate-100 bg-white shadow-2xl shadow-slate-200/50">
           {/* Header Info Bar */}
           <div className="p-6 sm:p-8 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50/50">
