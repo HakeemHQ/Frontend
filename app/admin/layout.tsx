@@ -24,7 +24,7 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen bg-slate-50/50">
       <AdminSidebar />
-      <div className="ltr:pl-0 rtl:pr-0 ltr:md:pl-[260px] rtl:md:pr-[260px] flex flex-col min-h-screen transition-all duration-300">
+      <div className="ltr:pl-0 rtl:pr-0 ltr:md:pl-[240px] rtl:md:pr-[240px] flex flex-col min-h-screen transition-all duration-300">
         <header className="sticky top-0 z-40 flex h-16 items-center justify-between md:justify-end px-4 sm:px-8 bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-sm">
           <button 
             onClick={toggleMobileMenu}

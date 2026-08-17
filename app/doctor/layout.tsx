@@ -23,7 +23,7 @@ export default function DoctorLayout({
   return (
     <div className="min-h-screen bg-slate-50 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-100 via-slate-50 to-slate-100 selection:bg-emerald-500/30">
       <DoctorSidebar />
-      <div className={`flex flex-col min-h-screen transition-all duration-300 ltr:pl-0 rtl:pr-0 ${isCollapsed ? "ltr:md:pl-[80px] rtl:md:pr-[80px]" : "ltr:md:pl-[80px] rtl:md:pr-[80px] ltr:lg:pl-[260px] rtl:lg:pr-[260px]"}`}>
+      <div className={`flex flex-col min-h-screen transition-all duration-300 ltr:pl-0 rtl:pr-0 ${isCollapsed ? "ltr:md:pl-[72px] rtl:md:pr-[72px]" : "ltr:md:pl-[72px] rtl:md:pr-[72px] ltr:lg:pl-[240px] rtl:lg:pr-[240px]"}`}>
         <header className="sticky top-0 z-40 flex h-16 items-center justify-between md:justify-end px-4 sm:px-8 bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-sm">
           <button 
             onClick={toggleMobileMenu}
