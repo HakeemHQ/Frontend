@@ -65,66 +65,79 @@ export default function AccessGrantedPage({ params }: { params: Promise<{ code: 
 
   return (
     <div className="max-w-2xl mx-auto pt-4 pb-8 space-y-6 relative animate-in fade-in duration-300">
-      {/* Header Breadcrumbs */}
-      <div className="flex items-center text-sm text-slate-500 mb-6">
-        <Link href="/doctor/patients" className="flex items-center hover:text-slate-800 transition">
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 rtl:rotate-180 mr-1 rtl:mr-0 rtl:ml-1" />
-          <span>{t('doctor.accessGranted.breadcrumbPatients')}</span>
-        </Link>
-        <span className="mx-2">/</span>
-        <span className="font-medium text-slate-900">{t('doctor.accessGranted.breadcrumbCurrent')}</span>
-      </div>
-
-      <div className="flex flex-col items-center mt-12 mb-8">
-        <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-16 h-16 text-[#008060] mb-4" />
-        <h1 className="text-3xl font-bold tracking-tight text-[#008060] mb-2 font-heading">
-          {t('doctor.accessGranted.title')}
-        </h1>
-        <p className="text-slate-500 text-sm text-center">
-          {t('doctor.accessGranted.subtitle')}
-        </p>
-      </div>
-
-      <div className="max-w-lg mx-auto">
-        <div className="w-full border border-slate-100 rounded-2xl p-6 bg-surface shadow-sm mb-6">
-          {/* Patient Details */}
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 rounded-full bg-background flex items-center justify-center border border-slate-100 overflow-hidden shrink-0">
-              <HugeiconsIcon icon={UserIcon} className="w-8 h-8 text-slate-400" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-slate-900 font-heading">{patientName}</h3>
-              <p className="text-slate-500 text-sm">{t('doctor.redeemAccess.patientCode')}: {patientCode}</p>
-            </div>
-          </div>
-
-          <div className="space-y-0">
-            <div className="flex items-center justify-between py-4 border-t border-slate-100 text-sm">
-              <span className="font-semibold text-slate-700">{t('doctor.accessGranted.grantedAt')}</span>
-              <span className="text-slate-500">{formatDate(grantedAtTime)}</span>
-            </div>
-            
-            <div className="flex items-center justify-between py-4 border-t border-slate-100 text-sm">
-              <span className="font-semibold text-slate-700">{t('doctor.accessGranted.timeLimit')}</span>
-              <span className="text-slate-500">{calculateTimeLimit(grantedAtTime, expiresAtTime)}</span>
-            </div>
-
-            <div className="flex items-center justify-between py-4 border-t border-slate-100 text-sm">
-              <span className="font-semibold text-slate-700">{t('doctor.accessGranted.expiresAt')}</span>
-              <span className="text-slate-500">{formatDate(expiresAtTime)}</span>
-            </div>
-          </div>
+      {/* Massive Hero Section */}
+      <div className="mb-12 bg-primary rounded-[48px] p-10 md:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px] mx-4 md:mx-auto max-w-5xl mt-4">
+        {/* Background Graphic */}
+        <div className="absolute -top-24 -right-10 opacity-10 text-white transform rotate-12 pointer-events-none">
+          <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-[500px] h-[500px]" />
         </div>
-
-        {/* Action Button */}
-        <Link href={`/doctor/patients/workspace/${code}`} className="block w-full">
-          <Button 
-            fullWidth 
-            className="bg-[#008060] hover:bg-[#006e52] text-white border-0 py-4 text-base font-semibold shadow-sm transition"
+        
+        {/* Back Navigation */}
+        <div className="absolute top-10 left-10 z-20 rtl:left-auto rtl:right-10">
+          <Link 
+            href="/doctor/patients"
+            className="inline-flex items-center text-sm font-bold text-white/80 hover:text-white transition bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md cursor-pointer border-none"
           >
-            {t('doctor.accessGranted.goToWorkspace')}
-          </Button>
-        </Link>
+            <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 rtl:rotate-180 mr-2 rtl:mr-0 rtl:ml-2" />
+            {t('doctor.accessGranted.breadcrumbPatients')}
+          </Link>
+        </div>
+        
+        <div className="relative z-10 mt-24 text-center">
+          <div className="w-20 h-20 bg-white text-primary rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
+            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-12 h-12" />
+          </div>
+          <h1 className="text-5xl md:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
+            {t('doctor.accessGranted.title')}
+          </h1>
+          <p className="text-white/80 text-xl font-medium max-w-2xl mx-auto">
+            {t('doctor.accessGranted.subtitle')}
+          </p>
+        </div>
+      </div>
+
+      <div className="w-full bg-white border-0 rounded-[40px] shadow-2xl shadow-slate-200/50 overflow-hidden p-8 md:p-12 relative z-30 -mt-20 mx-4 md:mx-auto max-w-3xl">
+        <div className="max-w-lg mx-auto">
+          <div className="w-full border-2 border-slate-100 rounded-[32px] p-8 bg-slate-50 shadow-sm mb-8">
+            {/* Patient Details */}
+            <div className="flex items-center gap-6 mb-8">
+              <div className="w-20 h-20 rounded-[24px] bg-white flex items-center justify-center border-2 border-slate-100 overflow-hidden shrink-0 shadow-sm">
+                <HugeiconsIcon icon={UserIcon} className="w-10 h-10 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-black text-slate-900 font-heading">{patientName}</h3>
+                <p className="text-slate-500 text-base font-bold mt-1">{t('doctor.redeemAccess.patientCode')}: {patientCode}</p>
+              </div>
+            </div>
+
+            <div className="space-y-0">
+              <div className="flex items-center justify-between py-5 border-t-2 border-slate-100 text-base">
+                <span className="font-bold text-slate-700">{t('doctor.accessGranted.grantedAt')}</span>
+                <span className="font-semibold text-slate-500">{formatDate(grantedAtTime)}</span>
+              </div>
+              
+              <div className="flex items-center justify-between py-5 border-t-2 border-slate-100 text-base">
+                <span className="font-bold text-slate-700">{t('doctor.accessGranted.timeLimit')}</span>
+                <span className="font-semibold text-slate-500">{calculateTimeLimit(grantedAtTime, expiresAtTime)}</span>
+              </div>
+
+              <div className="flex items-center justify-between py-5 border-t-2 border-slate-100 text-base">
+                <span className="font-bold text-slate-700">{t('doctor.accessGranted.expiresAt')}</span>
+                <span className="font-semibold text-slate-500">{formatDate(expiresAtTime)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Button */}
+          <Link href={`/doctor/patients/workspace/${code}`} className="block w-full">
+            <Button 
+              fullWidth 
+              className="bg-primary hover:bg-primary/90 text-white rounded-full h-16 text-xl font-black shadow-xl shadow-primary/30 hover:shadow-primary/40 hover:-translate-y-1 transition-all border-none"
+            >
+              {t('doctor.accessGranted.goToWorkspace')}
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -91,36 +91,36 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
       case 'approved':
       case 'ready':
         return (
-          <span className="flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-emerald-100">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5" />
+          <span className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-200 shadow-sm">
+            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-4 h-4" />
             {t('doctor.medicalCvs.approved')}
           </span>
         );
       case 'draft':
         return (
-          <span className="flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-blue-100">
-            <HugeiconsIcon icon={DocumentValidationIcon} className="w-3.5 h-3.5" />
+          <span className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-xs font-bold uppercase tracking-wider border border-primary/20 shadow-sm">
+            <HugeiconsIcon icon={DocumentValidationIcon} className="w-4 h-4" />
             {t('doctor.medicalCvs.unreviewed')}
           </span>
         );
       case 'failed':
         return (
-          <span className="flex items-center gap-1 px-2.5 py-1 bg-red-50 text-red-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-red-100">
-            <HugeiconsIcon icon={Alert01Icon} className="w-3.5 h-3.5" />
+          <span className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-700 rounded-full text-xs font-bold uppercase tracking-wider border border-red-200 shadow-sm">
+            <HugeiconsIcon icon={Alert01Icon} className="w-4 h-4" />
             Failed
           </span>
         );
       case 'queued':
       case 'processing':
         return (
-          <span className="flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-amber-100">
-            <HugeiconsIcon icon={Time02Icon} className="w-3.5 h-3.5" />
+          <span className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-700 rounded-full text-xs font-bold uppercase tracking-wider border border-amber-200 shadow-sm">
+            <HugeiconsIcon icon={Time02Icon} className="w-4 h-4" />
             {status}
           </span>
         );
       default:
         return (
-          <span className="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-slate-200">
+          <span className="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-full text-xs font-bold uppercase tracking-wider border border-slate-200 shadow-sm">
             {status}
           </span>
         );
@@ -170,38 +170,40 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
         )}
       </AnimatePresence>
 
-      {/* Back Navigation */}
-      <div className="mb-8">
-        <Link 
-          href={`/doctor/patients/workspace/${code}/medical-cv`}
-          className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 transition"
-        >
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 rtl:rotate-180 mr-1.5 rtl:mr-0 rtl:ml-1.5" />
-          {t('doctor.medicalCvs.breadcrumbMedicalCv')}
-        </Link>
-      </div>
-
-      <div className="mb-10 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-8 opacity-5">
-          <HugeiconsIcon icon={DocumentValidationIcon} className="w-48 h-48" />
+      {/* Massive Hero Section */}
+      <div className="mb-16 bg-primary rounded-[48px] p-10 md:p-16 lg:p-20 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[450px]">
+        {/* Background Graphic */}
+        <div className="absolute -top-20 -right-20 opacity-10 text-white transform rotate-12">
+          <HugeiconsIcon icon={DocumentValidationIcon} className="w-[600px] h-[600px]" />
         </div>
         
-        <div className="relative z-10">
-          <h1 className="text-3xl font-bold text-slate-900 font-heading mb-3 pr-12 rtl:pr-0 rtl:pl-12">
+        {/* Back Navigation */}
+        <div className="absolute top-10 left-10 z-20 rtl:left-auto rtl:right-10">
+          <Link 
+            href={`/doctor/patients/workspace/${code}/medical-cv`}
+            className="inline-flex items-center text-sm font-bold text-white/80 hover:text-white transition bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md"
+          >
+            <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 rtl:rotate-180 mr-2 rtl:mr-0 rtl:ml-2" />
+            {t('doctor.medicalCvs.breadcrumbMedicalCv')}
+          </Link>
+        </div>
+        
+        <div className="relative z-10 mt-20">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black font-heading tracking-tighter mb-8 pr-12 rtl:pr-0 rtl:pl-12 leading-[1.1]">
             {cv.title || "Untitled Medical CV"}
           </h1>
-          <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500 font-medium">
-            <span className="capitalize bg-slate-100 px-3 py-1 rounded-lg">Type: {cv.scopeType}</span>
-            {cv.focus && <span className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-lg border border-emerald-100">Focus: {cv.focus}</span>}
-            <span>•</span>
-            <span>{t('doctor.documents.date')}: {new Date(cv.createdAt).toLocaleDateString()}</span>
+          <div className="flex flex-wrap items-center gap-4 text-sm md:text-lg font-bold">
+            <span className="capitalize bg-white/20 text-white backdrop-blur-md px-6 py-3 rounded-full shadow-lg">Type: {cv.scopeType}</span>
+            {cv.focus && <span className="bg-emerald-400 text-slate-900 px-6 py-3 rounded-full shadow-lg">Focus: {cv.focus}</span>}
+            <span className="hidden md:inline text-white/50">•</span>
+            <span className="bg-white/10 text-white backdrop-blur-md px-6 py-3 rounded-full border border-white/10 shadow-lg">{t('doctor.documents.date')}: {new Date(cv.createdAt).toLocaleDateString()}</span>
           </div>
         </div>
       </div>
 
-      <div className="mb-6">
-        <h2 className="text-xl font-bold text-slate-900 font-heading">{t('doctor.medicalCvs.version')} History</h2>
-        <p className="text-slate-500 text-sm">{t('doctor.medicalCvs.description')}</p>
+      <div className="mb-8 pl-4">
+        <h2 className="text-4xl md:text-5xl font-black text-slate-900 font-heading tracking-tighter mb-4">{t('doctor.medicalCvs.version')} History</h2>
+        <p className="text-slate-500 text-lg font-medium">{t('doctor.medicalCvs.description')}</p>
       </div>
 
       <div className="space-y-4">
@@ -212,13 +214,13 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className={`bg-white border p-5 rounded-2xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${
-                version.status.toLowerCase() === 'draft' ? 'border-blue-200 ring-2 ring-blue-50' : 'border-slate-200'
+              className={`bg-white border-0 p-8 md:p-12 rounded-[40px] shadow-2xl flex flex-col xl:flex-row xl:items-center justify-between gap-8 transition-all duration-500 hover:-translate-y-2 ${
+                version.status.toLowerCase() === 'draft' ? 'shadow-primary/20 ring-4 ring-primary/10 relative z-10 scale-[1.01]' : 'shadow-slate-200/50 hover:shadow-slate-300/60'
               }`}
             >
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <h3 className="font-bold text-slate-900 text-lg">{t('doctor.medicalCvs.version')} {version.versionNumber}</h3>
+                  <h3 className="font-black font-heading text-slate-900 text-3xl md:text-4xl tracking-tighter">{t('doctor.medicalCvs.version')} {version.versionNumber}</h3>
                   {getStatusBadge(version.status)}
                 </div>
                 <div className="text-sm text-slate-500 font-medium flex flex-wrap items-center gap-x-4 gap-y-1">

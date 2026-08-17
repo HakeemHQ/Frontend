@@ -103,18 +103,18 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
   ];
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col max-w-5xl mx-auto bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden relative animate-in fade-in zoom-in-95 duration-300">
+    <div className="h-[calc(100vh-6rem)] flex flex-col max-w-6xl mx-auto bg-white border-0 rounded-[48px] shadow-2xl shadow-slate-200/50 overflow-hidden relative animate-in fade-in duration-300 mt-4">
       
       {/* Header */}
-      <div className="h-16 shrink-0 flex items-center justify-between px-6 border-b border-slate-100 bg-white/80 backdrop-blur-md z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-sm">
-            <HugeiconsIcon icon={AiMagicIcon} className="w-5 h-5" />
+      <div className="h-24 shrink-0 flex items-center justify-between px-8 bg-primary text-white z-10">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 rounded-[20px] bg-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-inner">
+            <HugeiconsIcon icon={AiMagicIcon} className="w-7 h-7" />
           </div>
           <div>
-            <h1 className="font-bold text-slate-900 leading-tight">{t('doctor.askAi.title')}</h1>
-            <p className="text-xs font-medium text-emerald-600 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <h1 className="text-3xl font-black font-heading tracking-tight leading-tight">{t('doctor.askAi.title')}</h1>
+            <p className="text-sm font-bold text-white/80 flex items-center gap-2 mt-1">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_rgba(52,211,153,0.5)]"></span>
               {t('doctor.workspace.patientCode')}: {code}
             </p>
           </div>
@@ -125,11 +125,11 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
       <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50">
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="w-24 h-24 mb-6 rounded-full bg-blue-50 flex items-center justify-center relative">
-              <div className="absolute inset-0 bg-blue-100/50 rounded-full animate-ping opacity-75 duration-1000"></div>
-              <HugeiconsIcon icon={Chemistry01Icon} className="w-10 h-10 text-blue-600 relative z-10" />
+            <div className="w-32 h-32 mb-8 rounded-[32px] bg-primary/5 flex items-center justify-center relative">
+              <div className="absolute inset-0 bg-primary/10 rounded-[32px] animate-ping opacity-75 duration-1000"></div>
+              <HugeiconsIcon icon={Chemistry01Icon} className="w-14 h-14 text-primary relative z-10" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-2 font-heading">
+            <h2 className="text-4xl font-black text-slate-900 mb-4 font-heading tracking-tighter">
               {t('doctor.askAi.title')}
             </h2>
             <p className="text-slate-500 max-w-md mx-auto mb-8">
@@ -143,9 +143,9 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
                   onClick={() => {
                     handleSendMessage(undefined, prompt);
                   }}
-                  className="px-4 py-3 bg-white border border-slate-200 hover:border-blue-300 hover:shadow-sm hover:bg-blue-50/50 rounded-xl text-sm font-medium text-slate-700 transition-all text-left rtl:text-right flex items-center gap-2"
+                  className="px-6 py-5 bg-white border-2 border-slate-100 hover:border-primary hover:shadow-xl hover:shadow-primary/10 rounded-[24px] text-base font-bold text-slate-700 transition-all text-left rtl:text-right flex items-center gap-3 hover:-translate-y-1"
                 >
-                  <HugeiconsIcon icon={AiMagicIcon} className="w-4 h-4 text-blue-500" />
+                  <HugeiconsIcon icon={AiMagicIcon} className="w-5 h-5 text-primary" />
                   {prompt}
                 </button>
               ))}
@@ -164,12 +164,12 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
                   
                   <div className={`flex flex-col gap-1 ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                     <div 
-                      className={`px-5 py-3.5 shadow-sm text-[15px] leading-relaxed ${
+                      className={`px-6 py-4 shadow-sm text-base leading-relaxed font-medium ${
                         msg.role === 'user' 
-                          ? 'bg-blue-600 text-white rounded-2xl rounded-tr-sm' 
+                          ? 'bg-primary text-white rounded-[24px] rounded-tr-sm shadow-primary/20' 
                           : msg.isError 
-                            ? 'bg-red-50 border border-red-100 text-red-800 rounded-2xl rounded-tl-sm'
-                            : 'bg-white border border-slate-100 text-slate-800 rounded-2xl rounded-tl-sm'
+                            ? 'bg-red-50 text-red-800 rounded-[24px] rounded-tl-sm'
+                            : 'bg-white text-slate-800 rounded-[24px] rounded-tl-sm shadow-md'
                       }`}
                     >
                       {msg.text}
@@ -222,24 +222,24 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
       </div>
 
       {/* Input Area */}
-      <div className="shrink-0 p-4 bg-white border-t border-slate-100">
+      <div className="shrink-0 p-8 bg-white border-t border-slate-100 rounded-b-[48px]">
         <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto relative flex items-center">
           <input
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder={t('doctor.askAi.inputPlaceholder')}
-            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-base rounded-full pl-6 pr-14 rtl:pl-14 rtl:pr-6 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
+            className="w-full bg-slate-50 border-0 text-slate-900 text-lg font-bold rounded-full pl-8 pr-16 rtl:pl-16 rtl:pr-8 py-5 focus:outline-none focus:ring-4 focus:ring-primary/20 transition-all shadow-inner"
           />
           <button
             type="submit"
             disabled={!inputValue.trim() || isTyping}
-            className="absolute right-2 rtl:right-auto rtl:left-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-full transition-colors shadow-sm"
+            className="absolute right-3 rtl:right-auto rtl:left-3 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-primary hover:bg-primary/90 disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-full transition-all shadow-md hover:shadow-lg hover:-translate-y-[55%] border-none"
           >
-            <HugeiconsIcon icon={ArrowRight01Icon} className="w-5 h-5 rtl:rotate-180" />
+            <HugeiconsIcon icon={ArrowRight01Icon} className="w-6 h-6 rtl:rotate-180" />
           </button>
         </form>
-        <p className="text-center text-[11px] font-medium text-slate-400 mt-3">
+        <p className="text-center text-xs font-bold text-slate-400 mt-4">
           {t('doctor.askAi.disclaimer')}
         </p>
       </div>

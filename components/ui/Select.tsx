@@ -50,11 +50,11 @@ export function Select({ options, value, onChange, placeholder = "Select...", cl
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-sm transition outline-none focus:shadow-sm ${
+          className={`flex w-full items-center justify-between rounded-2xl border px-5 py-3.5 text-sm transition-all duration-300 outline-none focus:shadow-md ${
             error 
-              ? 'border-red-300 focus:border-red-500 text-red-900 bg-red-50' 
+              ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 text-red-900 bg-red-50' 
               : isOpen 
-                ? 'border-blue-500 shadow-sm bg-white' 
+                ? 'border-primary ring-4 ring-primary/10 bg-white' 
                 : 'border-slate-200 hover:border-slate-300 bg-white'
           }`}
         >
@@ -65,8 +65,8 @@ export function Select({ options, value, onChange, placeholder = "Select...", cl
         </button>
 
         {isOpen && (
-        <div className="absolute z-50 mt-2 w-full overflow-hidden rounded-xl border border-slate-100 bg-white p-1 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] animate-in fade-in zoom-in-95 duration-100">
-          <ul className="max-h-60 overflow-y-auto">
+        <div className="absolute z-50 mt-2 w-full overflow-hidden rounded-2xl border border-slate-100 bg-white p-2 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] animate-in fade-in zoom-in-95 duration-200">
+          <ul className="max-h-60 overflow-y-auto space-y-1">
             {options.map((option) => (
               <li key={option.value}>
                 <button
@@ -75,14 +75,14 @@ export function Select({ options, value, onChange, placeholder = "Select...", cl
                     onChange?.(option.value);
                     setIsOpen(false);
                   }}
-                  className={`flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-colors ${
+                  className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm transition-all duration-200 ${
                     value === option.value
-                      ? "bg-blue-50 text-blue-700 font-semibold"
+                      ? "bg-primary/10 text-primary font-bold"
                       : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
                   }`}
                 >
                   {option.label}
-                  {value === option.value && <CheckIcon className="text-blue-600" />}
+                  {value === option.value && <CheckIcon className="text-primary" />}
                 </button>
               </li>
             ))}

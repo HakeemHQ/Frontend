@@ -90,7 +90,7 @@ export default function VerifyIdentityPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto pt-4 pb-12 space-y-8 relative">
+    <div className="max-w-2xl mx-auto pt-4 pb-8 space-y-6 relative animate-in fade-in duration-300">
       <AnimatePresence>
         {toast && (
           <Toast 
@@ -101,33 +101,35 @@ export default function VerifyIdentityPage() {
         )}
       </AnimatePresence>
 
-      <div className="flex items-center text-sm font-medium text-slate-500 mb-8">
-        <Link href="/doctor/patients" className="flex items-center hover:text-slate-900 transition-colors">
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 rtl:rotate-180 mr-1.5 rtl:mr-0 rtl:ml-1.5" />
-          <span>{t('doctor.verifyIdentity.breadcrumbPatients')}</span>
-        </Link>
-        <span className="mx-3 text-slate-300">/</span>
-        <span className="text-slate-900 font-semibold">{t('doctor.verifyIdentity.breadcrumbCurrent')}</span>
-      </div>
-
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="w-full bg-white/80 backdrop-blur-xl border border-slate-100/80 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden p-8 md:p-12"
-      >
-        <div className="mb-10 text-center">
-          <div className="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-emerald-100/50">
-            <HugeiconsIcon icon={UserIdVerificationIcon} className="w-10 h-10" />
-          </div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 mb-3">
+      {/* Massive Hero Section */}
+      <div className="mb-12 bg-primary rounded-[48px] p-10 md:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px] mx-4 md:mx-auto max-w-5xl mt-4">
+        {/* Background Graphic */}
+        <div className="absolute -top-24 -right-10 opacity-10 text-white transform rotate-12 pointer-events-none">
+          <HugeiconsIcon icon={UserIdVerificationIcon} className="w-[500px] h-[500px]" />
+        </div>
+        
+        {/* Back Navigation */}
+        <div className="absolute top-10 left-10 z-20 rtl:left-auto rtl:right-10">
+          <Link 
+            href="/doctor/patients"
+            className="inline-flex items-center text-sm font-bold text-white/80 hover:text-white transition bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md cursor-pointer border-none"
+          >
+            <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 rtl:rotate-180 mr-2 rtl:mr-0 rtl:ml-2" />
+            {t('doctor.verifyIdentity.breadcrumbPatients')}
+          </Link>
+        </div>
+        
+        <div className="relative z-10 mt-24 text-center">
+          <h1 className="text-5xl md:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
             {t('doctor.verifyIdentity.title')}
           </h1>
-          <p className="text-slate-500 text-base max-w-md mx-auto">
+          <p className="text-white/80 text-xl font-medium max-w-2xl mx-auto">
             {t('doctor.verifyIdentity.subtitle')}
           </p>
         </div>
+      </div>
 
+      <div className="w-full bg-white border-0 rounded-[40px] shadow-2xl shadow-slate-200/50 overflow-hidden p-8 md:p-12 relative z-30 -mt-20 mx-4 md:mx-auto max-w-3xl">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-md mx-auto">
           <div className="space-y-2">
             <label className="text-sm font-bold text-slate-900" htmlFor="patientCode">
@@ -137,7 +139,7 @@ export default function VerifyIdentityPage() {
               placeholder={t('doctor.verifyIdentity.patientCodePlaceholder')}
               iconLeft={<HugeiconsIcon icon={Search01Icon} className="h-5 w-5 text-slate-400" />}
               id="patientCode"
-              className="bg-slate-50 border-slate-200 focus-visible:ring-emerald-500/20 focus-visible:border-emerald-500 rounded-2xl h-14"
+              className="bg-slate-50 border-slate-200 focus-visible:ring-primary/20 focus-visible:border-primary rounded-2xl h-14"
               {...register("patientCode")}
               error={errors.patientCode?.message}
             />
@@ -151,7 +153,7 @@ export default function VerifyIdentityPage() {
               placeholder={t('doctor.verifyIdentity.nationalIdPlaceholder')}
               iconLeft={<HugeiconsIcon icon={UserIdVerificationIcon} className="h-5 w-5 text-slate-400" />}
               id="nationalId"
-              className="bg-slate-50 border-slate-200 focus-visible:ring-emerald-500/20 focus-visible:border-emerald-500 rounded-2xl h-14"
+              className="bg-slate-50 border-slate-200 focus-visible:ring-primary/20 focus-visible:border-primary rounded-2xl h-14"
               {...register("nationalId")}
               error={errors.nationalId?.message}
             />
@@ -162,13 +164,13 @@ export default function VerifyIdentityPage() {
               type="submit"
               disabled={status === "loading"}
               fullWidth 
-              className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl h-14 text-lg font-bold shadow-md hover:shadow-lg transition-all"
+              className="bg-primary hover:bg-primary/90 text-white rounded-full h-16 text-xl font-black shadow-xl shadow-primary/30 hover:-translate-y-1 transition-all border-none"
             >
               {status === "loading" ? t('doctor.verifyIdentity.processing') : t('doctor.verifyIdentity.submitButton')}
             </Button>
           </div>
         </form>
-      </motion.div>
+      </div>
     </div>
   );
 }

@@ -80,35 +80,51 @@ export default function UsersListPage() {
   const totalPages = users?.total ? Math.ceil(users.total / pageSize) : 1;
 
   return (
-    <div className="space-y-6 pb-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-          {t('admin.users.title')}
-        </h1>
+    <div className="space-y-8 pb-8 max-w-7xl mx-auto">
+      {/* Hero Header */}
+      <div className="bg-primary rounded-[48px] p-12 md:p-16 text-white shadow-2xl shadow-primary/30 relative overflow-hidden min-h-[350px] flex flex-col justify-center">
+        <div className="relative z-10 flex flex-col gap-8">
+          <div>
+            <h1 className="text-5xl md:text-6xl font-black tracking-tighter mb-4 font-heading">
+              {t('admin.users.title')}
+            </h1>
+            <p className="text-xl text-white/80 font-medium">Manage all platform users</p>
+          </div>
+          
+          {/* Filters inside Hero */}
+          <div className="flex flex-col sm:flex-row items-center gap-4 bg-white/10 p-5 rounded-[32px] backdrop-blur-md border border-white/20 shadow-xl w-full max-w-3xl">
+            <div className="w-full sm:flex-1">
+              <span className="text-xs font-bold text-white/60 mb-2 uppercase tracking-wider pl-2 block">{t('nav.search')}</span>
+              <div className="relative">
+                <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-white/50" />
+                <input
+                  placeholder={t('admin.users.searchPlaceholder')}
+                  className="w-full bg-white/20 border-none text-white rounded-[20px] pl-12 pr-6 py-4 text-lg font-bold focus:ring-2 focus:ring-white outline-none placeholder-white/50"
+                  value={search}
+                  onChange={handleSearchChange}
+                />
+              </div>
+            </div>
+            <div className="w-full sm:w-64">
+              <span className="text-xs font-bold text-white/60 mb-2 uppercase tracking-wider pl-2 block">{t('admin.users.status')}</span>
+              <select 
+                className="w-full bg-white/20 border-none text-white rounded-[20px] px-6 py-4 text-lg font-bold focus:ring-2 focus:ring-white outline-none appearance-none"
+                value={statusFilter}
+                onChange={(e) => handleStatusChangeFilter(e.target.value)}
+              >
+                {statusOptions.map(opt => (
+                  <option key={opt.value} value={opt.value} className="text-slate-900 bg-white">
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4">
-        <div className="space-y-1.5 w-full flex-1 z-30">
-          <label className="text-sm font-medium text-slate-700">{t('nav.search')}</label>
-          <Input
-            placeholder={t('admin.users.searchPlaceholder')}
-            iconLeft={<SearchIcon className="h-4 w-4" />}
-            className="bg-white"
-            value={search}
-            onChange={handleSearchChange}
-          />
-        </div>
-        <div className="space-y-1.5 w-full sm:w-48 z-10">
-          <label className="text-sm font-medium text-slate-700">{t('admin.users.status')}</label>
-          <Select 
-            options={statusOptions}
-            value={statusFilter}
-            onChange={handleStatusChangeFilter}
-          />
-        </div>
-      </div>
-
-      <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+      <div className="-mt-16 relative z-20 px-4 md:px-8">
+        <div className="overflow-hidden rounded-[40px] border border-slate-100 bg-white shadow-2xl shadow-slate-200/50">
         {isUsersLoading ? (
           <div className="flex justify-center items-center h-48">
             <Spinner />
@@ -171,26 +187,27 @@ export default function UsersListPage() {
             </table>
           </div>
         )}
+        </div>
       </div>
 
       {!isUsersLoading && !usersError && (users?.items?.length ?? 0) > 0 && (
-        <div className="flex items-center justify-center gap-1 pt-4">
+        <div className="flex items-center justify-center gap-1 pt-8 pb-8">
           <button 
             disabled={page === 1}
             onClick={() => setPage(p => Math.max(1, p - 1))}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex h-12 w-12 items-center justify-center rounded-[20px] bg-white text-slate-400 transition hover:bg-slate-50 hover:text-slate-600 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronLeftIcon />
           </button>
           
-          <span className="text-sm text-slate-600 font-medium px-4">
-            {t('admin.users.page')} {page} {t('admin.users.of')} {totalPages}
+          <span className="text-lg text-slate-600 font-bold px-6">
+            {t('ui.page')} {page} {t('ui.of')} {totalPages}
           </span>
           
           <button 
             disabled={page === totalPages || totalPages === 0}
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex h-12 w-12 items-center justify-center rounded-[20px] bg-white text-slate-400 transition hover:bg-slate-50 hover:text-slate-600 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronRightIcon />
           </button>

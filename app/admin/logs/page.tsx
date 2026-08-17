@@ -18,6 +18,7 @@ const ChevronRightIcon = () => (
 );
 
 export default function AuditLogsPage() {
+  const { t } = useLanguage();
   const { auditLogs, isAuditLogsLoading, auditLogsError, fetchAuditLogs } = useAdminStore();
   
   const [actionFilter, setActionFilter] = useState("");
@@ -80,53 +81,68 @@ export default function AuditLogsPage() {
   const totalPages = auditLogs?.total ? Math.ceil(auditLogs.total / pageSize) : 1;
 
   return (
-    <div className="space-y-6 pb-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-          Audit Logs
-        </h1>
-      </div>
-
-      <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4">
-        <div className="space-y-1.5 w-full flex-1 z-30">
-          <label className="text-sm font-medium text-slate-700">Action</label>
-          <Input
-            placeholder="e.g. ExtractedItemReviewed"
-            className="bg-white"
-            value={actionFilter}
-            onChange={handleActionChange}
-          />
-        </div>
-        <div className="space-y-1.5 w-full flex-1 z-20">
-          <label className="text-sm font-medium text-slate-700">Actor User ID</label>
-          <Input
-            placeholder="Filter by user ID"
-            className="bg-white"
-            value={actorUserIdFilter}
-            onChange={handleActorChange}
-          />
-        </div>
-        <div className="space-y-1.5 w-full sm:w-40 z-10">
-          <label className="text-sm font-medium text-slate-700">From Date</label>
-          <Input 
-            type="date" 
-            value={fromDate}
-            onChange={handleFromDateChange}
-          />
-        </div>
-        <div className="space-y-1.5 w-full sm:w-40 z-10">
-          <label className="text-sm font-medium text-slate-700">To Date</label>
-          <Input 
-            type="date" 
-            value={toDate}
-            onChange={handleToDateChange}
-          />
+    <div className="space-y-8 pb-8 max-w-7xl mx-auto">
+      {/* Hero Header */}
+      <div className="bg-primary rounded-[48px] p-12 md:p-16 text-white shadow-2xl shadow-primary/30 relative overflow-hidden min-h-[350px] flex flex-col justify-center">
+        <div className="relative z-10 flex flex-col gap-8">
+          <div>
+            <h1 className="text-5xl md:text-6xl font-black tracking-tighter mb-4 font-heading">
+              {t('admin.auditLogs.systemLogs')}
+            </h1>
+            <p className="text-xl text-white/80 font-medium">{t('admin.auditLogs.detailedLogs')}</p>
+          </div>
+          
+          {/* Filters */}
+          <div className="flex flex-col xl:flex-row items-center gap-4 bg-white/10 p-5 rounded-[32px] backdrop-blur-md border border-white/20 shadow-xl w-full">
+            <div className="w-full xl:w-1/4">
+              <span className="text-xs font-bold text-white/60 mb-2 uppercase tracking-wider pl-2 block">{t('admin.auditLogs.action')}</span>
+              <input
+                placeholder={t('admin.auditLogs.actionPlaceholder')}
+                className="w-full bg-white/20 border-none text-white rounded-[20px] px-6 py-4 text-lg font-bold focus:ring-2 focus:ring-white outline-none placeholder-white/50"
+                value={actionFilter}
+                onChange={handleActionChange}
+              />
+            </div>
+            <div className="w-full xl:w-1/4">
+              <span className="text-xs font-bold text-white/60 mb-2 uppercase tracking-wider pl-2 block">{t('admin.auditLogs.actorUserId')}</span>
+              <input
+                placeholder={t('admin.auditLogs.filterByUser')}
+                className="w-full bg-white/20 border-none text-white rounded-[20px] px-6 py-4 text-lg font-bold focus:ring-2 focus:ring-white outline-none placeholder-white/50"
+                value={actorUserIdFilter}
+                onChange={handleActorChange}
+              />
+            </div>
+            
+            <div className="w-full xl:w-auto flex flex-col sm:flex-row gap-4 flex-1">
+              <div className="w-full sm:flex-1">
+                <span className="text-xs font-bold text-white/60 mb-2 uppercase tracking-wider pl-2 block">{t('admin.auditLogs.fromDate')}</span>
+                <input 
+                  type="date" 
+                  value={fromDate}
+                  onChange={handleFromDateChange}
+                  className="bg-white/20 border-none text-white rounded-[20px] px-6 py-4 text-lg font-bold focus:ring-2 focus:ring-white outline-none w-full"
+                  style={{ colorScheme: 'dark' }}
+                />
+              </div>
+              <div className="w-full sm:flex-1">
+                <span className="text-xs font-bold text-white/60 mb-2 uppercase tracking-wider pl-2 block">{t('admin.auditLogs.toDate')}</span>
+                <input 
+                  type="date" 
+                  value={toDate}
+                  onChange={handleToDateChange}
+                  className="bg-white/20 border-none text-white rounded-[20px] px-6 py-4 text-lg font-bold focus:ring-2 focus:ring-white outline-none w-full"
+                  style={{ colorScheme: 'dark' }}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       
-      {dateError && <p className="text-sm text-red-500">{dateError}</p>}
+      {dateError && <p className="text-lg text-red-500 font-bold px-8 -mt-8 relative z-20">{dateError}</p>}
 
-      <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+      <div className="-mt-16 relative z-20 px-4 md:px-8">
+        <div className="overflow-hidden rounded-[40px] border border-slate-100 bg-white shadow-2xl shadow-slate-200/50">
         {isAuditLogsLoading ? (
           <div className="flex justify-center items-center h-48">
             <Spinner />
@@ -137,18 +153,18 @@ export default function AuditLogsPage() {
           </div>
         ) : (!auditLogs?.items || auditLogs.items.length === 0) ? (
           <div className="flex justify-center items-center h-48 text-slate-500">
-            <p>No audit events found.</p>
+            <p>{t('admin.auditLogs.noResults')}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-slate-600">
               <thead className="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-500">
                 <tr>
-                  <th className="px-6 py-4">Audit ID</th>
-                  <th className="px-6 py-4">Actor User ID</th>
-                  <th className="px-6 py-4">Action</th>
-                  <th className="px-6 py-4">Target</th>
-                  <th className="px-6 py-4">Occurred At</th>
+                  <th className="px-6 py-4">{t('admin.auditLogs.auditId')}</th>
+                  <th className="px-6 py-4">{t('admin.auditLogs.actorUserId')}</th>
+                  <th className="px-6 py-4">{t('admin.auditLogs.action')}</th>
+                  <th className="px-6 py-4">{t('admin.auditLogs.target')}</th>
+                  <th className="px-6 py-4">{t('admin.auditLogs.occurredAt')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -175,26 +191,27 @@ export default function AuditLogsPage() {
             </table>
           </div>
         )}
+        </div>
       </div>
 
       {!isAuditLogsLoading && !auditLogsError && (auditLogs?.items?.length ?? 0) > 0 && (
-        <div className="flex items-center justify-center gap-1 pt-4">
+        <div className="flex items-center justify-center gap-1 pt-8 pb-8">
           <button 
             disabled={page === 1}
             onClick={() => setPage(p => Math.max(1, p - 1))}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex h-12 w-12 items-center justify-center rounded-[20px] bg-white text-slate-400 transition hover:bg-slate-50 hover:text-slate-600 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronLeftIcon />
           </button>
           
-          <span className="text-sm text-slate-600 font-medium px-4">
-            Page {page} of {totalPages}
+          <span className="text-lg text-slate-600 font-bold px-6">
+            {t('ui.page')} {page} {t('ui.of')} {totalPages}
           </span>
           
           <button 
             disabled={page === totalPages || totalPages === 0}
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex h-12 w-12 items-center justify-center rounded-[20px] bg-white text-slate-400 transition hover:bg-slate-50 hover:text-slate-600 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronRightIcon />
           </button>

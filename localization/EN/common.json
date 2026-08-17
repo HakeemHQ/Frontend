@@ -112,12 +112,15 @@
   "admin": {
     "dashboard": {
       "title": "Dashboard",
+      "subtitle": "Activity Summary Overview",
       "description": "System overview at a glance.",
       "activeUsers": "Active Users",
       "documentsUploaded": "Documents Uploaded",
       "extractionsCompleted": "Extractions Completed",
       "cvVersionsGenerated": "CV Versions Generated",
+      "from": "From",
       "to": "to",
+      "toLabel": "To",
       "dateError": "From Date cannot be after To Date"
     },
     "doctors": {
@@ -207,9 +210,17 @@
     },
     "auditLogs": {
       "title": "Audit Logs",
+      "systemLogs": "System Logs",
       "description": "View system audit trail.",
+      "detailedLogs": "Detailed audit logs and system events",
       "searchLabel": "Search Actor ID",
       "searchPlaceholder": "Search by User ID",
+      "filterByUser": "Filter by user ID",
+      "actionPlaceholder": "e.g. ExtractedItemReviewed",
+      "fromDate": "From Date",
+      "toDate": "To Date",
+      "auditId": "Audit ID",
+      "occurredAt": "Occurred At",
       "allActions": "All Actions",
       "create": "Create",
       "update": "Update",
@@ -218,6 +229,7 @@
       "timestamp": "Timestamp",
       "actor": "Actor",
       "user": "User",
+      "actorUserId": "Actor User ID",
       "action": "Action",
       "target": "Target",
       "entity": "Entity",
@@ -238,7 +250,9 @@
     },
     "logs": {
       "title": "Application Logs",
+      "applicationLogs": "Application Logs",
       "description": "View server-side log entries.",
+      "viewServerLogs": "View server-side log entries.",
       "time": "Time",
       "level": "Level",
       "message": "Message",

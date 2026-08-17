@@ -9,12 +9,8 @@ import { Toast } from "@/components/ui/Toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/localization/LanguageContext";
 
-const UserIcon = ({ className }: { className?: string }) => (
-  <svg className={className} width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-    <circle cx="12" cy="7" r="4" />
-  </svg>
-);
+import { HugeiconsIcon } from "@hugeicons/react";
+import { UserCircleIcon } from "@hugeicons/core-free-icons";
 
 export default function DoctorProfilePage() {
   const { t } = useLanguage();
@@ -55,25 +51,33 @@ export default function DoctorProfilePage() {
   const doc = profile as DoctorProfile;
 
   return (
-    <div className="space-y-10 pb-12 max-w-4xl mx-auto relative">
+    <div className="pb-12 max-w-6xl mx-auto relative px-4 sm:px-6 mt-4">
       <AnimatePresence>
         {error && <Toast message={error} type="error" onClose={() => setError(null)} />}
       </AnimatePresence>
       
-      <div>
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">
-          {t('doctor.profile.title')}
-        </h1>
-        <p className="text-slate-500 text-base">
-          {t('doctor.profile.description')}
-        </p>
+      {/* Massive Hero Section */}
+      <div className="mb-12 bg-primary rounded-[48px] p-10 md:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px]">
+        {/* Background Graphic */}
+        <div className="absolute -top-24 -right-10 opacity-10 text-white transform rotate-12 pointer-events-none">
+          <HugeiconsIcon icon={UserCircleIcon} className="w-[500px] h-[500px]" />
+        </div>
+        
+        <div className="relative z-10 mt-24">
+          <h1 className="text-5xl md:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
+            {t('doctor.profile.title')}
+          </h1>
+          <p className="text-white/80 text-xl font-medium max-w-2xl">
+            {t('doctor.profile.description')}
+          </p>
+        </div>
       </div>
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="rounded-3xl border border-slate-100/80 bg-white/80 backdrop-blur-xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative min-h-[400px]"
+        className="bg-white rounded-[40px] shadow-2xl shadow-slate-200/50 p-8 md:p-12 relative z-30 -mt-20 mx-4 md:mx-auto max-w-5xl border-0 min-h-[400px]"
       >
         {isLoading ? (
           <div className="animate-pulse">
@@ -101,9 +105,9 @@ export default function DoctorProfilePage() {
           </div>
         ) : doc ? (
           <>
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 border-b border-slate-100/80 pb-10 mb-10">
-              <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-3xl bg-emerald-50 text-emerald-600 shadow-sm border border-emerald-100/50">
-                <UserIcon className="w-12 h-12" />
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 border-b-2 border-slate-100 pb-12 mb-12">
+              <div className="flex h-32 w-32 shrink-0 items-center justify-center rounded-[32px] bg-primary/10 text-primary shadow-sm border-2 border-primary/20">
+                <HugeiconsIcon icon={UserCircleIcon} className="w-16 h-16" />
               </div>
               <div className="text-center sm:text-left rtl:sm:text-right pt-2">
                 <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">{doc.fullName}</h2>
@@ -114,48 +118,39 @@ export default function DoctorProfilePage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl hover:bg-slate-50/80 transition-colors">
-                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">{t('doctor.profile.email')}</span>
-                <span className="text-base font-semibold text-slate-900">{doc.email}</span>
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 rounded-[24px] bg-slate-50 hover:bg-primary/5 border border-slate-100 hover:border-primary/20 transition-colors">
+                <span className="text-lg font-bold text-slate-500 mb-1 sm:mb-0">{t('doctor.profile.email')}</span>
+                <span className="text-xl font-black text-slate-900">{doc.email}</span>
               </div>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl hover:bg-slate-50/80 transition-colors">
-                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">{t('doctor.profile.licenseNumber')}</span>
-                <span className="text-base font-semibold text-slate-900">{doc.licenseNumber || "N/A"}</span>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 rounded-[24px] bg-slate-50 hover:bg-primary/5 border border-slate-100 hover:border-primary/20 transition-colors">
+                <span className="text-lg font-bold text-slate-500 mb-1 sm:mb-0">{t('doctor.profile.licenseNumber')}</span>
+                <span className="text-xl font-black text-slate-900">{doc.licenseNumber || "N/A"}</span>
               </div>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl hover:bg-slate-50/80 transition-colors">
-                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">{t('doctor.profile.specialty')}</span>
-                <span className="text-base font-semibold text-slate-900">{doc.specialty}</span>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 rounded-[24px] bg-slate-50 hover:bg-primary/5 border border-slate-100 hover:border-primary/20 transition-colors">
+                <span className="text-lg font-bold text-slate-500 mb-1 sm:mb-0">{t('doctor.profile.specialty')}</span>
+                <span className="text-xl font-black text-slate-900">{doc.specialty}</span>
               </div>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl hover:bg-slate-50/80 transition-colors">
-                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">{t('doctor.profile.status')}</span>
-                <span className="text-base font-bold text-emerald-600 uppercase tracking-wide text-sm">{doc.status}</span>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 rounded-[24px] bg-slate-50 hover:bg-primary/5 border border-slate-100 hover:border-primary/20 transition-colors">
+                <span className="text-lg font-bold text-slate-500 mb-1 sm:mb-0">{t('doctor.profile.status')}</span>
+                <span className="text-lg font-black text-emerald-600 uppercase tracking-widest">{doc.status}</span>
               </div>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl hover:bg-slate-50/80 transition-colors">
-                <span className="text-sm font-bold text-slate-500 mb-1 sm:mb-0">{t('admin.doctors.doctorId')}</span>
-                <span className="text-base font-mono text-slate-600 bg-slate-100 px-2 py-1 rounded-md text-sm">{doc.doctorId}</span>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 rounded-[24px] bg-slate-50 hover:bg-primary/5 border border-slate-100 hover:border-primary/20 transition-colors">
+                <span className="text-lg font-bold text-slate-500 mb-1 sm:mb-0">{t('admin.doctors.doctorId')}</span>
+                <span className="text-lg font-mono text-primary font-bold bg-primary/10 px-4 py-2 rounded-xl">{doc.doctorId}</span>
               </div>
             </div>
           </>
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-slate-500 min-h-[300px]">
             <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-4">
-              <UserIcon className="w-8 h-8 text-slate-300" />
+              <HugeiconsIcon icon={UserCircleIcon} className="w-8 h-8 text-slate-300" />
             </div>
             <p className="font-bold text-lg text-slate-900">{t('ui.noDataFound')}</p>
           </div>
         )}
 
-        {doc && (
-          <div className="mt-12 pt-6 border-t border-slate-100/80">
-            <Button 
-              className="w-full sm:w-auto px-8 h-12 rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-md hover:shadow-lg transition-all font-semibold"
-              onClick={() => router.push('/doctor/profile/change-password')}
-            >
-              {t('doctor.profile.changePassword')}
-            </Button>
-          </div>
-        )}
+
       </motion.div>
     </div>
   );

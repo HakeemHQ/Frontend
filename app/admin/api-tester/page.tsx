@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { adminApi } from "@/lib/api/admin";
+import { useLanguage } from "@/localization/LanguageContext";
 
 type TestResult = {
   name: string;
@@ -12,6 +13,7 @@ type TestResult = {
 };
 
 export default function ApiTesterPage() {
+  const { t } = useLanguage();
   const [tests, setTests] = useState<TestResult[]>([
     { name: "Create Doctor (POST /admin/doctors)", status: "pending" },
     { name: "Get Doctors (GET /admin/doctors)", status: "pending" },
@@ -144,23 +146,27 @@ export default function ApiTesterPage() {
   };
 
   return (
-    <div className="space-y-6 pb-8 mx-auto max-w-4xl">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-            API Test Runner
-          </h1>
-          <p className="mt-2 text-sm text-slate-500">
-            Execute all admin API integrations sequentially and verify the responses.
-          </p>
+    <div className="space-y-8 pb-8 mx-auto max-w-5xl">
+      {/* Hero Header */}
+      <div className="bg-primary rounded-[48px] p-12 md:p-16 text-white shadow-2xl shadow-primary/30 relative overflow-hidden min-h-[300px] flex flex-col justify-center">
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+          <div>
+            <h1 className="text-5xl md:text-6xl font-black tracking-tighter mb-4 font-heading">
+              {t('admin.apiTester.title')}
+            </h1>
+            <p className="text-xl text-white/80 font-medium max-w-xl">
+              {t('admin.apiTester.description')}
+            </p>
+          </div>
+          <Button onClick={runTests} disabled={isRunning} className="bg-white hover:bg-slate-50 text-primary font-black rounded-full h-16 px-8 shadow-xl shadow-white/20 transition-all hover:-translate-y-1 text-xl border-none">
+            {isRunning ? "Running Tests..." : "Run All API Tests"}
+          </Button>
         </div>
-        <Button onClick={runTests} disabled={isRunning} className="bg-blue-600 hover:bg-blue-700 text-white">
-          {isRunning ? "Running Tests..." : "Run All API Tests"}
-        </Button>
       </div>
 
-      <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-sm">
-        <div className="divide-y divide-slate-100">
+      <div className="-mt-16 relative z-20 px-4 md:px-8">
+        <div className="rounded-[40px] border border-slate-100 bg-white overflow-hidden shadow-2xl shadow-slate-200/50">
+          <div className="divide-y divide-slate-100">
           {tests.map((test, index) => (
             <div key={index} className="p-6">
               <div className="flex items-center justify-between mb-4">

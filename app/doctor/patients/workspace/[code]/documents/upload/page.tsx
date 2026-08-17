@@ -12,7 +12,8 @@ import {
   Calendar01Icon,
   AiLockIcon,
   ArrowRight01Icon,
-  DocumentAttachmentIcon
+  DocumentAttachmentIcon,
+  ArrowLeft01Icon
 } from "@hugeicons/core-free-icons";
 import { usePatientDocumentsStore } from "@/store/usePatientDocumentsStore";
 import { Toast } from "@/components/ui/Toast";
@@ -136,19 +137,35 @@ export default function AddDocumentPage({ params }: { params: Promise<{ code: st
         className="hidden" 
       />
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 md:p-12">
-        {/* Header Section */}
-        <div className="flex flex-col items-center text-center mb-12">
-          <div className="w-16 h-16 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center mb-6">
-            <HugeiconsIcon icon={DocumentAttachmentIcon} className="w-8 h-8" />
-          </div>
-          <h1 className="text-3xl font-bold text-slate-900 font-heading mb-3">
+      {/* Massive Hero Section */}
+      <div className="mb-12 bg-primary rounded-[48px] p-10 md:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px] mx-4 md:mx-auto max-w-5xl">
+        {/* Background Graphic */}
+        <div className="absolute -top-24 -right-10 opacity-10 text-white transform rotate-12 pointer-events-none">
+          <HugeiconsIcon icon={DocumentAttachmentIcon} className="w-[500px] h-[500px]" />
+        </div>
+        
+        {/* Back Navigation */}
+        <div className="absolute top-10 left-10 z-20 rtl:left-auto rtl:right-10">
+          <button 
+            onClick={() => router.back()}
+            className="inline-flex items-center text-sm font-bold text-white/80 hover:text-white transition bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md cursor-pointer border-none"
+          >
+            <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 rtl:rotate-180 mr-2 rtl:mr-0 rtl:ml-2" />
+            {t('doctor.documents.title')}
+          </button>
+        </div>
+        
+        <div className="relative z-10 mt-24">
+          <h1 className="text-5xl md:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
             {t('doctor.documents.uploadTitle')}
           </h1>
-          <p className="text-slate-500 text-lg">
+          <p className="text-white/80 text-xl font-medium max-w-2xl">
             {t('doctor.documents.uploadSubtitle')}
           </p>
         </div>
+      </div>
+
+      <div className="bg-white rounded-[40px] shadow-2xl shadow-slate-200/50 p-8 md:p-12 relative z-30 -mt-20 mx-4 md:mx-auto max-w-4xl border-0">
 
         {/* Upload Methods Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
@@ -160,17 +177,17 @@ export default function AddDocumentPage({ params }: { params: Promise<{ code: st
               <div 
                 key={method.id}
                 onClick={() => handleCardClick(method)}
-                className={`flex flex-col items-center text-center p-8 rounded-xl border-2 transition cursor-pointer ${
+                className={`flex flex-col items-center justify-center text-center p-10 rounded-[32px] transition-all duration-300 cursor-pointer ${
                   isSelected
-                    ? "border-primary-600 bg-primary-50/30"
-                    : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                    ? "border-4 border-primary bg-primary/5 scale-105 shadow-xl shadow-primary/20"
+                    : "border-2 border-slate-100 bg-white hover:border-primary/30 hover:bg-slate-50 hover:-translate-y-2 hover:shadow-2xl hover:shadow-slate-200/50"
                 }`}
               >
-                <div className="w-14 h-14 rounded-full bg-primary-50 text-slate-700 flex items-center justify-center mb-6">
-                  <HugeiconsIcon icon={method.icon} className="w-6 h-6" />
+                <div className={`w-20 h-20 rounded-[24px] flex items-center justify-center mb-6 transition-colors duration-300 ${isSelected ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-primary/10 text-primary shadow-sm'}`}>
+                  <HugeiconsIcon icon={method.icon} className="w-10 h-10" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 font-heading mb-3">{method.title}</h3>
-                <p className={`text-sm leading-relaxed ${hasFile ? "text-primary-600 font-semibold truncate w-full max-w-[200px]" : "text-slate-500"}`}>
+                <h3 className="text-2xl font-black text-slate-900 font-heading mb-3 tracking-tight">{method.title}</h3>
+                <p className={`text-base font-bold leading-relaxed ${hasFile ? "text-primary truncate w-full max-w-[250px]" : "text-slate-500"}`}>
                   {hasFile ? selectedFile.file.name : method.description}
                 </p>
               </div>
@@ -188,57 +205,57 @@ export default function AddDocumentPage({ params }: { params: Promise<{ code: st
         </div>
 
         {/* Form Fields */}
-        <div className="space-y-6 max-w-2xl mx-auto mb-16">
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">
+        <div className="space-y-8 max-w-3xl mx-auto mb-16">
+          <div className="space-y-4">
+            <label className="block text-xl font-bold text-slate-900">
               {t('doctor.documents.documentTitle')}
             </label>
             <Input 
               placeholder={t('doctor.documents.documentTitlePlaceholder')}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              iconLeft={<HugeiconsIcon icon={AiLockIcon} className="w-5 h-5 text-slate-400" />}
-              className="bg-white border-slate-200"
+              iconLeft={<HugeiconsIcon icon={AiLockIcon} className="w-6 h-6 text-slate-400" />}
+              className="bg-slate-50 border-slate-100 h-16 rounded-[20px] text-lg font-bold"
             />
           </div>
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">
+          <div className="space-y-4">
+            <label className="block text-xl font-bold text-slate-900">
               {t('doctor.documents.date')}
             </label>
             <Input 
               type="date"
               value={documentDate}
               onChange={(e) => setDocumentDate(e.target.value)}
-              iconLeft={<HugeiconsIcon icon={Calendar01Icon} className="w-5 h-5 text-slate-400" />}
-              className="bg-white border-slate-200"
+              iconLeft={<HugeiconsIcon icon={Calendar01Icon} className="w-6 h-6 text-slate-400" />}
+              className="bg-slate-50 border-slate-100 h-16 rounded-[20px] text-lg font-bold"
             />
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-end gap-4">
+        <div className="flex flex-col sm:flex-row items-center justify-end gap-6 border-t border-slate-100 pt-10">
           <Button 
             variant="outline" 
-            className="w-full sm:w-auto border-red-500 text-red-500 hover:bg-red-50 font-semibold px-8 disabled:opacity-50"
+            className="w-full sm:w-auto border-red-500 text-red-500 hover:bg-red-50 font-bold px-10 py-5 rounded-full text-lg transition-all"
             onClick={() => router.back()}
             disabled={isLoading}
           >
             {t('doctor.profile.cancel')}
           </Button>
           <Button 
-            className="w-full sm:w-auto bg-primary-600 hover:bg-primary-700 text-white font-semibold px-8 flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold px-12 py-5 rounded-full text-lg shadow-xl shadow-primary/30 hover:shadow-primary/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 disabled:opacity-50 border-none"
             onClick={handleSubmit}
             disabled={isLoading}
           >
             {isLoading ? (
               <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 {t('doctor.documents.uploading')}
               </>
             ) : (
               <>
                 {t('doctor.documents.uploadButton')}
-                <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 rtl:rotate-180" />
+                <HugeiconsIcon icon={ArrowRight01Icon} className="w-5 h-5 rtl:rotate-180" />
               </>
             )}
           </Button>

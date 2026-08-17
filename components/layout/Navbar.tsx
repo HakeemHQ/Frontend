@@ -14,11 +14,11 @@ export function Navbar() {
         <div className="text-sm font-semibold text-slate-800">{t('nav.dashboard')}</div>
       </div>
       <div className="flex items-center gap-4">
-        <div className="hidden rounded-xl border border-slate-200 px-4 py-2 text-sm text-slate-500 md:block">
+        <div className="hidden rounded-full border border-slate-200 bg-slate-50 px-5 py-2.5 text-sm text-slate-500 md:block hover:bg-slate-100 transition-colors">
           {t('nav.search')}
         </div>
         <LanguageSwitcher />
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-sky-900 font-bold text-white">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary font-bold text-white shadow-md shadow-primary/20">
           H
         </div>
       </div>

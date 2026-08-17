@@ -109,8 +109,8 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen w-full bg-white text-gray-900 font-sans relative">
-      <div className="absolute top-4 right-4 z-50">
+    <main className="flex min-h-screen w-full bg-slate-50 text-gray-900 font-sans relative p-4 lg:p-8">
+      <div className="absolute top-8 right-8 z-50">
         <LanguageSwitcher />
       </div>
       <AnimatePresence>
@@ -122,129 +122,138 @@ export default function LoginPage() {
           />
         )}
       </AnimatePresence>
-      <section className="hidden lg:flex relative w-1/2 flex-col justify-center bg-gradient-to-br from-[#c6d7f9] to-[#e8effc] px-16 xl:px-24 overflow-hidden">
-        <div className="absolute right-0 top-0 h-full w-[1px] bg-gradient-to-b from-transparent via-blue-200 to-transparent"></div>
 
-        <div className="relative z-10 max-w-lg">
-          <div className="mb-10 flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg border-2 border-blue-600 text-blue-600">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 4v16" />
-                <path d="M4 12h16" />
-              </svg>
+      <div className="flex w-full max-w-[1600px] mx-auto bg-white rounded-[48px] shadow-2xl shadow-slate-200/50 overflow-hidden min-h-[calc(100vh-4rem)]">
+        {/* Left Side: Massive Hero Panel */}
+        <section className="hidden lg:flex relative w-1/2 flex-col justify-between bg-primary p-16 xl:p-24 overflow-hidden text-white">
+          <div className="absolute right-0 top-0 h-full w-[1px] bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
+          
+          <div className="relative z-10">
+            <div className="mb-16 flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-primary">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 4v16" />
+                  <path d="M4 12h16" />
+                </svg>
+              </div>
+              <span className="text-3xl font-black tracking-tighter text-white font-heading">{t('common.appName')}</span>
             </div>
-            <span className="text-2xl font-bold tracking-tight text-blue-600">{t('common.appName')}</span>
-          </div>
 
-          <h1 className="mb-6 text-4xl xl:text-5xl font-bold leading-tight tracking-tight text-gray-900">
-            {t('auth.login.heroTitle')}
-          </h1>
-          <p className="text-lg text-gray-600 leading-relaxed mb-16 max-w-md">
-            {t('auth.login.heroSubtitle')}
-          </p>
-
-          <div className="relative w-full h-40">
-            <div className="absolute left-0 top-0 flex w-64 items-center gap-4 rounded-xl bg-white/80 p-4 shadow-sm backdrop-blur-md border border-white/40">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-                <FileIcon className="h-5 w-5" />
-              </div>
-              <div className="space-y-2 w-full">
-                <div className="h-2 w-full rounded-full bg-blue-100"></div>
-                <div className="h-2 w-2/3 rounded-full bg-blue-50"></div>
-              </div>
-            </div>
-            
-            <div className="absolute right-10 top-20 flex w-64 items-center gap-4 rounded-xl bg-white/80 p-4 shadow-sm backdrop-blur-md border border-white/40">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-                <HistoryIcon className="h-5 w-5" />
-              </div>
-              <div className="space-y-2 w-full">
-                <div className="h-2 w-full rounded-full bg-blue-100"></div>
-                <div className="h-2 w-1/2 rounded-full bg-blue-50"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="flex w-full lg:w-1/2 flex-col items-center justify-center p-6 sm:p-12">
-        <div className="w-full max-w-md space-y-8 rounded-3xl sm:border sm:border-gray-100 sm:bg-white sm:p-10 sm:shadow-[0_2px_40px_-12px_rgba(0,0,0,0.05)]">
-          <div className="text-center sm:text-left">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-              {t('auth.login.title')}
-            </h2>
-            <p className="mt-2 text-sm text-gray-500">
-              {t('auth.login.subtitle')}
+            <h1 className="mb-8 text-6xl xl:text-7xl font-black leading-none tracking-tighter text-white font-heading">
+              {t('auth.login.heroTitle')}
+            </h1>
+            <p className="text-2xl text-white/80 leading-relaxed max-w-lg font-medium">
+              {t('auth.login.heroSubtitle')}
             </p>
           </div>
 
-          <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700" htmlFor="email">
-                {t('auth.login.emailLabel')}
-              </label>
-              <Input
-                id="email"
-                type="email"
-                placeholder={t('auth.login.emailPlaceholder')}
-                {...register("email")}
-                error={errors.email?.message}
-                iconLeft={<MailIcon className="h-5 w-5" />}
-              />
+          <div className="relative w-full h-48 mt-12">
+            <div className="absolute left-0 top-0 flex w-72 items-center gap-4 rounded-3xl bg-white/10 p-5 shadow-xl backdrop-blur-md border border-white/20">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[20px] bg-white text-primary">
+                <FileIcon className="h-7 w-7" />
+              </div>
+              <div className="space-y-3 w-full">
+                <div className="h-3 w-full rounded-full bg-white/30"></div>
+                <div className="h-3 w-2/3 rounded-full bg-white/20"></div>
+              </div>
             </div>
-
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700" htmlFor="password">
-                {t('auth.login.passwordLabel')}
-              </label>
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder={t('auth.login.passwordPlaceholder')}
-                {...register("password")}
-                error={errors.password?.message}
-                iconLeft={<LockIcon className="h-5 w-5" />}
-                iconRight={
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="hover:text-gray-600 focus:outline-none"
-                    aria-label={showPassword ? t('auth.login.hidePassword') : t('auth.login.showPassword')}
-                  >
-                    {showPassword ? (
-                      <EyeOffIcon className="h-5 w-5" />
-                    ) : (
-                      <EyeIcon className="h-5 w-5" />
-                    )}
-                  </button>
-                }
-              />
-            </div>
-
-            <div className="flex justify-end">
-              <Link
-                href="/forgot-password"
-                className="text-sm font-medium text-blue-600 hover:text-blue-500 hover:underline"
-              >
-                {t('auth.login.forgotPassword')}
-              </Link>
-            </div>
-
-            <Button type="submit" fullWidth className="py-3.5 text-base shadow-sm hover:shadow-md" disabled={loading}>
-              {loading ? t('auth.login.submitting') : t('auth.login.submitButton')}
-            </Button>
-          </form>
-
-          <div className="space-y-6 pt-2">
-            <div className="flex items-center justify-center gap-2 rounded-xl bg-slate-50 px-4 py-3 text-xs font-medium text-blue-700">
-              <ShieldIcon className="h-4 w-4" />
-              <span>{t('auth.login.securityNote')}</span>
-            </div>
-
             
+            <div className="absolute right-0 top-24 flex w-72 items-center gap-4 rounded-3xl bg-white/10 p-5 shadow-xl backdrop-blur-md border border-white/20">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[20px] bg-white text-primary">
+                <HistoryIcon className="h-7 w-7" />
+              </div>
+              <div className="space-y-3 w-full">
+                <div className="h-3 w-full rounded-full bg-white/30"></div>
+                <div className="h-3 w-1/2 rounded-full bg-white/20"></div>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        {/* Right Side: Massive Form */}
+        <section className="flex w-full lg:w-1/2 flex-col items-center justify-center p-8 sm:p-16 lg:p-24 relative">
+          <div className="w-full max-w-lg space-y-10">
+            <div className="text-left">
+              <h2 className="text-5xl font-black tracking-tighter text-slate-900 font-heading">
+                {t('auth.login.title')}
+              </h2>
+              <p className="mt-4 text-xl text-slate-500 font-medium">
+                {t('auth.login.subtitle')}
+              </p>
+            </div>
+
+            <form className="space-y-8" onSubmit={handleSubmit(onSubmit)}>
+              <div className="space-y-3">
+                <label className="text-lg font-bold text-slate-900" htmlFor="email">
+                  {t('auth.login.emailLabel')}
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder={t('auth.login.emailPlaceholder')}
+                  {...register("email")}
+                  error={errors.email?.message}
+                  iconLeft={<MailIcon className="h-6 w-6 text-slate-400" />}
+                  className="bg-slate-50 border-slate-100 focus-visible:ring-primary/20 focus-visible:border-primary rounded-[24px] h-20 text-xl font-bold px-6"
+                />
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-lg font-bold text-slate-900" htmlFor="password">
+                    {t('auth.login.passwordLabel')}
+                  </label>
+                  <Link
+                    href="/forgot-password"
+                    className="text-base font-bold text-primary hover:text-primary/80 hover:underline"
+                  >
+                    {t('auth.login.forgotPassword')}
+                  </Link>
+                </div>
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder={t('auth.login.passwordPlaceholder')}
+                  {...register("password")}
+                  error={errors.password?.message}
+                  iconLeft={<LockIcon className="h-6 w-6 text-slate-400" />}
+                  className="bg-slate-50 border-slate-100 focus-visible:ring-primary/20 focus-visible:border-primary rounded-[24px] h-20 text-xl font-bold px-6"
+                  iconRight={
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="text-slate-400 hover:text-slate-600 focus:outline-none pr-4"
+                      aria-label={showPassword ? t('auth.login.hidePassword') : t('auth.login.showPassword')}
+                    >
+                      {showPassword ? (
+                        <EyeOffIcon className="h-6 w-6" />
+                      ) : (
+                        <EyeIcon className="h-6 w-6" />
+                      )}
+                    </button>
+                  }
+                />
+              </div>
+
+              <Button type="submit" fullWidth className="bg-primary hover:bg-primary/90 text-white font-black h-20 rounded-full shadow-2xl shadow-primary/30 hover:shadow-primary/40 hover:-translate-y-1 transition-all text-2xl border-none mt-4" disabled={loading}>
+                {loading ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                    {t('auth.login.submitting')}
+                  </div>
+                ) : t('auth.login.submitButton')}
+              </Button>
+            </form>
+
+            <div className="pt-8">
+              <div className="flex items-center justify-center gap-3 rounded-[20px] bg-slate-50 p-6 text-sm font-bold text-primary">
+                <ShieldIcon className="h-6 w-6" />
+                <span className="text-base">{t('auth.login.securityNote')}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
   );
 }

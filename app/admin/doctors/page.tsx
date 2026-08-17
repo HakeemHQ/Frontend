@@ -108,51 +108,75 @@ export default function DoctorsListPage() {
   });
 
   return (
-    <div className="space-y-6 pb-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-          {t('admin.doctors.title')}
-        </h1>
-        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-          <Link href="/admin/doctors/add" className="w-full sm:w-auto">
-            <Button className="w-full gap-2">
-              <PlusIcon />
-              {t('admin.doctors.addDoctor')}
-            </Button>
-          </Link>
+    <div className="space-y-8 pb-8 max-w-7xl mx-auto">
+      {/* Hero Header */}
+      <div className="bg-primary rounded-[48px] p-12 md:p-16 text-white shadow-2xl shadow-primary/30 relative overflow-hidden min-h-[350px] flex flex-col justify-center">
+        <div className="relative z-10 flex flex-col gap-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+            <div>
+              <h1 className="text-5xl md:text-6xl font-black tracking-tighter mb-4 font-heading">
+                {t('admin.doctors.title')}
+              </h1>
+              <p className="text-xl text-white/80 font-medium">Manage platform doctors and specialists</p>
+            </div>
+            <Link href="/admin/doctors/add">
+              <Button className="bg-white hover:bg-slate-50 text-primary font-black rounded-full h-14 px-8 shadow-xl shadow-white/20 transition-all hover:-translate-y-1 text-lg border-none">
+                <PlusIcon className="mr-2 h-5 w-5 font-black" />
+                {t('admin.doctors.addDoctor')}
+              </Button>
+            </Link>
+          </div>
+          
+          {/* Filters inside Hero */}
+          <div className="flex flex-col sm:flex-row items-center gap-4 bg-white/10 p-5 rounded-[32px] backdrop-blur-md border border-white/20 shadow-xl w-full max-w-5xl">
+            <div className="w-full sm:flex-1">
+              <span className="text-xs font-bold text-white/60 mb-2 uppercase tracking-wider pl-2 block">{t('nav.search')}</span>
+              <div className="relative">
+                <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-white/50" />
+                <input
+                  placeholder={t('admin.doctors.searchPlaceholder')}
+                  className="w-full bg-white/20 border-none text-white rounded-[20px] pl-12 pr-6 py-4 text-lg font-bold focus:ring-2 focus:ring-white outline-none placeholder-white/50"
+                  value={search}
+                  onChange={handleSearchChange}
+                />
+              </div>
+            </div>
+            
+            <div className="w-full sm:w-64">
+              <span className="text-xs font-bold text-white/60 mb-2 uppercase tracking-wider pl-2 block">{t('admin.doctors.specialty')}</span>
+              <select 
+                className="w-full bg-white/20 border-none text-white rounded-[20px] px-6 py-4 text-lg font-bold focus:ring-2 focus:ring-white outline-none appearance-none"
+                value={specialtyFilter}
+                onChange={(e) => handleSpecialtyChange(e.target.value)}
+              >
+                {specialtyOptions.map(opt => (
+                  <option key={opt.value} value={opt.value} className="text-slate-900 bg-white">
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="w-full sm:w-64">
+              <span className="text-xs font-bold text-white/60 mb-2 uppercase tracking-wider pl-2 block">{t('admin.doctors.status')}</span>
+              <select 
+                className="w-full bg-white/20 border-none text-white rounded-[20px] px-6 py-4 text-lg font-bold focus:ring-2 focus:ring-white outline-none appearance-none"
+                value={statusFilter}
+                onChange={(e) => handleStatusChangeFilter(e.target.value)}
+              >
+                {statusOptions.map(opt => (
+                  <option key={opt.value} value={opt.value} className="text-slate-900 bg-white">
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4">
-        <div className="space-y-1.5 w-full flex-1 z-30">
-          <label className="text-sm font-medium text-slate-700">{t('nav.search')}</label>
-          <Input
-            placeholder={t('admin.doctors.searchPlaceholder')}
-            iconLeft={<SearchIcon className="h-4 w-4" />}
-            className="bg-white"
-            value={search}
-            onChange={handleSearchChange}
-          />
-        </div>
-        <div className="space-y-1.5 w-full sm:w-48 z-20">
-          <label className="text-sm font-medium text-slate-700">{t('admin.doctors.specialty')}</label>
-          <Select 
-            options={specialtyOptions}
-            value={specialtyFilter}
-            onChange={handleSpecialtyChange}
-          />
-        </div>
-        <div className="space-y-1.5 w-full sm:w-48 z-10">
-          <label className="text-sm font-medium text-slate-700">{t('admin.doctors.status')}</label>
-          <Select 
-            options={statusOptions}
-            value={statusFilter}
-            onChange={handleStatusChangeFilter}
-          />
-        </div>
-      </div>
-
-      <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+      <div className="-mt-16 relative z-20 px-4 md:px-8">
+        <div className="overflow-hidden rounded-[40px] border border-slate-100 bg-white shadow-2xl shadow-slate-200/50">
         {isDoctorsLoading ? (
           <div className="flex justify-center items-center h-48">
             <Spinner />
@@ -211,6 +235,7 @@ export default function DoctorsListPage() {
             </table>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

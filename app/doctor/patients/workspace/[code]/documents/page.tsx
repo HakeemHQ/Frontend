@@ -141,58 +141,68 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
         )}
       </AnimatePresence>
 
-      {/* Breadcrumbs */}
-      <div className="flex items-center text-sm text-slate-500 mb-2">
-        <Link href={`/doctor/patients/workspace/${code}`} className="flex items-center hover:text-slate-800 transition">
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 rtl:rotate-180 mr-1 rtl:mr-0 rtl:ml-1" />
-          <span>{t('doctor.workspace.breadcrumbPatients')}</span>
-        </Link>
-        <span className="mx-2">/</span>
-        <span className="font-medium text-primary-600">{t('doctor.documents.title')}</span>
-      </div>
-
-      <div className="w-full border border-slate-100 rounded-2xl bg-surface shadow-sm overflow-hidden p-6 md:p-8">
+      {/* Massive Hero Section */}
+      <div className="mb-12 bg-primary rounded-[48px] p-10 md:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px]">
+        {/* Background Graphic */}
+        <div className="absolute -top-24 -right-10 opacity-10 text-white transform rotate-12">
+          <HugeiconsIcon icon={FileUploadIcon} className="w-[500px] h-[500px]" />
+        </div>
         
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <h1 className="text-2xl font-bold text-slate-900 font-heading">{t('doctor.documents.title')}</h1>
+        {/* Back Navigation & Actions */}
+        <div className="absolute top-10 left-10 right-10 z-20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <Link 
+            href={`/doctor/patients/workspace/${code}`}
+            className="inline-flex items-center text-sm font-bold text-white/80 hover:text-white transition bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md"
+          >
+            <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 rtl:rotate-180 mr-2 rtl:mr-0 rtl:ml-2" />
+            {t('doctor.workspace.breadcrumbPatients')}
+          </Link>
           <Link href={`/doctor/patients/workspace/${code}/documents/upload`}>
-            <Button className="bg-primary-600 hover:bg-primary-700 text-white font-medium flex items-center gap-2">
-              <HugeiconsIcon icon={FileUploadIcon} className="w-4 h-4" />
+            <Button variant="ghost" className="flex items-center gap-2 rounded-[24px] bg-white !text-primary hover:bg-slate-50 border-none shadow-xl shadow-black/10 hover:-translate-y-1 transition-all px-8 py-4 font-black">
+              <HugeiconsIcon icon={FileUploadIcon} className="w-6 h-6" />
               {t('doctor.documents.upload')}
             </Button>
           </Link>
         </div>
+        
+        <div className="relative z-10 mt-24">
+          <h1 className="text-5xl md:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
+            {t('doctor.documents.title')}
+          </h1>
+        </div>
+      </div>
+
+      <div className="w-full border-0 rounded-[40px] bg-white shadow-2xl shadow-slate-200/50 p-8 md:p-12 relative z-30 -mt-20 mx-4 md:mx-8 md:w-auto">
 
         {/* Filters */}
-        <div className="flex flex-col sm:flex-row items-end gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row items-end gap-4 mb-8">
           <div className="w-full sm:w-1/2 md:w-2/5">
             <Input
               placeholder={t('doctor.documents.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              iconLeft={<HugeiconsIcon icon={Search01Icon} className="w-5 h-5 text-slate-400" />}
-              className="bg-slate-50 border-slate-200"
+              iconLeft={<HugeiconsIcon icon={Search01Icon} className="w-6 h-6 text-slate-400" />}
+              className="bg-slate-50 border-slate-200 h-16 rounded-[20px] text-lg font-bold"
             />
           </div>
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto rounded-xl border border-slate-100">
-          <table className="w-full text-sm text-left rtl:text-right text-slate-600">
-            <thead className="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-100">
+        <div className="overflow-x-auto rounded-[24px] border border-slate-100 shadow-sm">
+          <table className="w-full text-base text-left rtl:text-right text-slate-600">
+            <thead className="text-sm text-slate-500 uppercase bg-slate-50 border-b border-slate-100 font-bold tracking-wider">
               <tr>
-                <th scope="col" className="px-6 py-4 font-bold">{t('doctor.documents.document')}</th>
-                <th scope="col" className="px-6 py-4 font-bold">{t('doctor.documents.date')}</th>
-                <th scope="col" className="px-6 py-4 font-bold">{t('doctor.documents.status')}</th>
+                <th scope="col" className="px-8 py-6">{t('doctor.documents.document')}</th>
+                <th scope="col" className="px-8 py-6">{t('doctor.documents.date')}</th>
+                <th scope="col" className="px-8 py-6">{t('doctor.documents.status')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={3} className="px-6 py-8 text-center text-slate-500">
-                    <div className="flex justify-center mb-2">
-                      <div className="w-6 h-6 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+                  <td colSpan={3} className="px-8 py-12 text-center text-slate-500">
+                    <div className="flex justify-center mb-4">
+                      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
                     </div>
                     {t('doctor.documents.loadingDocuments')}
                   </td>
@@ -203,7 +213,7 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
                   return (
                     <tr 
                       key={`${doc.documentId || 'doc'}-${index}`} 
-                      className="bg-white hover:bg-slate-50 transition cursor-pointer"
+                      className="bg-white hover:bg-slate-50 transition-colors duration-300 cursor-pointer group"
                       onClick={() => {
                         const revStatus = (doc.reviewStatus || doc.documentReviewStatus || '').toLowerCase();
                         const isReviewed = 
@@ -220,9 +230,9 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
                         }
                       }}
                     >
-                      <td className="px-6 py-5 font-semibold text-slate-900">{doc.title}</td>
-                      <td className="px-6 py-5">{formattedDate}</td>
-                      <td className="px-6 py-5">
+                      <td className="px-8 py-6 font-bold text-lg text-slate-900 group-hover:text-primary transition-colors">{doc.title}</td>
+                      <td className="px-8 py-6 font-medium text-slate-500">{formattedDate}</td>
+                      <td className="px-8 py-6">
                         {getStatusBadge(doc)}
                       </td>
                     </tr>

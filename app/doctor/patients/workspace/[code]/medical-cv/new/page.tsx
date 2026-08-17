@@ -78,16 +78,7 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
         )}
       </AnimatePresence>
 
-      {/* Back Navigation */}
-      <div className="mb-8">
-        <button 
-          onClick={() => router.back()}
-          className="flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 transition"
-        >
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 rtl:rotate-180 mr-1.5 rtl:mr-0 rtl:ml-1.5" />
-          {t('doctor.workspace.breadcrumbPatients')}
-        </button>
-      </div>
+
 
       {showSuccess ? (
         <div className="bg-white border border-emerald-100 rounded-3xl p-10 md:p-16 text-center shadow-sm animate-in zoom-in-95 duration-500">
@@ -119,27 +110,42 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
           </div>
         </div>
       ) : (
-        <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
-          {/* Header */}
-          <div className="px-8 py-10 bg-slate-50 border-b border-slate-100 flex items-start gap-5">
-            <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center shrink-0 shadow-sm border border-blue-200 text-blue-600">
-              <HugeiconsIcon icon={FileAddIcon} className="w-7 h-7" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900 font-heading tracking-tight mb-2">
-                {t('doctor.medicalCvs.generateNew')}
-              </h1>
-              <p className="text-slate-500 leading-relaxed text-sm max-w-xl">
-                {t('doctor.medicalCvs.generateDesc')}
-              </p>
-            </div>
-          </div>
+      {/* Massive Hero Section */}
+      <div className="mb-12 bg-primary rounded-[48px] p-10 md:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px]">
+        {/* Background Graphic */}
+        <div className="absolute -top-24 -right-10 opacity-10 text-white transform rotate-12">
+          <HugeiconsIcon icon={FileAddIcon} className="w-[500px] h-[500px]" />
+        </div>
+        
+        {/* Back Navigation */}
+        <div className="absolute top-10 left-10 z-20 rtl:left-auto rtl:right-10">
+          <button 
+            onClick={() => router.back()}
+            className="inline-flex items-center text-sm font-bold text-white/80 hover:text-white transition bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md cursor-pointer border-none"
+          >
+            <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 rtl:rotate-180 mr-2 rtl:mr-0 rtl:ml-2" />
+            {t('doctor.workspace.breadcrumbPatients')}
+          </button>
+        </div>
+        
+        <div className="relative z-10 mt-24">
+          <h1 className="text-5xl md:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
+            {t('doctor.medicalCvs.generateNew')}
+          </h1>
+          <p className="text-white/80 text-xl font-medium max-w-2xl">
+            {t('doctor.medicalCvs.generateDesc')}
+          </p>
+        </div>
+      </div>
+
+      {!showSuccess && (
+        <div className="bg-white border-0 rounded-[40px] shadow-2xl shadow-slate-200/50 p-8 md:p-12 relative z-30 -mt-20 mx-4 md:mx-8">
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="p-8 space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-10">
             {/* Title Field */}
-            <div className="space-y-3">
-              <label htmlFor="cv-title" className="block text-sm font-bold text-slate-900">
+            <div className="space-y-4">
+              <label htmlFor="cv-title" className="block text-xl font-bold text-slate-900">
                 {t('doctor.medicalCvs.titleLabel')} <span className="text-red-500">*</span>
               </label>
               <Input
@@ -149,17 +155,17 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Cardiology Medical CV or Diabetes Summary"
-                iconLeft={<HugeiconsIcon icon={TextIcon} className="w-5 h-5 text-slate-400" />}
-                className="font-medium"
+                iconLeft={<HugeiconsIcon icon={TextIcon} className="w-6 h-6 text-slate-400" />}
+                className="font-bold text-lg h-16 rounded-[20px]"
               />
             </div>
 
             {/* Submit Button */}
-            <div className="pt-4 border-t border-slate-100 flex justify-end">
+            <div className="pt-8 flex justify-end">
               <Button
                 type="submit"
                 disabled={isCreating}
-                className="relative overflow-hidden group"
+                className="relative overflow-hidden group rounded-full px-12 py-5 text-lg font-bold shadow-xl shadow-primary/30 hover:-translate-y-1 hover:shadow-primary/40 transition-all duration-300 border-none bg-primary hover:bg-primary/90 text-white"
               >
                 <span className={`transition-opacity duration-300 ${isCreating ? "opacity-0" : "opacity-100"}`}>
                   {t('doctor.medicalCvs.generateCv')}

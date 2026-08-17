@@ -73,7 +73,7 @@ export function DoctorSidebar() {
 
   return (
     <aside 
-      className={`fixed left-0 top-0 block h-screen border-r border-slate-100 bg-white z-40 transition-all duration-300 ${
+      className={`fixed left-0 top-0 block h-screen border-r-2 border-slate-100 bg-white/80 backdrop-blur-2xl z-40 transition-all duration-300 shadow-[4px_0_24px_-12px_rgba(0,0,0,0.1)] ${
         isCollapsed ? "w-[80px]" : "w-[80px] lg:w-[260px]"
       }`}
     >
@@ -81,7 +81,7 @@ export function DoctorSidebar() {
         {/* Toggle Button */}
         <button 
           onClick={toggleCollapse}
-          className={`absolute top-10 hidden lg:flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm hover:text-blue-600 transition-colors z-50 ${
+          className={`absolute top-10 hidden lg:flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm hover:text-primary transition-colors z-50 ${
             isRTL ? "-left-3" : "-right-3"
           }`}
           aria-label={t('nav.toggleSidebar')}
@@ -105,10 +105,10 @@ export function DoctorSidebar() {
           </div>
           {!isCollapsed && (
             <div className="hidden lg:block overflow-hidden whitespace-nowrap transition-opacity duration-300">
-              <div className="text-lg font-bold tracking-tight text-blue-600">
+              <div className="text-lg font-bold font-heading tracking-tight text-primary">
                 {t('common.appName')}
               </div>
-              <div className="text-[10px] uppercase font-semibold text-slate-400">
+              <div className="text-[10px] uppercase font-bold text-slate-400">
                 {t('common.brandTagline')}
               </div>
             </div>
@@ -130,15 +130,15 @@ export function DoctorSidebar() {
                   key={item.href}
                   href={item.href}
                   title={isCollapsed ? item.label : undefined}
-                  className={`flex items-center rounded-lg py-3 font-semibold transition-colors ${
-                    isCollapsed ? "justify-center px-0" : "gap-3 px-4 text-sm"
+                  className={`flex items-center rounded-[24px] py-4 font-bold transition-all duration-300 ${
+                    isCollapsed ? "justify-center px-0 mx-2" : "gap-3 px-6 text-[15px]"
                   } ${
                     finalIsActive
-                      ? "bg-blue-50 text-blue-600"
-                      : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                      ? "bg-primary text-white shadow-xl shadow-primary/30 -translate-y-1 mx-2"
+                      : "text-slate-500 hover:bg-white hover:shadow-md hover:text-slate-900 mx-2"
                   }`}
                 >
-                  <span className={finalIsActive ? "text-blue-600" : "text-slate-400"}>
+                  <span className={finalIsActive ? "text-white" : "text-slate-400"}>
                     {item.icon}
                   </span>
                   {!isCollapsed && <span className="hidden lg:block">{item.label}</span>}
@@ -152,8 +152,8 @@ export function DoctorSidebar() {
           <button 
             onClick={logout}
             title={isCollapsed ? t('nav.logout') : undefined}
-            className={`flex w-full items-center rounded-lg py-3 font-semibold text-red-500 transition-colors hover:bg-red-50 cursor-pointer ${
-              isCollapsed ? "justify-center px-0" : "gap-3 px-4 text-sm"
+            className={`flex w-full items-center rounded-[20px] py-4 font-bold text-rose-500 transition-all hover:bg-rose-50 hover:shadow-sm cursor-pointer mx-2 ${
+              isCollapsed ? "justify-center px-0 w-auto" : "gap-3 px-6 text-[15px] w-auto"
             }`}
           >
             <LogoutIcon />

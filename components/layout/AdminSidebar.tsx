@@ -63,7 +63,7 @@ export function AdminSidebar() {
   const { logout } = useAuth();
 
   return (
-    <aside className="fixed left-0 top-0 hidden h-screen w-[260px] border-r border-slate-100 bg-white md:block">
+    <aside className="fixed left-0 top-0 hidden h-screen w-[260px] border-r-2 border-slate-100 bg-white/80 backdrop-blur-2xl md:block z-50 shadow-[4px_0_24px_-12px_rgba(0,0,0,0.1)]">
       <div className="flex h-full flex-col">
         <div className="flex items-center gap-3 px-6 py-8">
           <div className="flex h-10 w-10 items-center justify-center shrink-0 overflow-hidden rounded-xl">
@@ -77,10 +77,10 @@ export function AdminSidebar() {
             />
           </div>
           <div>
-            <div className="text-lg font-bold tracking-tight text-blue-600">
+            <div className="text-lg font-bold font-heading tracking-tight text-primary">
               Hakeem
             </div>
-            <div className="text-[10px] uppercase font-semibold text-slate-400">
+            <div className="text-[10px] uppercase font-bold text-slate-400">
               Premium Medical SaaS
             </div>
           </div>
@@ -94,13 +94,13 @@ export function AdminSidebar() {
                 <Link
                   key={item.label}
                   href={item.href}
-                  className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
+                  className={`flex items-center gap-3 rounded-[24px] px-6 py-4 text-[15px] font-bold transition-all duration-300 mx-2 ${
                     isActive
-                      ? "bg-blue-50 text-blue-600"
-                      : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                      ? "bg-primary text-white shadow-xl shadow-primary/30 -translate-y-1"
+                      : "text-slate-500 hover:bg-white hover:shadow-md hover:text-slate-900"
                   }`}
                 >
-                  <span className={isActive ? "text-blue-600" : "text-slate-400"}>
+                  <span className={isActive ? "text-white" : "text-slate-400"}>
                     {item.icon}
                   </span>
                   <span>{item.label}</span>
@@ -113,7 +113,7 @@ export function AdminSidebar() {
         <div className="px-4 py-6">
           <button 
             onClick={logout}
-            className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold text-red-500 transition-colors hover:bg-red-50 cursor-pointer"
+            className="flex w-auto mx-2 items-center gap-3 rounded-[20px] px-6 py-4 text-[15px] font-bold text-rose-500 transition-all hover:bg-rose-50 hover:shadow-sm cursor-pointer"
           >
             <LogoutIcon />
             <span>Logout</span>

@@ -18,11 +18,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
           <input
             ref={ref}
-            className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition placeholder:text-gray-400 focus:shadow-sm ${
+            className={`w-full rounded-2xl border px-5 py-3.5 text-sm outline-none transition-all duration-300 placeholder:text-slate-400 focus:shadow-md ${
               error 
-                ? 'border-red-300 focus:border-red-500 text-red-900 bg-red-50' 
-                : 'border-gray-200 text-gray-900 focus:border-blue-500 bg-surface'
-            } ${iconLeft ? 'pl-10 rtl:pl-4 rtl:pr-10' : ''} ${iconRight ? 'pr-10 rtl:pr-4 rtl:pl-10' : ''}`}
+                ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 text-red-900 bg-red-50' 
+                : 'border-slate-200 text-slate-900 focus:border-primary focus:ring-4 focus:ring-primary/10 bg-surface hover:border-slate-300'
+            } ${iconLeft ? 'pl-11 rtl:pl-5 rtl:pr-11' : ''} ${iconRight ? 'pr-11 rtl:pr-5 rtl:pl-11' : ''}`}
             {...props}
           />
           {iconRight && (

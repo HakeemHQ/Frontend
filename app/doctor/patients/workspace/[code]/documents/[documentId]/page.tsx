@@ -11,7 +11,8 @@ import {
   File01Icon,
   Delete02Icon,
   Alert02Icon,
-  Tick02Icon
+  Tick02Icon,
+  DocumentValidationIcon
 } from "@hugeicons/core-free-icons";
 import { getDocumentContent, getDocumentExtractedFields } from "@/lib/api/documents";
 import { usePatientDocumentsStore } from "@/store/usePatientDocumentsStore";
@@ -121,37 +122,43 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
         )}
       </AnimatePresence>
 
-      {/* Breadcrumbs */}
-      <div className="flex items-center text-sm text-slate-500 mb-2">
-        <Link href={`/doctor/patients/workspace/${code}/documents`} className="flex items-center hover:text-slate-800 transition">
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4 rtl:rotate-180 mr-1 rtl:mr-0 rtl:ml-1" />
-          <span>{t('doctor.documents.title')}</span>
-        </Link>
-        <span className="mx-2">/</span>
-        <span className="font-medium text-primary-600">{t('doctor.documents.breadcrumbPreview')}</span>
+      {/* Massive Hero Section */}
+      <div className="mb-12 bg-primary rounded-[48px] p-10 md:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px]">
+        {/* Background Graphic */}
+        <div className="absolute -top-24 -right-10 opacity-10 text-white transform rotate-12 pointer-events-none">
+          <HugeiconsIcon icon={DocumentValidationIcon} className="w-[500px] h-[500px]" />
+        </div>
+        
+        {/* Back Navigation & Actions */}
+        <div className="absolute top-10 left-10 right-10 z-20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <Link 
+            href={`/doctor/patients/workspace/${code}/documents`}
+            className="inline-flex items-center text-sm font-bold text-white/80 hover:text-white transition bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md"
+          >
+            <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 rtl:rotate-180 mr-2 rtl:mr-0 rtl:ml-2" />
+            {t('doctor.documents.title')}
+          </Link>
+          <Button 
+            className="flex items-center gap-2 rounded-full bg-white text-primary hover:bg-slate-50 border-none shadow-lg shadow-black/10 hover:-translate-y-1 transition-all px-8 py-3 font-black disabled:opacity-50"
+            onClick={handleDownload}
+            disabled={!blobUrl || isLoading}
+          >
+            <HugeiconsIcon icon={Download01Icon} className="w-5 h-5" />
+            {t('doctor.documents.download')}
+          </Button>
+        </div>
+        
+        <div className="relative z-10 mt-24">
+          <h1 className="text-5xl md:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
+            {documentName}
+          </h1>
+        </div>
       </div>
 
-      <div className="w-full border border-slate-100 rounded-2xl bg-surface shadow-sm overflow-hidden p-6 md:p-8 flex flex-col min-h-[800px]">
-        
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 shrink-0">
-          <h1 className="text-2xl font-bold text-slate-900 font-heading">{documentName}</h1>
-          <div className="flex items-center gap-3">
-
-            <Button 
-              variant="outline" 
-              className="border-primary-600 text-primary-600 hover:bg-primary-50 font-semibold flex items-center gap-2 disabled:opacity-50"
-              onClick={handleDownload}
-              disabled={!blobUrl || isLoading}
-            >
-              <HugeiconsIcon icon={Download01Icon} className="w-4 h-4" />
-              {t('doctor.documents.download')}
-            </Button>
-          </div>
-        </div>
+      <div className="w-full border-0 rounded-[40px] bg-white shadow-2xl shadow-slate-200/50 p-4 md:p-8 flex flex-col min-h-[800px] relative z-30 -mt-20 mx-4 md:mx-auto md:w-auto">
 
         {/* Document Viewer Area */}
-        <div className="flex-1 border border-slate-200 rounded-xl overflow-hidden bg-slate-50 flex items-center justify-center relative">
+        <div className="flex-1 border border-slate-100 rounded-[32px] overflow-hidden bg-slate-50 flex items-center justify-center relative shadow-inner">
           
           {isLoading ? (
             <div className="flex flex-col items-center text-slate-500">
@@ -201,22 +208,21 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
         </div>
       </div>
 
-      {/* Extracted Data Section */}
       {isExtracting ? (
-        <div className="w-full border border-slate-100 rounded-2xl bg-surface shadow-sm overflow-hidden p-6 md:p-8 flex flex-col items-center justify-center min-h-[200px]">
-          <div className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p className="font-medium text-slate-500">{t('doctor.documents.processing')}</p>
+        <div className="w-full border-0 rounded-[40px] bg-white shadow-xl shadow-slate-200/50 overflow-hidden p-12 flex flex-col items-center justify-center min-h-[300px] mt-8">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-6"></div>
+          <p className="font-bold text-lg text-slate-500">{t('doctor.documents.processing')}</p>
         </div>
       ) : extractedData && extractedData.items && extractedData.items.length > 0 ? (
-        <div className="w-full border border-slate-100 rounded-2xl bg-surface shadow-sm overflow-hidden mt-6">
-          <div className="bg-slate-50 px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="w-full border-0 rounded-[40px] bg-white shadow-xl shadow-slate-200/50 overflow-hidden mt-8">
+          <div className="bg-slate-50 px-10 py-8 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-xl font-bold text-slate-900 font-heading">{t('doctor.documents.extractedData')}</h2>
-              <p className="text-sm text-slate-500">{t('doctor.documents.extractedDataSubtitle')}</p>
+              <h2 className="text-3xl font-black text-slate-900 font-heading tracking-tight mb-2">{t('doctor.documents.extractedData')}</h2>
+              <p className="text-base font-medium text-slate-500">{t('doctor.documents.extractedDataSubtitle')}</p>
             </div>
           </div>
           
-          <div className="p-6 md:p-8 space-y-8">
+          <div className="p-8 md:p-12 space-y-12">
             {extractedData.items.map((item, itemIdx) => (
               <div key={item.extractedItemId || itemIdx} className="space-y-4">
                 <div className="flex items-center gap-2 mb-4">
@@ -238,14 +244,14 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
                     }
 
                     return (
-                      <div key={field.extractedFieldId || fieldIdx} className="bg-slate-50 rounded-xl p-4 border border-slate-100 relative overflow-hidden group">
-                        <div className="flex items-start justify-between mb-2">
-                          <h4 className="font-bold text-slate-700 text-sm">{field.fieldName}</h4>
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${confidenceColor}`}>
+                      <div key={field.extractedFieldId || fieldIdx} className="bg-slate-50 rounded-[24px] p-6 border-0 shadow-sm relative overflow-hidden group hover:bg-white hover:shadow-lg transition-all duration-300">
+                        <div className="flex items-start justify-between mb-4">
+                          <h4 className="font-black text-slate-900 text-lg">{field.fieldName}</h4>
+                          <span className={`text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest ${confidenceColor}`}>
                             {Math.round(field.confidence * 100)}% {t('doctor.documents.match')}
                           </span>
                         </div>
-                        <p className="text-slate-900 font-medium break-words">
+                        <p className="text-slate-700 font-medium break-words text-lg">
                           {field.confirmedValue || field.correctedValue || field.extractedValue || field.originalExtractedValue || <span className="text-slate-400 italic">{t('doctor.documents.notFound')}</span>}
                         </p>
                         
