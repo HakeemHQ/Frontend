@@ -9,18 +9,17 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { requestPatientAccess, verifyPatientIdentity, VerifyPatientResponse } from "@/lib/api/patients";
+import { requestPatientAccess, verifyPatientIdentity } from "@/lib/api/patients";
 import {
   ArrowLeft01Icon,
   Search01Icon,
   UserIdVerificationIcon,
-  CheckmarkCircle02Icon
 } from "@hugeicons/core-free-icons";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/localization/LanguageContext";
 
-  const getVerifySchema = (t: any) => z.object({
+const getVerifySchema = (t: any) => z.object({
   patientCode: z.string().min(1, t('doctor.verifyIdentity.invalidCode')),
   nationalId: z.string().min(1, t('doctor.verifyIdentity.formatMismatch')),
 });
@@ -50,21 +49,17 @@ export default function VerifyIdentityPage() {
     setToast(null);
 
     try {
-      // 1. Verify Identity
       await verifyPatientIdentity(data);
       
-      // 2. Automatically Request Access
       try {
         await requestPatientAccess({ patientCode: data.patientCode });
       } catch (reqErr: any) {
         const reqStatus = reqErr.response?.status;
-        // If 409, it means a request is already pending or active, which is fine to proceed to redeem
         if (reqStatus !== 409) {
-          throw reqErr; // Throw to the outer catch if it's an unexpected error
+          throw reqErr;
         }
       }
       
-      // 3. Navigate directly to redeem page
       setToast({ message: t('doctor.verifyIdentity.successMessage'), type: "success" });
       setTimeout(() => {
         router.push(`/doctor/patients/redeem-access/${data.patientCode}`);
@@ -90,7 +85,7 @@ export default function VerifyIdentityPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto pt-4 pb-8 space-y-6 relative animate-in fade-in duration-300">
+    <div className="max-w-xl mx-auto px-4 sm:px-6 pt-4 pb-12 space-y-6">
       <AnimatePresence>
         {toast && (
           <Toast 
@@ -101,70 +96,65 @@ export default function VerifyIdentityPage() {
         )}
       </AnimatePresence>
 
-      {/* Massive Hero Section */}
-      <div className="mb-12 bg-primary rounded-[48px] p-6 sm:p-10 lg:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px] mx-4 md:mx-auto max-w-5xl mt-4">
-        {/* Background Graphic */}
-        <div className="absolute -top-24 -right-10 opacity-10 text-white transform rotate-12 pointer-events-none">
-          <HugeiconsIcon icon={UserIdVerificationIcon} className="w-[500px] h-[500px]" />
-        </div>
-        
-        {/* Back Navigation */}
-        <div className="absolute top-10 left-10 z-20 rtl:left-auto rtl:right-10">
-          <Link 
-            href="/doctor/patients"
-            className="inline-flex items-center text-sm font-bold text-white/80 hover:text-white transition bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md cursor-pointer border-none"
-          >
-            <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 rtl:rotate-180 mr-2 rtl:mr-0 rtl:ml-2" />
-            {t('doctor.verifyIdentity.breadcrumbPatients')}
-          </Link>
-        </div>
-        
-        <div className="relative z-10 mt-24 text-center">
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
-            {t('doctor.verifyIdentity.title')}
-          </h1>
-          <p className="text-white/80 text-xl font-medium max-w-2xl mx-auto">
-            {t('doctor.verifyIdentity.subtitle')}
-          </p>
-        </div>
-      </div>
+      {/* Navigation Breadcrumbs */}
+      <nav className="flex items-center gap-2 text-xs font-semibold text-slate-400">
+        <Link href="/doctor/patients" className="inline-flex items-center gap-1 transition hover:text-primary">
+          <HugeiconsIcon icon={ArrowLeft01Icon} className="w-3.5 h-3.5 rtl:rotate-180" />
+          <span>{t('doctor.verifyIdentity.breadcrumbPatients')}</span>
+        </Link>
+        <span>/</span>
+        <span className="text-slate-800 font-bold">{t('doctor.verifyIdentity.title')}</span>
+      </nav>
 
-      <div className="w-full bg-white border-0 rounded-[40px] shadow-2xl shadow-slate-200/50 overflow-hidden p-8 md:p-12 relative z-30 -mt-20 mx-4 md:mx-auto max-w-3xl">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-md mx-auto">
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-900" htmlFor="patientCode">
+      {/* Form Card */}
+      <div className="w-full bg-white border border-slate-100 rounded-2xl shadow-sm p-6 sm:p-8">
+        <div className="flex items-start gap-3.5 pb-5 mb-5 border-b border-slate-100">
+          <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <HugeiconsIcon icon={UserIdVerificationIcon} className="w-5 h-5" />
+          </div>
+          <div>
+            <h1 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 font-heading">
+              {t('doctor.verifyIdentity.title')}
+            </h1>
+            <p className="mt-0.5 text-xs sm:text-sm text-slate-500">
+              {t('doctor.verifyIdentity.subtitle')}
+            </p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-slate-700" htmlFor="patientCode">
               {t('doctor.verifyIdentity.patientCode')}
             </label>
             <Input
               placeholder={t('doctor.verifyIdentity.patientCodePlaceholder')}
-              iconLeft={<HugeiconsIcon icon={Search01Icon} className="h-5 w-5 text-slate-400" />}
+              iconLeft={<HugeiconsIcon icon={Search01Icon} className="h-4 w-4 text-slate-400" />}
               id="patientCode"
-              className="bg-slate-50 border-slate-200 focus-visible:ring-primary/20 focus-visible:border-primary rounded-2xl h-14"
               {...register("patientCode")}
               error={errors.patientCode?.message}
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-900" htmlFor="nationalId">
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-slate-700" htmlFor="nationalId">
               {t('doctor.verifyIdentity.nationalId')}
             </label>
             <Input
               placeholder={t('doctor.verifyIdentity.nationalIdPlaceholder')}
-              iconLeft={<HugeiconsIcon icon={UserIdVerificationIcon} className="h-5 w-5 text-slate-400" />}
+              iconLeft={<HugeiconsIcon icon={UserIdVerificationIcon} className="h-4 w-4 text-slate-400" />}
               id="nationalId"
-              className="bg-slate-50 border-slate-200 focus-visible:ring-primary/20 focus-visible:border-primary rounded-2xl h-14"
               {...register("nationalId")}
               error={errors.nationalId?.message}
             />
           </div>
 
-          <div className="pt-6">
+          <div className="pt-4 border-t border-slate-100 mt-6">
             <Button 
               type="submit"
               disabled={status === "loading"}
               fullWidth 
-              className="bg-primary hover:bg-primary/90 text-white rounded-full h-16 text-xl font-black shadow-xl shadow-primary/30 hover:-translate-y-1 transition-all border-none"
+              className="py-2.5 text-sm font-semibold"
             >
               {status === "loading" ? t('doctor.verifyIdentity.processing') : t('doctor.verifyIdentity.submitButton')}
             </Button>

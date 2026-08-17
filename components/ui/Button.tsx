@@ -7,12 +7,12 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = '', variant = 'primary', fullWidth, children, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center rounded-full px-6 py-3.5 text-sm font-bold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50';
+    const baseStyles = 'inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-1 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 select-none';
     
     const variants = {
-      primary: 'bg-primary text-white hover:bg-primary-600 active:bg-primary-700 hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5',
-      outline: 'border-2 border-primary bg-surface text-primary hover:bg-primary/5 active:bg-primary/10 hover:shadow-md hover:-translate-y-0.5',
-      ghost: 'bg-transparent text-slate-600 hover:bg-slate-100 active:bg-slate-200',
+      primary: 'bg-primary text-white hover:bg-primary-600 active:bg-primary-700 shadow-sm hover:shadow-md hover:-translate-y-0.5',
+      outline: 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 active:bg-slate-100 shadow-sm hover:border-slate-300',
+      ghost: 'bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200',
     };
 
     const classes = `${baseStyles} ${variants[variant]} ${fullWidth ? 'w-full' : ''} ${className}`;

@@ -48,22 +48,22 @@ export default function ApiTesterPage() {
     updateTest(0, { status: "running" });
     try {
       const doc = await adminApi.createDoctor({
-        email: `test-${Date.now()}@hakeem.test`,
-        fullName: "Test Doctor",
+        fullName: "Test Doctor " + Math.floor(Math.random() * 1000),
+        email: `testdoc${Date.now()}@hakeem.test`,
         specialty: "Cardiology",
         temporaryPassword: "Password123!"
       });
-      createdDoctorId = doc.id;
+      createdDoctorId = (doc as any).id || (doc as any).doctorId;
       updateTest(0, { status: "passed", response: doc });
     } catch (e: any) {
-      updateTest(0, { status: "failed", error: e.message || JSON.stringify(e) });
+      updateTest(0, { status: "failed", error: e.message });
     }
 
     // 2. Get Doctors
     updateTest(1, { status: "running" });
     try {
-      const res = await adminApi.getDoctors({ page: 1, pageSize: 5 });
-      updateTest(1, { status: "passed", response: res });
+      const docs = await adminApi.getDoctors();
+      updateTest(1, { status: "passed", response: docs });
     } catch (e: any) {
       updateTest(1, { status: "failed", error: e.message });
     }
@@ -78,30 +78,31 @@ export default function ApiTesterPage() {
         updateTest(2, { status: "failed", error: e.message });
       }
     } else {
-      updateTest(2, { status: "failed", error: "Skipped because Doctor was not created" });
+      updateTest(2, { status: "failed", error: "Skipped: No doctor created" });
     }
 
     // 4. Update Doctor Status
     updateTest(3, { status: "running" });
     if (createdDoctorId) {
       try {
-        const res = await adminApi.updateDoctorStatus(createdDoctorId, "Suspended");
-        updateTest(3, { status: "passed", response: res });
+        const doc = await adminApi.updateDoctorStatus(createdDoctorId, "Suspended");
+        updateTest(3, { status: "passed", response: doc });
       } catch (e: any) {
         updateTest(3, { status: "failed", error: e.message });
       }
     } else {
-      updateTest(3, { status: "failed", error: "Skipped because Doctor was not created" });
+      updateTest(3, { status: "failed", error: "Skipped: No doctor created" });
     }
 
     // 5. Get Users
     updateTest(4, { status: "running" });
     try {
-      const res = await adminApi.getUsers({ page: 1, pageSize: 5 });
-      if (res.items && res.items.length > 0) {
-        fetchedUserId = res.items[0].userId;
+      const users = await adminApi.getUsers();
+      const items = (users as any).items || (Array.isArray(users) ? users : []);
+      if (items.length > 0) {
+        fetchedUserId = items[0].id || items[0].userId;
       }
-      updateTest(4, { status: "passed", response: res });
+      updateTest(4, { status: "passed", response: users });
     } catch (e: any) {
       updateTest(4, { status: "failed", error: e.message });
     }
@@ -110,20 +111,20 @@ export default function ApiTesterPage() {
     updateTest(5, { status: "running" });
     if (fetchedUserId) {
       try {
-        const res = await adminApi.updateUserStatus(fetchedUserId, "Suspended");
+        const res = await adminApi.updateUserStatus(fetchedUserId, "Active");
         updateTest(5, { status: "passed", response: res });
       } catch (e: any) {
         updateTest(5, { status: "failed", error: e.message });
       }
     } else {
-      updateTest(5, { status: "failed", error: "Skipped because no User was found" });
+      updateTest(5, { status: "failed", error: "Skipped: No user available to update" });
     }
 
     // 7. Get Audit Logs
     updateTest(6, { status: "running" });
     try {
-      const res = await adminApi.getAuditLogs({ page: 1, pageSize: 5 });
-      updateTest(6, { status: "passed", response: res });
+      const logs = await adminApi.getAuditLogs();
+      updateTest(6, { status: "passed", response: logs });
     } catch (e: any) {
       updateTest(6, { status: "failed", error: e.message });
     }
@@ -146,66 +147,67 @@ export default function ApiTesterPage() {
   };
 
   return (
-    <div className="space-y-8 pb-8 mx-auto max-w-5xl">
+    <div className="space-y-6 pb-12 mx-auto max-w-5xl px-4 sm:px-6">
       {/* Hero Header */}
-      <div className="bg-primary rounded-[48px] p-12 md:p-16 text-white shadow-2xl shadow-primary/30 relative overflow-hidden min-h-[300px] flex flex-col justify-center">
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+      <div className="bg-primary rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-primary/20 relative min-h-[140px] flex flex-col justify-center">
+        <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-5xl md:text-6xl font-black tracking-tighter mb-4 font-heading">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight font-heading">
               {t('admin.apiTester.title')}
             </h1>
-            <p className="text-xl text-white/80 font-medium max-w-xl">
+            <p className="mt-1 text-xs sm:text-sm text-white/80 font-medium max-w-xl">
               {t('admin.apiTester.description')}
             </p>
           </div>
           <button 
             onClick={runTests} 
             disabled={isRunning} 
-            className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold backdrop-blur-md border border-white/20 transition-all hover:-translate-y-1 shadow-lg hover:shadow-xl shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-semibold backdrop-blur-md border border-white/20 transition-all hover:-translate-y-0.5 shadow-sm shrink-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {isRunning ? "Running Tests..." : "Run All API Tests"}
           </button>
         </div>
       </div>
 
-      <div className="-mt-16 relative z-20 px-4 md:px-8">
-        <div className="rounded-[40px] border border-slate-100 bg-white overflow-hidden shadow-2xl shadow-slate-200/50">
+      <div className="-mt-6 relative z-10">
+        <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-sm">
           <div className="divide-y divide-slate-100">
-          {tests.map((test, index) => (
-            <div key={index} className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-slate-900">{test.name}</h3>
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold
-                  ${test.status === 'passed' ? 'bg-emerald-50 text-emerald-600' :
-                    test.status === 'failed' ? 'bg-red-50 text-red-600' :
-                    test.status === 'running' ? 'bg-blue-50 text-blue-600 animate-pulse' :
-                    'bg-slate-50 text-slate-600'
-                  }
-                `}>
-                  {test.status.toUpperCase()}
-                </span>
-              </div>
-              
-              {test.error && (
-                <div className="bg-red-50 text-red-800 text-sm p-4 rounded-lg font-mono mb-4">
-                  {test.error}
+            {tests.map((test, index) => (
+              <div key={index} className="p-4 sm:p-5">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-semibold text-sm text-slate-900">{test.name}</h3>
+                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold
+                    ${test.status === 'passed' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
+                      test.status === 'failed' ? 'bg-rose-50 text-rose-700 border border-rose-200' :
+                      test.status === 'running' ? 'bg-blue-50 text-blue-700 border border-blue-200 animate-pulse' :
+                      'bg-slate-50 text-slate-600 border border-slate-200'
+                    }
+                  `}>
+                    {test.status.toUpperCase()}
+                  </span>
                 </div>
-              )}
-              
-              {test.response && (
-                <details className="text-sm bg-slate-50 rounded-lg border border-slate-100">
-                  <summary className="p-3 cursor-pointer font-medium text-slate-600 hover:text-slate-900 outline-none">
-                    View Response
-                  </summary>
-                  <div className="p-4 pt-0 overflow-x-auto">
-                    <pre className="text-xs text-slate-700">
-                      {JSON.stringify(test.response, null, 2)}
-                    </pre>
+                
+                {test.error && (
+                  <div className="bg-rose-50 text-rose-800 text-xs p-3 rounded-lg font-mono mb-2">
+                    {test.error}
                   </div>
-                </details>
-              )}
-            </div>
-          ))}
+                )}
+                
+                {test.response && (
+                  <details className="text-xs bg-slate-50 rounded-lg border border-slate-100">
+                    <summary className="p-2.5 cursor-pointer font-medium text-slate-600 hover:text-slate-900 outline-none">
+                      View Response
+                    </summary>
+                    <div className="p-3 pt-0 overflow-x-auto">
+                      <pre className="text-xs text-slate-700">
+                        {JSON.stringify(test.response, null, 2)}
+                      </pre>
+                    </div>
+                  </details>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

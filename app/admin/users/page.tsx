@@ -12,8 +12,6 @@ import {
   Cancel01Icon, 
   ArrowLeft01Icon, 
   ArrowRight01Icon,
-  FilterIcon,
-  UserCheck01Icon,
   ArrowRight02Icon
 } from "@hugeicons/core-free-icons";
 
@@ -100,48 +98,48 @@ export default function UsersListPage() {
   const canGoNext = items.length === pageSize ? page < totalPages || totalPages > page : page < totalPages;
 
   return (
-    <div className="space-y-8 pb-12 max-w-7xl mx-auto px-4 sm:px-6">
+    <div className="space-y-6 pb-12 max-w-7xl mx-auto px-4 sm:px-6">
       {/* Hero Header */}
-      <div className="bg-primary rounded-[48px] p-8 sm:p-12 md:p-16 text-white shadow-2xl shadow-primary/30 relative min-h-[340px] flex flex-col justify-center z-30">
-        {/* Background Graphic Container with overflow-hidden */}
-        <div className="absolute inset-0 rounded-[48px] overflow-hidden pointer-events-none">
-          <div className="absolute -top-20 -right-10 opacity-10 text-white transform rotate-12">
-            <HugeiconsIcon icon={UserGroupIcon} className="w-[450px] h-[450px]" />
+      <div className="bg-primary rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-primary/20 relative min-h-[160px] flex flex-col justify-center z-30">
+        {/* Background Graphic Container */}
+        <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
+          <div className="absolute -top-16 -right-10 opacity-10 text-white transform rotate-12">
+            <HugeiconsIcon icon={UserGroupIcon} className="w-[360px] h-[360px]" />
           </div>
         </div>
 
-        <div className="relative z-10 flex flex-col gap-8 max-w-4xl">
+        <div className="relative z-10 flex flex-col gap-6 max-w-4xl">
           <div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter mb-3 font-heading">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight font-heading">
               {t('admin.users.title')}
             </h1>
-            <p className="text-lg sm:text-xl text-white/80 font-medium max-w-2xl">
+            <p className="mt-1 text-sm sm:text-base text-white/80 font-medium max-w-2xl">
               {t('admin.users.subtitle') || "Manage patient, doctor, and admin system accounts across the platform"}
             </p>
           </div>
           
           {/* Filters Bar inside Hero */}
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 bg-white/10 p-4 sm:p-5 rounded-[32px] backdrop-blur-md border border-white/20 shadow-xl relative z-50">
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-white/10 p-3 sm:p-4 rounded-2xl backdrop-blur-md border border-white/20 relative z-50">
             {/* Search Input */}
             <div className="sm:col-span-6">
-              <span className="text-xs font-bold text-white/70 mb-1.5 uppercase tracking-wider pl-2 block">
+              <span className="text-xs font-bold text-white/70 mb-1 uppercase tracking-wider pl-1 block">
                 {t('nav.search')}
               </span>
               <div className="relative">
-                <HugeiconsIcon icon={Search01Icon} className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/60" />
+                <HugeiconsIcon icon={Search01Icon} className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white/60" />
                 <input
                   type="text"
                   placeholder={t('admin.users.searchPlaceholder')}
-                  className="w-full bg-white/20 border border-white/10 text-white rounded-[20px] pl-12 pr-10 py-3.5 text-base font-bold focus:ring-2 focus:ring-white outline-none placeholder-white/50 transition-all"
+                  className="w-full bg-white/20 border border-white/10 text-white rounded-xl pl-10 pr-8 py-2.5 text-sm font-medium focus:ring-2 focus:ring-white outline-none placeholder-white/50 transition-all"
                   value={search}
                   onChange={handleSearchChange}
                 />
                 {search && (
                   <button 
                     onClick={handleClearSearch}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/60 hover:text-white cursor-pointer p-1 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white cursor-pointer p-1 transition-colors"
                   >
-                    <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
+                    <HugeiconsIcon icon={Cancel01Icon} className="w-3.5 h-3.5" />
                   </button>
                 )}
               </div>
@@ -173,18 +171,18 @@ export default function UsersListPage() {
       </div>
 
       {/* Main Content Area */}
-      <div className="-mt-14 relative z-10 px-2 sm:px-4 md:px-6">
-        <div className="overflow-hidden rounded-[36px] sm:rounded-[40px] border border-slate-100 bg-white shadow-2xl shadow-slate-200/50">
+      <div className="-mt-6 relative z-10">
+        <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
           {/* Header Info Bar */}
-          <div className="p-6 sm:p-8 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50/50">
-            <div className="flex items-center gap-3">
-              <div className="w-3 h-3 rounded-full bg-primary animate-pulse"></div>
-              <span className="text-sm sm:text-base font-bold text-slate-700">
+          <div className="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-3 bg-slate-50/75">
+            <div className="flex items-center gap-2.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse"></div>
+              <span className="text-xs sm:text-sm font-semibold text-slate-700">
                 {isUsersLoading ? (
                   t('common.loading')
                 ) : items.length > 0 ? (
                   <>
-                    {t('doctor.patients.title') || "Showing"}: <span className="text-slate-900 font-black">{items.length}</span> {t('admin.users.title')?.toLowerCase() || "users"} (Page {page} of {totalPages})
+                    {t('doctor.patients.title') || "Showing"} <span className="text-slate-900 font-bold">{items.length}</span> {t('admin.users.title')?.toLowerCase() || "users"} (Page {page} of {totalPages})
                   </>
                 ) : (
                   t('admin.users.noResults')
@@ -193,19 +191,19 @@ export default function UsersListPage() {
             </div>
 
             {/* Page Size Selector */}
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 {t('ui.pageSize') || "Per page"}:
               </span>
-              <div className="flex bg-slate-100 rounded-full p-1 border border-slate-200/60 shadow-inner">
+              <div className="flex bg-slate-100 rounded-lg p-0.5 border border-slate-200/60">
                 {PAGE_SIZE_OPTIONS.map((size) => (
                   <button
                     key={size}
                     onClick={() => handlePageSizeChange(size)}
-                    className={`px-3.5 py-1.5 text-xs font-black rounded-full transition-all duration-200 cursor-pointer ${
+                    className={`px-2.5 py-1 text-xs font-bold rounded-md transition-all duration-150 cursor-pointer ${
                       pageSize === size
-                        ? "bg-primary text-white shadow-md shadow-primary/20 scale-105"
-                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
+                        ? "bg-primary text-white shadow-sm"
+                        : "text-slate-600 hover:text-slate-900"
                     }`}
                   >
                     {size}
@@ -217,46 +215,46 @@ export default function UsersListPage() {
 
           {/* Table / Skeleton / Empty State */}
           {isUsersLoading ? (
-            <div className="p-8 space-y-4 animate-pulse">
+            <div className="p-6 space-y-3 animate-pulse">
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="h-16 bg-slate-100 rounded-2xl w-full flex items-center justify-between px-6">
-                  <div className="h-5 bg-slate-200 rounded-lg w-1/3"></div>
-                  <div className="h-6 bg-slate-200 rounded-full w-20"></div>
-                  <div className="h-5 bg-slate-200 rounded-lg w-24"></div>
-                  <div className="h-6 bg-slate-200 rounded-full w-16"></div>
+                <div key={i} className="h-12 bg-slate-100 rounded-xl w-full flex items-center justify-between px-5">
+                  <div className="h-4 bg-slate-200 rounded w-1/3"></div>
+                  <div className="h-5 bg-slate-200 rounded-full w-16"></div>
+                  <div className="h-4 bg-slate-200 rounded w-20"></div>
+                  <div className="h-5 bg-slate-200 rounded-full w-14"></div>
                 </div>
               ))}
             </div>
           ) : usersError ? (
-            <div className="flex flex-col justify-center items-center py-20 text-rose-500 gap-3">
-              <p className="font-bold text-lg">{usersError}</p>
+            <div className="flex flex-col justify-center items-center py-12 text-rose-500 gap-3">
+              <p className="font-semibold text-sm">{usersError}</p>
               <button 
                 onClick={() => fetchUsers({ search: debouncedSearch.trim() || undefined, userType: userTypeFilter || undefined, status: statusFilter || undefined, page, pageSize })}
-                className="px-6 py-2.5 rounded-full bg-rose-50 text-rose-600 font-bold border border-rose-200 hover:bg-rose-100 transition cursor-pointer text-sm"
+                className="px-4 py-2 rounded-xl bg-rose-50 text-rose-600 font-semibold border border-rose-200 hover:bg-rose-100 transition cursor-pointer text-xs"
               >
                 {t('doctor.workspace.refresh') || "Try Again"}
               </button>
             </div>
           ) : items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 text-slate-400 text-center px-4">
-              <div className="h-20 w-20 rounded-full bg-slate-100 flex items-center justify-center mb-4 text-slate-300">
-                <HugeiconsIcon icon={UserGroupIcon} className="w-10 h-10" />
+            <div className="flex flex-col items-center justify-center py-16 text-slate-400 text-center px-4">
+              <div className="h-14 w-14 rounded-full bg-slate-100 flex items-center justify-center mb-3 text-slate-300">
+                <HugeiconsIcon icon={UserGroupIcon} className="w-7 h-7" />
               </div>
-              <p className="text-xl font-black text-slate-800 mb-1">{t('admin.users.noResults')}</p>
-              <p className="text-sm font-medium text-slate-500 max-w-sm">
-                Try adjusting your search criteria, role filters, or status selection to find what you are looking for.
+              <p className="text-base font-bold text-slate-800 mb-1">{t('admin.users.noResults')}</p>
+              <p className="text-xs font-normal text-slate-500 max-w-sm">
+                Try adjusting your search criteria, role filters, or status selection.
               </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm text-slate-600">
-                <thead className="border-b border-slate-100 bg-slate-50/80 text-xs font-bold uppercase tracking-wider text-slate-500">
+                <thead className="border-b border-slate-100 bg-slate-50/75 text-xs font-semibold uppercase tracking-wider text-slate-500">
                   <tr>
-                    <th className="px-6 sm:px-8 py-4">{t('admin.users.email')}</th>
-                    <th className="px-6 py-4">{t('admin.users.role')}</th>
-                    <th className="px-6 py-4">{t('admin.users.verification')}</th>
-                    <th className="px-6 py-4">{t('admin.users.status')}</th>
-                    <th className="px-6 py-4 text-right"></th>
+                    <th className="px-5 py-3.5">{t('admin.users.email')}</th>
+                    <th className="px-5 py-3.5">{t('admin.users.role')}</th>
+                    <th className="px-5 py-3.5">{t('admin.users.verification')}</th>
+                    <th className="px-5 py-3.5">{t('admin.users.status')}</th>
+                    <th className="px-5 py-3.5 text-right"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -269,41 +267,41 @@ export default function UsersListPage() {
                     return (
                       <tr 
                         key={user.userId} 
-                        className="transition-colors duration-150 hover:bg-slate-50 cursor-pointer"
+                        className="transition-colors duration-150 hover:bg-slate-50 cursor-pointer group"
                         onClick={() => {
                           startTransition(() => {
                             router.push(`/admin/users/${user.userId}`);
                           });
                         }}
                       >
-                        <td className="whitespace-nowrap px-6 sm:px-8 py-4 font-bold text-slate-900">
-                          <div className="flex items-center gap-3">
-                            <div className="h-9 w-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-sm shrink-0">
+                        <td className="whitespace-nowrap px-5 py-3.5 font-bold text-slate-900">
+                          <div className="flex items-center gap-2.5">
+                            <div className="h-7 w-7 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs shrink-0">
                               {user.email ? user.email[0].toUpperCase() : "U"}
                             </div>
-                            <span className="truncate max-w-xs md:max-w-md">{user.email}</span>
+                            <span className="truncate max-w-xs md:max-w-md group-hover:text-primary transition-colors text-sm">{user.email}</span>
                           </div>
                         </td>
-                        <td className="whitespace-nowrap px-6 py-4">
-                          <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold tracking-wide ${
+                        <td className="whitespace-nowrap px-5 py-3.5">
+                          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold ${
                             user.userType === 'Admin' 
-                              ? 'bg-purple-100 text-purple-700 border border-purple-200' 
+                              ? 'bg-purple-50 text-purple-700 border border-purple-200' 
                               : user.userType === 'Doctor' 
-                              ? 'bg-blue-100 text-blue-700 border border-blue-200' 
-                              : 'bg-emerald-100 text-emerald-700 border border-emerald-200'
+                              ? 'bg-blue-50 text-blue-700 border border-blue-200' 
+                              : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                           }`}>
                             {user.userType}
                           </span>
                         </td>
-                        <td className="whitespace-nowrap px-6 py-4">
-                          <span className={`inline-flex items-center gap-1.5 text-xs font-bold ${
+                        <td className="whitespace-nowrap px-5 py-3.5">
+                          <span className={`inline-flex items-center gap-1.5 text-xs font-semibold ${
                             user.identityVerificationStatus === 'Verified'
                               ? 'text-emerald-600'
                               : user.identityVerificationStatus === 'Pending'
                               ? 'text-amber-600'
                               : 'text-slate-400'
                           }`}>
-                            <span className={`w-2 h-2 rounded-full ${
+                            <span className={`w-1.5 h-1.5 rounded-full ${
                               user.identityVerificationStatus === 'Verified'
                                 ? 'bg-emerald-500'
                                 : user.identityVerificationStatus === 'Pending'
@@ -313,9 +311,9 @@ export default function UsersListPage() {
                             {user.identityVerificationStatus || "Unverified"}
                           </span>
                         </td>
-                        <td className="whitespace-nowrap px-6 py-4">
+                        <td className="whitespace-nowrap px-5 py-3.5">
                           <span
-                            className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold tracking-wide ${
+                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold ${
                               isActive
                                 ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                                 : "bg-rose-50 text-rose-700 border border-rose-200"
@@ -324,8 +322,8 @@ export default function UsersListPage() {
                             {statusText}
                           </span>
                         </td>
-                        <td className="whitespace-nowrap px-6 py-4 text-right text-slate-400">
-                          <HugeiconsIcon icon={ArrowRight02Icon} className="w-5 h-5 ml-auto inline" />
+                        <td className="whitespace-nowrap px-5 py-3.5 text-right text-slate-400">
+                          <HugeiconsIcon icon={ArrowRight02Icon} className="w-4 h-4 ml-auto inline" />
                         </td>
                       </tr>
                     );
@@ -335,34 +333,34 @@ export default function UsersListPage() {
             </div>
           )}
 
-          {/* Premium Pagination Bar */}
+          {/* Compact Pagination Bar */}
           {!isUsersLoading && !usersError && items.length > 0 && (
-            <div className="p-6 sm:p-8 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="text-sm font-bold text-slate-500">
-                {t('doctor.patients.page') || "Page"} <span className="text-slate-900 font-black">{page}</span> {t('ui.of') || "of"} <span className="text-slate-900 font-black">{totalPages}</span>
+            <div className="p-4 sm:p-5 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="text-xs font-semibold text-slate-500">
+                {t('doctor.patients.page') || "Page"} <span className="text-slate-900 font-bold">{page}</span> {t('ui.of') || "of"} <span className="text-slate-900 font-bold">{totalPages}</span>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <button 
                   disabled={!canGoPrevious}
                   onClick={() => setPage(p => Math.max(1, p - 1))}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-slate-200 bg-white text-slate-700 font-black text-sm hover:bg-slate-100 hover:border-slate-300 transition-all shadow-sm cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white disabled:hover:border-slate-200"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 font-semibold text-xs hover:bg-slate-50 transition-all shadow-sm cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white"
                 >
-                  <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4" />
+                  <HugeiconsIcon icon={ArrowLeft01Icon} className="w-3.5 h-3.5 rtl:rotate-180" />
                   <span>{t('doctor.patients.previous') || "Previous"}</span>
                 </button>
                 
-                <span className="text-sm font-black bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm text-slate-900 select-none">
+                <span className="text-xs font-bold bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm text-slate-800 select-none">
                   {page}
                 </span>
                 
                 <button 
                   disabled={!canGoNext}
                   onClick={() => setPage(p => p + 1)}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-slate-200 bg-white text-slate-700 font-black text-sm hover:bg-slate-100 hover:border-slate-300 transition-all shadow-sm cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white disabled:hover:border-slate-200"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 font-semibold text-xs hover:bg-slate-50 transition-all shadow-sm cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white"
                 >
                   <span>{t('doctor.patients.next') || "Next"}</span>
-                  <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4" />
+                  <HugeiconsIcon icon={ArrowRight01Icon} className="w-3.5 h-3.5 rtl:rotate-180" />
                 </button>
               </div>
             </div>

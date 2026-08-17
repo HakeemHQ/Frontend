@@ -5,65 +5,69 @@ import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowLeft01Icon,
-  FileAddIcon,
+  Search01Icon as SearchIcon,
+  FilterIcon,
   DocumentValidationIcon,
-  MoreVerticalIcon,
   CheckmarkCircle02Icon,
   Time02Icon,
-  SearchIcon,
-  FilterIcon
+  FileAddIcon,
+  MoreVerticalIcon
 } from "@hugeicons/core-free-icons";
-import { Button } from "@/components/ui/Button";
+import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/localization/LanguageContext";
+import { getPatientMedicalCvs } from "@/lib/api/medical-cvs";
+import { PatientMedicalCv } from "@/types/medical-cv";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
-import { motion, AnimatePresence } from "framer-motion";
-import { usePatientMedicalCvsStore } from "@/store/usePatientMedicalCvsStore";
+import { Button } from "@/components/ui/Button";
 import { Toast } from "@/components/ui/Toast";
 
-import { useLanguage } from "@/localization/LanguageContext";
-
-export default function MedicalCVsPage({ params }: { params: Promise<{ code: string }> }) {
+export default function MedicalCvListPage({ params }: { params: Promise<{ code: string }> }) {
   const { t } = useLanguage();
   const { code } = use(params);
-  const { cvs, isLoading, error, fetchCvs } = usePatientMedicalCvsStore();
-  
-  const [searchQuery, setSearchQuery] = useState("");
-  const [verificationFilter, setVerificationFilter] = useState("All");
-  const [toastMessage, setToastMessage] = useState<{ message: string; type: 'success' | 'error' | 'warning' } | null>(null);
+
+  const [cvs, setCvs] = useState<PatientMedicalCv[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [verificationFilter, setVerificationFilter] = useState<string>("All");
+  const [toastMessage, setToastMessage] = useState<{ message: string; type: "success" | "error" | "warning" } | null>(null);
 
   useEffect(() => {
-    const dataStr = sessionStorage.getItem(`access_${code}`);
-    if (dataStr) {
+    let isMounted = true;
+    const fetchCvs = async () => {
       try {
-        const accessData = JSON.parse(dataStr);
-        const patientId = accessData?.patientId || accessData?.patient?.patientId;
-        if (patientId) {
-          fetchCvs(patientId);
-        } else {
-          setToastMessage({ message: "Could not find Patient ID for this workspace.", type: "error" });
+        setIsLoading(true);
+        const res = await getPatientMedicalCvs(code);
+        const items = Array.isArray(res) ? res : ((res as any)?.data || (res as any)?.items || []);
+        if (isMounted) {
+          setCvs(items);
         }
-      } catch (e) {
-        console.error("Failed to parse access data");
+      } catch (err: any) {
+        if (isMounted) {
+          setToastMessage({
+            message: err.response?.data?.message || t('doctor.medicalCvs.fetchError'),
+            type: "error"
+          });
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
-    }
-  }, [code, fetchCvs]);
+    };
 
-  useEffect(() => {
-    if (error) {
-      setToastMessage({ message: error, type: 'error' });
-    }
-  }, [error]);
+    fetchCvs();
 
-  const filteredCVs = cvs.filter(cv => {
-    const matchesSearch = cv.title.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    // Status mapping for filter: we map based on the backend's status
-    const status = cv.verificationStatus || "unknown";
-    let matchesVerification = true;
-    if (verificationFilter === "Draft" && status.toLowerCase() !== "draft") matchesVerification = false;
-    if (verificationFilter === "Ready" && status.toLowerCase() !== "ready" && status.toLowerCase() !== "approved") matchesVerification = false;
-    
-    return matchesSearch && matchesVerification;
+    return () => {
+      isMounted = false;
+    };
+  }, [code, t]);
+
+  const filteredCVs = cvs.filter((cv) => {
+    const titleMatch = (cv.title || "Untitled CV").toLowerCase().includes(searchQuery.toLowerCase());
+    const roleMatch = (cv.createdByRole || "").toLowerCase().includes(searchQuery.toLowerCase());
+    const statusMatch = verificationFilter === "All" || (cv.verificationStatus || "").toLowerCase() === verificationFilter.toLowerCase();
+    return (titleMatch || roleMatch) && statusMatch;
   });
 
   const getStatusBadge = (status: string) => {
@@ -71,8 +75,8 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
       case 'ready':
       case 'approved':
         return (
-          <span className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-[11px] font-bold uppercase tracking-wide border border-emerald-100 shadow-sm">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5" />
+          <span className="flex items-center gap-1 px-2.5 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-xs font-bold uppercase tracking-wide border border-emerald-200">
+            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3 h-3" />
             {t('doctor.medicalCvs.ready')}
           </span>
         );
@@ -80,14 +84,14 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
       case 'queued':
       case 'processing':
         return (
-          <span className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-700 rounded-full text-[11px] font-bold uppercase tracking-wide border border-amber-100 shadow-sm">
-            <HugeiconsIcon icon={Time02Icon} className="w-3.5 h-3.5" />
+          <span className="flex items-center gap-1 px-2.5 py-0.5 bg-amber-50 text-amber-700 rounded-md text-xs font-bold uppercase tracking-wide border border-amber-200">
+            <HugeiconsIcon icon={Time02Icon} className="w-3 h-3" />
             {status}
           </span>
         );
       default:
         return (
-          <span className="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-full text-[11px] font-bold uppercase tracking-wide border border-slate-200 shadow-sm">
+          <span className="px-2.5 py-0.5 bg-slate-100 text-slate-700 rounded-md text-xs font-bold uppercase tracking-wide border border-slate-200">
             {status}
           </span>
         );
@@ -95,31 +99,27 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
   };
 
   const renderSkeletons = () => (
-    <motion.div 
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm h-full animate-pulse">
+        <div key={i} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm h-full animate-pulse">
           <div className="flex justify-between items-start mb-4">
-            <div className="w-12 h-12 bg-slate-100 rounded-xl"></div>
-            <div className="w-5 h-5 bg-slate-100 rounded-full"></div>
+            <div className="w-10 h-10 bg-slate-100 rounded-xl"></div>
+            <div className="w-4 h-4 bg-slate-100 rounded-full"></div>
           </div>
-          <div className="flex-1 space-y-2 mb-4">
-            <div className="h-5 bg-slate-100 rounded-md w-3/4"></div>
-            <div className="h-3 bg-slate-100 rounded-md w-1/2"></div>
+          <div className="space-y-2 mb-4">
+            <div className="h-4 bg-slate-100 rounded w-3/4"></div>
+            <div className="h-3 bg-slate-100 rounded w-1/2"></div>
           </div>
-          <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-            <div className="w-16 h-5 bg-slate-100 rounded-lg"></div>
+          <div className="pt-3 border-t border-slate-50 flex items-center justify-between">
+            <div className="w-14 h-4 bg-slate-100 rounded"></div>
           </div>
         </div>
       ))}
-    </motion.div>
+    </div>
   );
 
   return (
-    <div className="max-w-5xl mx-auto pt-4 pb-12 animate-in fade-in duration-300 relative">
+    <div className="max-w-5xl mx-auto pb-12 px-4 sm:px-6 relative">
       <AnimatePresence>
         {toastMessage && (
           <Toast 
@@ -130,58 +130,57 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
         )}
       </AnimatePresence>
 
-      {/* Back Navigation */}
-      {/* Massive Hero Section */}
-      <div className="mb-12 bg-primary rounded-[48px] p-6 sm:p-10 lg:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px]">
-        {/* Background Graphic */}
-        <div className="absolute -top-24 -right-10 opacity-10 text-white transform rotate-12">
-          <HugeiconsIcon icon={FileAddIcon} className="w-[500px] h-[500px]" />
+      {/* Hero Header */}
+      <div className="bg-primary rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-primary/20 relative min-h-[160px] flex flex-col justify-center z-20">
+        <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
+          <div className="absolute -top-16 -right-10 opacity-10 text-white transform rotate-12">
+            <HugeiconsIcon icon={FileAddIcon} className="w-[360px] h-[360px]" />
+          </div>
         </div>
         
         {/* Back Navigation & Actions */}
-        <div className="absolute top-10 left-10 right-10 z-20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 relative z-20">
           <Link 
             href={`/doctor/patients/workspace/${code}`}
-            className="inline-flex items-center text-sm font-bold text-white/90 hover:text-white transition-all bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md border border-white/10 shadow-lg hover:shadow-xl hover:-translate-y-0.5 gap-2"
+            className="inline-flex items-center text-xs font-semibold text-white/80 hover:text-white transition bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-lg backdrop-blur-md self-start"
           >
-            <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 rtl:rotate-180 mr-2 rtl:mr-0 rtl:ml-2" />
+            <HugeiconsIcon icon={ArrowLeft01Icon} className="w-3.5 h-3.5 rtl:rotate-180 mr-1.5 rtl:mr-0 rtl:ml-1.5" />
             {t('doctor.workspace.breadcrumbPatients')}
           </Link>
           <Link 
             href={`/doctor/patients/workspace/${code}/medical-cv/new`}
-            className="inline-flex items-center text-sm font-bold text-white/90 hover:text-white transition-all bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md border border-white/10 shadow-lg hover:shadow-xl hover:-translate-y-0.5 gap-2"
+            className="inline-flex items-center text-xs sm:text-sm font-semibold text-white transition bg-white/15 hover:bg-white/25 px-4 py-2 rounded-xl backdrop-blur-md border border-white/20 shadow-sm hover:shadow gap-1.5 self-start sm:self-auto"
           >
-            <HugeiconsIcon icon={FileAddIcon} className="w-5 h-5" />
+            <HugeiconsIcon icon={FileAddIcon} className="w-4 h-4" />
             {t('doctor.medicalCvs.generateNew')}
           </Link>
         </div>
         
-        <div className="relative z-10 mt-24">
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
+        <div className="relative z-10">
+          <h1 className="text-2xl sm:text-3xl font-black text-white font-heading tracking-tight">
             {t('doctor.medicalCvs.title')}
           </h1>
-          <p className="text-white/80 text-xl font-medium max-w-2xl">
+          <p className="mt-1 text-sm sm:text-base text-white/80 font-medium max-w-xl">
             {t('doctor.medicalCvs.description')}
           </p>
         </div>
       </div>
 
       {/* Filters Section */}
-      <div className="bg-white p-8 rounded-[40px] border-0 shadow-2xl shadow-slate-200/50 mb-12 flex flex-col lg:flex-row gap-6 items-center justify-between relative z-30 -mt-20 mx-4 md:mx-8">
-        <div className="w-full md:w-96">
+      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm mb-6 flex flex-col md:flex-row gap-3 items-center justify-between relative z-30 -mt-6">
+        <div className="w-full md:w-80">
           <Input 
             placeholder={t('doctor.medicalCvs.searchPlaceholder')} 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            iconLeft={<HugeiconsIcon icon={SearchIcon} className="w-5 h-5" />}
+            iconLeft={<HugeiconsIcon icon={SearchIcon} className="w-4 h-4 text-slate-400" />}
           />
         </div>
-        <div className="w-full md:w-auto flex items-center gap-3">
-          <div className="flex items-center gap-2 text-sm font-medium text-slate-600">
-            <HugeiconsIcon icon={FilterIcon} className="w-5 h-5" />
+        <div className="w-full md:w-auto flex items-center gap-2">
+          <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">
             {t('doctor.medicalCvs.statusLabel')}:
-          </div>
-          <div className="w-48">
+          </span>
+          <div className="w-40">
             <Select 
               options={[
                 { value: "All", label: t('doctor.medicalCvs.allStatuses') },
@@ -195,10 +194,11 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
         </div>
       </div>
 
+      {/* CV Cards Grid */}
       {isLoading ? (
         renderSkeletons()
       ) : filteredCVs.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <AnimatePresence>
             {filteredCVs.map((cv, idx) => {
               const status = cv.verificationStatus || 'Unknown';
@@ -207,52 +207,33 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
               return (
                 <motion.div
                   key={`${cv.medicalCvId || 'cv'}-${idx}`}
-                  variants={{
-                    hidden: { opacity: 0, scale: 0.95 },
-                    visible: { opacity: 1, scale: 1 }
-                  }}
-                  initial="hidden"
-                  animate="visible"
-                  exit={{ opacity: 0, scale: 0.95 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
                   transition={{ duration: 0.2 }}
                 >
                   <Link 
                     href={`/doctor/patients/workspace/${code}/medical-cv/${cv.medicalCvId}`}
-                    className="block h-full"
+                    className="block h-full group"
                   >
-                    <div 
-                      className="bg-white border-0 rounded-[40px] p-8 lg:p-10 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 hover:-translate-y-2 cursor-pointer group flex flex-col h-full relative overflow-hidden"
-                    >
-                      {/* Decorative Background Icon */}
-                      <div className="absolute -bottom-6 -right-6 text-slate-50 opacity-50 group-hover:text-primary/5 group-hover:scale-110 transition-all duration-500 transform rotate-12 pointer-events-none">
-                         <HugeiconsIcon icon={DocumentValidationIcon} className="w-48 h-48" />
-                      </div>
-
-                      <div className="flex justify-between items-start mb-8 relative z-10">
-                        <div className="w-16 h-16 bg-primary/10 text-primary rounded-[24px] flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-lg shadow-primary/10">
-                          <HugeiconsIcon icon={DocumentValidationIcon} className="w-8 h-8" />
+                    <div className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-200 cursor-pointer flex flex-col h-full">
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="w-10 h-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-colors duration-200">
+                          <HugeiconsIcon icon={DocumentValidationIcon} className="w-5 h-5" />
                         </div>
-                        <button className="text-slate-400 hover:text-slate-600 p-1">
-                          <HugeiconsIcon icon={MoreVerticalIcon} className="w-5 h-5" />
-                        </button>
                       </div>
                       
-                      <div className="flex-1 relative z-10">
-                        <h3 className="font-black text-slate-900 text-2xl font-heading mb-3 leading-tight group-hover:text-primary transition-colors line-clamp-2 tracking-tight">
+                      <div className="flex-1">
+                        <h3 className="font-bold text-slate-900 text-base mb-1.5 leading-snug group-hover:text-primary transition-colors line-clamp-2">
                           {cv.title || "Untitled CV"}
                         </h3>
-                        <p className="text-base font-bold text-slate-500 mb-3 capitalize">
-                          {t('doctor.medicalCvs.title')} <span className="font-medium text-slate-400">({cv.createdByRole || "Doctor"})</span>
-                        </p>
-                        <p className="text-[11px] font-bold text-slate-400 mb-4 bg-slate-50 inline-block px-2 py-0.5 rounded">
-                          {t('doctor.medicalCvs.version')} {versionNumber}
+                        <p className="text-xs text-slate-400 font-medium mb-3">
+                          {cv.createdByRole || "Doctor"} • v{versionNumber}
                         </p>
                       </div>
 
-                      <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap">
-                        <div className="flex items-center gap-2">
-                          {getStatusBadge(status)}
-                        </div>
+                      <div className="pt-3 border-t border-slate-50 flex items-center justify-between">
+                        {getStatusBadge(status)}
                       </div>
                     </div>
                   </Link>
@@ -262,31 +243,27 @@ export default function MedicalCVsPage({ params }: { params: Promise<{ code: str
           </AnimatePresence>
         </div>
       ) : (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="bg-white border border-slate-200 rounded-3xl p-16 text-center shadow-sm"
-        >
-          <div className="w-20 h-20 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-5">
-            <HugeiconsIcon icon={SearchIcon} className="w-10 h-10" />
+        <div className="bg-white border border-slate-100 rounded-2xl p-12 text-center shadow-sm">
+          <div className="w-12 h-12 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-3">
+            <HugeiconsIcon icon={SearchIcon} className="w-6 h-6" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2 font-heading">
+          <h2 className="text-base font-bold text-slate-800 mb-1 font-heading">
             {t('doctor.medicalCvs.noResults')}
           </h2>
-          <p className="text-slate-500 mb-8 max-w-md mx-auto">
+          <p className="text-xs text-slate-500 mb-5 max-w-sm mx-auto">
             {t('doctor.medicalCvs.noResultsDesc')}
           </p>
-          <div className="flex items-center justify-center gap-4">
-            <Button onClick={() => { setSearchQuery(""); setVerificationFilter("All"); }} variant="outline">
+          <div className="flex items-center justify-center gap-2">
+            <Button onClick={() => { setSearchQuery(""); setVerificationFilter("All"); }} variant="outline" className="text-xs px-3.5 py-1.5">
               {t('doctor.medicalCvs.clearFilters')}
             </Button>
             <Link href={`/doctor/patients/workspace/${code}/medical-cv/new`}>
-              <Button>
+              <Button className="text-xs px-4 py-1.5">
                 {t('doctor.medicalCvs.generateNew')}
               </Button>
             </Link>
           </div>
-        </motion.div>
+        </div>
       )}
     </div>
   );

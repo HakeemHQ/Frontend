@@ -10,14 +10,13 @@ import {
   ArrowLeft01Icon,
   Search01Icon,
   FileUploadIcon,
-  FilterIcon,
   CheckmarkCircle02Icon,
-  Time02Icon
+  Time02Icon,
+  ArrowRight02Icon
 } from "@hugeicons/core-free-icons";
 import { Toast } from "@/components/ui/Toast";
 import { AnimatePresence } from "framer-motion";
 import { usePatientDocumentsStore } from "@/store/usePatientDocumentsStore";
-
 import { useLanguage } from "@/localization/LanguageContext";
 
 export default function DocumentsPage({ params }: { params: Promise<{ code: string }> }) {
@@ -72,8 +71,8 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
       revStatus === 'approved'
     ) {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-emerald-100">
-          <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5" />
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-xs font-bold uppercase tracking-wide border border-emerald-200">
+          <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3 h-3" />
           {t('doctor.documents.reviewed')}
         </span>
       );
@@ -81,8 +80,8 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
 
     if (revStatus === 'partiallyreviewed' || revStatus === 'partially_reviewed') {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-amber-100">
-          <HugeiconsIcon icon={Time02Icon} className="w-3.5 h-3.5" />
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-50 text-amber-700 rounded-md text-xs font-bold uppercase tracking-wide border border-amber-200">
+          <HugeiconsIcon icon={Time02Icon} className="w-3 h-3" />
           {t('doctor.documents.partiallyReviewed')}
         </span>
       );
@@ -90,8 +89,8 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
 
     if (extStatus === 'processing' || extStatus === 'queued') {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-amber-100">
-          <HugeiconsIcon icon={Time02Icon} className="w-3.5 h-3.5" />
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-50 text-amber-700 rounded-md text-xs font-bold uppercase tracking-wide border border-amber-200">
+          <HugeiconsIcon icon={Time02Icon} className="w-3 h-3" />
           {t('doctor.documents.processing')}
         </span>
       );
@@ -106,8 +105,8 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
       revStatus === 'pending'
     ) {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-blue-100">
-          <HugeiconsIcon icon={Time02Icon} className="w-3.5 h-3.5" />
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-blue-50 text-blue-700 rounded-md text-xs font-bold uppercase tracking-wide border border-blue-200">
+          <HugeiconsIcon icon={Time02Icon} className="w-3 h-3" />
           {t('doctor.documents.waitingForReview')}
         </span>
       );
@@ -115,22 +114,22 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
 
     if (extStatus === 'uploaded') {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold uppercase tracking-wide border border-emerald-100">
-          <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3.5 h-3.5" />
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-xs font-bold uppercase tracking-wide border border-emerald-200">
+          <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3 h-3" />
           {t('doctor.documents.uploaded')}
         </span>
       );
     }
     
     return (
-      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wide bg-slate-50 text-slate-700 border border-slate-200">
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold uppercase tracking-wide bg-slate-100 text-slate-700 border border-slate-200">
         {doc.reviewStatus || doc.extractionStatus || doc.status || 'Unknown'}
       </span>
     );
   };
 
   return (
-    <div className="max-w-5xl mx-auto pt-4 pb-12 space-y-6 animate-in fade-in duration-300 relative">
+    <div className="max-w-5xl mx-auto pb-12 px-4 sm:px-6 relative">
       <AnimatePresence>
         {toastMessage && (
           <Toast 
@@ -141,71 +140,70 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
         )}
       </AnimatePresence>
 
-      {/* Massive Hero Section */}
-      <div className="mb-12 bg-primary rounded-[48px] p-6 sm:p-10 lg:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px]">
-        {/* Background Graphic */}
-        <div className="absolute -top-24 -right-10 opacity-10 text-white transform rotate-12">
-          <HugeiconsIcon icon={FileUploadIcon} className="w-[500px] h-[500px]" />
+      {/* Hero Header */}
+      <div className="bg-primary rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-primary/20 relative min-h-[160px] flex flex-col justify-center z-20">
+        <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
+          <div className="absolute -top-16 -right-10 opacity-10 text-white transform rotate-12">
+            <HugeiconsIcon icon={FileUploadIcon} className="w-[360px] h-[360px]" />
+          </div>
         </div>
         
         {/* Back Navigation & Actions */}
-        <div className="absolute top-10 left-10 right-10 z-20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 relative z-20">
           <Link 
             href={`/doctor/patients/workspace/${code}`}
-            className="inline-flex items-center text-sm font-bold text-white/90 hover:text-white transition-all bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md border border-white/10 shadow-lg hover:shadow-xl hover:-translate-y-0.5 gap-2"
+            className="inline-flex items-center text-xs font-semibold text-white/80 hover:text-white transition bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-lg backdrop-blur-md self-start"
           >
-            <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 rtl:rotate-180 mr-2 rtl:mr-0 rtl:ml-2" />
+            <HugeiconsIcon icon={ArrowLeft01Icon} className="w-3.5 h-3.5 rtl:rotate-180 mr-1.5 rtl:mr-0 rtl:ml-1.5" />
             {t('doctor.workspace.breadcrumbPatients')}
           </Link>
           <Link 
             href={`/doctor/patients/workspace/${code}/documents/upload`}
-            className="inline-flex items-center text-sm font-bold text-white/90 hover:text-white transition-all bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md border border-white/10 shadow-lg hover:shadow-xl hover:-translate-y-0.5 gap-2"
+            className="inline-flex items-center text-xs sm:text-sm font-semibold text-white transition bg-white/15 hover:bg-white/25 px-4 py-2 rounded-xl backdrop-blur-md border border-white/20 shadow-sm hover:shadow gap-1.5 self-start sm:self-auto"
           >
-            <HugeiconsIcon icon={FileUploadIcon} className="w-5 h-5" />
+            <HugeiconsIcon icon={FileUploadIcon} className="w-4 h-4" />
             {t('doctor.documents.upload')}
           </Link>
         </div>
         
-        <div className="relative z-10 mt-24">
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
+        <div className="relative z-10">
+          <h1 className="text-2xl sm:text-3xl font-black text-white font-heading tracking-tight">
             {t('doctor.documents.title')}
           </h1>
         </div>
       </div>
 
-      <div className="w-full border-0 rounded-[40px] bg-white shadow-2xl shadow-slate-200/50 p-8 md:p-12 relative z-30 -mt-20 mx-4 md:mx-8 md:w-auto">
-
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row items-end gap-4 mb-8">
-          <div className="w-full sm:w-1/2 md:w-2/5">
-            <Input
-              placeholder={t('doctor.documents.searchPlaceholder')}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              iconLeft={<HugeiconsIcon icon={Search01Icon} className="w-6 h-6 text-slate-400" />}
-              className="bg-slate-50 border-slate-200 h-16 rounded-[20px] text-lg font-bold"
-            />
-          </div>
+      {/* Main Content Card */}
+      <div className="w-full rounded-2xl bg-white shadow-sm border border-slate-100 p-5 sm:p-6 relative z-30 -mt-6">
+        {/* Search Bar */}
+        <div className="mb-5 max-w-sm">
+          <Input
+            placeholder={t('doctor.documents.searchPlaceholder')}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            iconLeft={<HugeiconsIcon icon={Search01Icon} className="w-4 h-4 text-slate-400" />}
+          />
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto rounded-[24px] border border-slate-100 shadow-sm">
-          <table className="w-full text-base text-left rtl:text-right text-slate-600">
-            <thead className="text-sm text-slate-500 uppercase bg-slate-50 border-b border-slate-100 font-bold tracking-wider">
+        <div className="overflow-x-auto rounded-xl border border-slate-100">
+          <table className="w-full text-left rtl:text-right text-sm text-slate-600">
+            <thead className="text-xs text-slate-500 uppercase bg-slate-50/75 border-b border-slate-100 font-semibold tracking-wider">
               <tr>
-                <th scope="col" className="px-8 py-6">{t('doctor.documents.document')}</th>
-                <th scope="col" className="px-8 py-6">{t('doctor.documents.date')}</th>
-                <th scope="col" className="px-8 py-6">{t('doctor.documents.status')}</th>
+                <th scope="col" className="px-5 py-3.5">{t('doctor.documents.document')}</th>
+                <th scope="col" className="px-5 py-3.5">{t('doctor.documents.date')}</th>
+                <th scope="col" className="px-5 py-3.5">{t('doctor.documents.status')}</th>
+                <th scope="col" className="px-5 py-3.5 text-right"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={3} className="px-8 py-12 text-center text-slate-500">
-                    <div className="flex justify-center mb-4">
-                      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  <td colSpan={4} className="px-5 py-12 text-center text-slate-500">
+                    <div className="flex justify-center mb-2">
+                      <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
                     </div>
-                    {t('doctor.documents.loadingDocuments')}
+                    <span className="text-xs">{t('doctor.documents.loadingDocuments')}</span>
                   </td>
                 </tr>
               ) : filteredDocuments.length > 0 ? (
@@ -214,7 +212,7 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
                   return (
                     <tr 
                       key={`${doc.documentId || 'doc'}-${index}`} 
-                      className="bg-white hover:bg-slate-50 transition-colors duration-300 cursor-pointer group"
+                      className="bg-white hover:bg-slate-50 transition-colors duration-150 cursor-pointer group"
                       onClick={() => {
                         const revStatus = (doc.reviewStatus || doc.documentReviewStatus || '').toLowerCase();
                         const isReviewed = 
@@ -231,29 +229,31 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
                         }
                       }}
                     >
-                      <td className="px-8 py-6 font-bold text-lg text-slate-900 group-hover:text-primary transition-colors">{doc.title}</td>
-                      <td className="px-8 py-6 font-medium text-slate-500">{formattedDate}</td>
-                      <td className="px-8 py-6">
+                      <td className="px-5 py-3.5 font-bold text-sm text-slate-900 group-hover:text-primary transition-colors">{doc.title}</td>
+                      <td className="px-5 py-3.5 text-xs text-slate-500 font-medium">{formattedDate}</td>
+                      <td className="px-5 py-3.5">
                         {getStatusBadge(doc)}
+                      </td>
+                      <td className="px-5 py-3.5 text-right text-slate-400">
+                        <HugeiconsIcon icon={ArrowRight02Icon} className="w-4 h-4 ml-auto inline" />
                       </td>
                     </tr>
                   )
                 })
               ) : (
                 <tr>
-                  <td colSpan={3} className="px-6 py-12 text-center text-slate-500">
-                    <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
-                      <HugeiconsIcon icon={Search01Icon} className="w-6 h-6 text-slate-400" />
+                  <td colSpan={4} className="px-5 py-12 text-center text-slate-400">
+                    <div className="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-2 text-slate-300">
+                      <HugeiconsIcon icon={Search01Icon} className="w-5 h-5" />
                     </div>
-                    <p className="font-medium text-slate-900">{t('doctor.documents.noResults')}</p>
-                    <p className="text-sm mt-1">{t('doctor.documents.noResultsDesc')}</p>
+                    <p className="font-bold text-sm text-slate-700">{t('doctor.documents.noResults')}</p>
+                    <p className="text-xs text-slate-400 mt-0.5">{t('doctor.documents.noResultsDesc')}</p>
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
-
       </div>
     </div>
   );

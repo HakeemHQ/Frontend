@@ -9,17 +9,16 @@ import { usePatientsStore } from "@/store/usePatientsStore";
 import { getPatients } from "@/lib/api/patients";
 import { Toast } from "@/components/ui/Toast";
 import { motion, AnimatePresence } from "framer-motion";
-
 import { HugeiconsIcon } from "@hugeicons/react";
-import { UserGroupIcon, UserAdd01Icon, Search01Icon } from "@hugeicons/core-free-icons";
-
-const UserIcon = ({ className }: { className?: string }) => (
-  <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-    <circle cx="12" cy="7" r="4" />
-  </svg>
-);
-
+import { 
+  UserGroupIcon, 
+  UserAdd01Icon, 
+  Search01Icon, 
+  ArrowLeft01Icon, 
+  ArrowRight01Icon,
+  UserIcon,
+  ArrowRight02Icon 
+} from "@hugeicons/core-free-icons";
 import { useLanguage } from "@/localization/LanguageContext";
 
 const STATUS_FILTERS = ["Active", "Expired", "Revoked"];
@@ -110,49 +109,50 @@ export default function PatientsPage() {
   };
 
   return (
-    <div className="pb-12 max-w-6xl mx-auto relative px-4 sm:px-6 mt-4">
+    <div className="pb-12 max-w-6xl mx-auto px-4 sm:px-6">
       <AnimatePresence>
         {error && (
           <Toast message={error} type="error" onClose={() => setError(null)} />
         )}
       </AnimatePresence>
 
-      {/* Massive Hero Section */}
-      <div className="mb-12 bg-primary rounded-[48px] p-6 sm:p-10 lg:p-16 shadow-2xl shadow-primary/40 relative overflow-hidden text-white flex flex-col justify-end min-h-[350px]">
-        {/* Background Graphic */}
-        <div className="absolute -top-24 -right-10 opacity-10 text-white transform rotate-12 pointer-events-none">
-          <HugeiconsIcon icon={UserGroupIcon} className="w-[500px] h-[500px]" />
+      {/* Hero Header */}
+      <div className="bg-primary rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-primary/20 relative min-h-[160px] flex flex-col justify-center z-20">
+        <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
+          <div className="absolute -top-16 -right-10 opacity-10 text-white transform rotate-12">
+            <HugeiconsIcon icon={UserGroupIcon} className="w-[360px] h-[360px]" />
+          </div>
         </div>
-        
-        <div className="absolute top-10 right-10 z-20">
+
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight font-heading">
+              {t('doctor.patients.title')}
+            </h1>
+            <p className="mt-1 text-sm sm:text-base text-white/80 font-medium max-w-xl">
+              {t('doctor.patients.description')}
+            </p>
+          </div>
+
           <Link 
             href="/doctor/patients/verify-identity"
-            className="inline-flex items-center text-sm font-bold text-white/90 hover:text-white transition-all bg-white/10 hover:bg-white/20 px-6 py-3 rounded-full backdrop-blur-md border border-white/10 shadow-lg hover:shadow-xl hover:-translate-y-0.5 gap-2"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-semibold backdrop-blur-md border border-white/20 transition-all hover:-translate-y-0.5 shadow-sm hover:shadow shrink-0"
           >
-            <HugeiconsIcon icon={UserAdd01Icon} className="w-5 h-5" />
-            {t('doctor.patients.verifyNewPatient')}
+            <HugeiconsIcon icon={UserAdd01Icon} className="w-4 h-4" />
+            <span>{t('doctor.patients.verifyNewPatient')}</span>
           </Link>
-        </div>
-        
-        <div className="relative z-10 mt-24">
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white font-heading tracking-tighter mb-4 leading-tight">
-            {t('doctor.patients.title')}
-          </h1>
-          <p className="text-white/80 text-xl font-medium max-w-2xl">
-            {t('doctor.patients.description')}
-          </p>
         </div>
       </div>
 
-      <div className="bg-white rounded-[40px] shadow-2xl shadow-slate-200/50 p-8 md:p-12 relative z-30 -mt-20 mx-4 md:mx-auto max-w-5xl border-0">
-
+      {/* Main Content Card */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 sm:p-6 relative z-30 -mt-6">
         {/* Search & Filters */}
-        <div className="flex flex-col md:flex-row gap-6 items-center bg-slate-50 p-4 rounded-[32px] border border-slate-100 mb-10">
-          <div className="w-full md:flex-1">
-            <Input
+        <div className="flex flex-col md:flex-row gap-3 items-center bg-slate-50 p-2.5 sm:p-3 rounded-xl border border-slate-100 mb-6">
+          <div className="w-full md:flex-1 relative">
+            <HugeiconsIcon icon={Search01Icon} className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <input
               placeholder={t('doctor.patients.searchPlaceholder')}
-              iconLeft={<HugeiconsIcon icon={Search01Icon} className="h-6 w-6 text-slate-400" />}
-              className="border-none shadow-none focus-visible:ring-0 bg-transparent text-lg font-bold h-14"
+              className="w-full bg-white border border-slate-200 rounded-lg pl-10 pr-4 py-2 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -160,9 +160,11 @@ export default function PatientsPage() {
               }}
             />
           </div>
-          <div className="h-10 w-0.5 bg-slate-200 hidden md:block rounded-full"></div>
+          
+          <div className="h-6 w-px bg-slate-200 hidden md:block"></div>
+          
           {/* Status Filter Pills */}
-          <div className="flex gap-3 w-full md:w-auto overflow-x-auto shrink-0 p-2 scrollbar-hide">
+          <div className="flex gap-1.5 w-full md:w-auto shrink-0 overflow-x-auto">
             {STATUS_FILTERS.map((status) => (
               <button
                 key={status}
@@ -170,10 +172,10 @@ export default function PatientsPage() {
                   setStatusFilter(status);
                   setPage(1);
                 }}
-                className={`px-8 py-4 text-base font-black rounded-full whitespace-nowrap transition-all duration-300 shadow-sm cursor-pointer ${
+                className={`px-3.5 py-1.5 text-xs font-bold rounded-lg whitespace-nowrap transition-all duration-150 cursor-pointer ${
                   statusFilter === status 
-                    ? "bg-primary text-white shadow-lg shadow-primary/30 -translate-y-1" 
-                    : "bg-white text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+                    ? "bg-primary text-white shadow-sm" 
+                    : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80"
                 }`}
               >
                 {getStatusLabel(status)}
@@ -182,170 +184,170 @@ export default function PatientsPage() {
           </div>
         </div>
 
-      <div className="space-y-6 flex flex-col gap-4 min-h-[300px]">
-        {isLoading ? (
-          // Skeleton Loader
-          <div className="space-y-6 animate-pulse">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center justify-between p-8 rounded-[32px] border border-slate-100 bg-slate-50">
-                <div className="flex items-center gap-6">
-                  <div className="h-20 w-20 rounded-[24px] bg-slate-200"></div>
-                  <div className="space-y-4">
-                    <div className="h-6 bg-slate-200 rounded-lg w-48"></div>
-                    <div className="h-5 bg-slate-200 rounded-lg w-32"></div>
-                  </div>
-                </div>
-                <div className="space-y-4 text-right flex flex-col items-end">
-                  <div className="h-6 bg-slate-200 rounded-lg w-24"></div>
-                  <div className="h-5 bg-slate-200 rounded-lg w-36"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : filteredPatients.length > 0 ? (
-          <AnimatePresence>
-            {filteredPatients.map((patient, index) => {
-              let timeStr = patient.expiresAt || "";
-              let isExpired = false;
-              
-              try {
-                if (patient.expiresAt) {
-                  let expiryString = patient.expiresAt;
-                  if (typeof expiryString === 'string' && !expiryString.endsWith('Z')) {
-                    expiryString += 'Z';
-                  }
-                  const d = new Date(expiryString);
-                  isExpired = d.getTime() < Date.now();
-                  if (!isNaN(d.getTime())) {
-                    timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + " on " + d.toLocaleDateString();
-                  }
-                }
-              } catch (e) {}
-
-              let itemStatus = statusFilter !== "All" ? statusFilter : (isExpired ? "Expired" : "Active");
-
-              return (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  key={patient.accessId || patient.patientCode}
-                >
-                  <Link 
-                    href={`/doctor/patients/workspace/${patient.patientCode}`}
-                    onClick={(e) => {
-                      if (itemStatus === "Expired" || itemStatus === "Revoked") {
-                        e.preventDefault();
-                        setError(`You cannot access files for a${itemStatus === "Expired" ? "n expired" : " revoked"} patient. Please request access again.`);
-                        return;
-                      }
-                      
-                      const sessionData = {
-                        ...patient,
-                        patient: {
-                          patientCode: patient.patientCode,
-                          fullName: patient.fullName
-                        }
-                      };
-                      sessionStorage.setItem(`access_${patient.patientCode}`, JSON.stringify(sessionData));
-                    }}
-                    className="block outline-none focus-visible:ring-4 focus-visible:ring-primary/30 rounded-[32px]"
-                  >
-                    <div 
-                      className="group flex flex-col sm:flex-row sm:items-center justify-between p-8 rounded-[32px] border-2 border-slate-100 bg-white hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1 hover:border-primary/50 transition-all duration-300 gap-6 sm:gap-0 cursor-pointer relative overflow-hidden"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -translate-x-full group-hover:translate-x-full"></div>
-                      
-                      <div className="flex items-center gap-6 relative z-10">
-                        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[24px] bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-sm">
-                          <UserIcon className="w-10 h-10" />
-                        </div>
-                        <div>
-                          <h3 className="text-2xl font-black text-slate-900 font-heading tracking-tight group-hover:text-primary transition-colors duration-300 leading-tight">{patient.fullName}</h3>
-                          <p className="text-base font-bold text-slate-500 mt-1">{t('doctor.patients.code')}: {patient.patientCode}</p>
-                        </div>
-                      </div>
-                      <div className="sm:text-right flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center relative z-10">
-                        {itemStatus === "Active" ? (
-                          <>
-                            <span className="inline-block px-5 py-2.5 text-sm font-black tracking-widest uppercase rounded-full bg-emerald-100 text-emerald-700 mb-2 shadow-sm border border-emerald-200">
-                              {t('doctor.patients.statusActive')}
-                            </span>
-                            {timeStr && (
-                              <p className="text-sm font-bold text-slate-400 uppercase tracking-wide">
-                                {t('doctor.patients.until')} {timeStr}
-                              </p>
-                            )}
-                          </>
-                        ) : itemStatus === "Revoked" ? (
-                           <span className="inline-block px-5 py-2.5 text-sm font-black tracking-widest uppercase rounded-full bg-rose-100 text-rose-700 mb-2 shadow-sm border border-rose-200">
-                             {t('doctor.patients.statusRevoked')}
-                           </span>
-                        ) : (
-                           <span className="inline-block px-5 py-2.5 text-sm font-black tracking-widest uppercase rounded-full bg-slate-100 text-slate-600 mb-2 shadow-sm border border-slate-200">
-                             {t('doctor.patients.statusExpired')}
-                           </span>
-                        )}
-                      </div>
+        {/* Patient List */}
+        <div className="space-y-3 min-h-[260px]">
+          {isLoading ? (
+            <div className="space-y-3 animate-pulse">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-slate-200"></div>
+                    <div className="space-y-2">
+                      <div className="h-4 bg-slate-200 rounded w-36"></div>
+                      <div className="h-3 bg-slate-200 rounded w-24"></div>
                     </div>
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-        ) : (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex flex-col items-center justify-center py-20 text-slate-500 text-center bg-slate-50 rounded-[32px] border-2 border-dashed border-slate-200"
-          >
-            <div className="h-24 w-24 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm">
-              <UserIcon className="w-12 h-12 text-slate-300" />
+                  </div>
+                  <div className="h-5 bg-slate-200 rounded-full w-20"></div>
+                </div>
+              ))}
             </div>
-            <p className="font-black text-2xl text-slate-900 mb-2 font-heading tracking-tight">{t('doctor.patients.noResults')}</p>
-            <p className="text-lg font-medium text-slate-500 max-w-md">
-              {statusFilter === "All" 
-                ? t('doctor.patients.noResultsDescription')
-                : t('doctor.patients.noResultsWithStatus').replace('{status}', getStatusLabel(statusFilter))}
-            </p>
-            {page > 1 && (
-              <Button
-                variant="outline"
-                onClick={() => setPage(1)}
-                className="mt-6 rounded-full border-2 border-primary text-primary hover:bg-primary/5 font-bold px-6 py-2.5 h-auto text-sm cursor-pointer"
-              >
-                {t('doctor.patients.previous') ? `${t('doctor.patients.previous')} (Page 1)` : "Back to Page 1"}
-              </Button>
-            )}
-          </motion.div>
-        )}
-      </div>
-      
-      {/* Premium Pagination Controls */}
-      {!isLoading && (filteredPatients.length > 0 || page > 1) && (
-        <div className="flex justify-between items-center pt-10 mt-6 border-t border-slate-100">
-          <Button 
-            variant="outline" 
-            disabled={page === 1} 
-            onClick={() => setPage(page - 1)}
-            className="rounded-full border-2 border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 font-bold px-8 py-5 h-auto text-lg transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {t('doctor.patients.previous')}
-          </Button>
-          <span className="text-lg text-slate-900 font-black bg-slate-50 px-6 py-3 rounded-full border-2 border-slate-100 shadow-sm select-none">
-            {t('doctor.patients.page')} {page}
-          </span>
-          <Button 
-            variant="outline" 
-            onClick={() => setPage(page + 1)}
-            disabled={!hasNextPage || filteredPatients.length === 0}
-            className="rounded-full border-2 border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 font-bold px-8 py-5 h-auto text-lg transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {t('doctor.patients.next')}
-          </Button>
+          ) : filteredPatients.length > 0 ? (
+            <AnimatePresence>
+              {filteredPatients.map((patient, index) => {
+                let timeStr = patient.expiresAt || "";
+                let isExpired = false;
+                
+                try {
+                  if (patient.expiresAt) {
+                    let expiryString = patient.expiresAt;
+                    if (typeof expiryString === 'string' && !expiryString.endsWith('Z')) {
+                      expiryString += 'Z';
+                    }
+                    const d = new Date(expiryString);
+                    isExpired = d.getTime() < Date.now();
+                    if (!isNaN(d.getTime())) {
+                      timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + " on " + d.toLocaleDateString();
+                    }
+                  }
+                } catch (e) {}
+
+                let itemStatus = statusFilter !== "All" ? statusFilter : (isExpired ? "Expired" : "Active");
+
+                return (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.2, delay: index * 0.03 }}
+                    key={patient.accessId || patient.patientCode}
+                  >
+                    <Link 
+                      href={`/doctor/patients/workspace/${patient.patientCode}`}
+                      onClick={(e) => {
+                        if (itemStatus === "Expired" || itemStatus === "Revoked") {
+                          e.preventDefault();
+                          setError(`You cannot access files for a${itemStatus === "Expired" ? "n expired" : " revoked"} patient. Please request access again.`);
+                          return;
+                        }
+                        
+                        const sessionData = {
+                          ...patient,
+                          patient: {
+                            patientCode: patient.patientCode,
+                            fullName: patient.fullName
+                          }
+                        };
+                        sessionStorage.setItem(`access_${patient.patientCode}`, JSON.stringify(sessionData));
+                      }}
+                      className="block outline-none rounded-xl group"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-slate-100 bg-white hover:border-primary/40 hover:shadow-sm transition-all duration-200 gap-3 cursor-pointer">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-200">
+                            <HugeiconsIcon icon={UserIcon} className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors leading-snug">
+                              {patient.fullName}
+                            </h3>
+                            <p className="text-xs text-slate-400 font-medium mt-0.5">
+                              {t('doctor.patients.code')}: <span className="font-mono text-slate-600">{patient.patientCode}</span>
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between sm:justify-end gap-3">
+                          <div className="sm:text-right">
+                            {itemStatus === "Active" ? (
+                              <>
+                                <span className="inline-block px-2.5 py-0.5 text-[11px] font-bold uppercase rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                  {t('doctor.patients.statusActive')}
+                                </span>
+                                {timeStr && (
+                                  <p className="text-[11px] font-medium text-slate-400 mt-0.5">
+                                    {t('doctor.patients.until')} {timeStr}
+                                  </p>
+                                )}
+                              </>
+                            ) : itemStatus === "Revoked" ? (
+                              <span className="inline-block px-2.5 py-0.5 text-[11px] font-bold uppercase rounded-md bg-rose-50 text-rose-700 border border-rose-200">
+                                {t('doctor.patients.statusRevoked')}
+                              </span>
+                            ) : (
+                              <span className="inline-block px-2.5 py-0.5 text-[11px] font-bold uppercase rounded-md bg-slate-100 text-slate-600 border border-slate-200">
+                                {t('doctor.patients.statusExpired')}
+                              </span>
+                            )}
+                          </div>
+                          <HugeiconsIcon icon={ArrowRight02Icon} className="w-4 h-4 text-slate-300 group-hover:text-primary transition-colors shrink-0" />
+                        </div>
+                      </div>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          ) : (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center justify-center py-12 text-slate-500 text-center bg-slate-50/50 rounded-xl border border-dashed border-slate-200"
+            >
+              <div className="h-12 w-12 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm text-slate-300">
+                <HugeiconsIcon icon={UserIcon} className="w-6 h-6" />
+              </div>
+              <p className="font-bold text-base text-slate-800 mb-1">{t('doctor.patients.noResults')}</p>
+              <p className="text-xs text-slate-500 max-w-xs">
+                {statusFilter === "All" 
+                  ? t('doctor.patients.noResultsDescription')
+                  : t('doctor.patients.noResultsWithStatus').replace('{status}', getStatusLabel(statusFilter))}
+              </p>
+              {page > 1 && (
+                <button
+                  onClick={() => setPage(1)}
+                  className="mt-4 rounded-lg border border-primary text-primary hover:bg-primary/5 font-semibold px-4 py-1.5 text-xs cursor-pointer"
+                >
+                  {t('doctor.patients.previous') ? `${t('doctor.patients.previous')} (Page 1)` : "Back to Page 1"}
+                </button>
+              )}
+            </motion.div>
+          )}
         </div>
-      )}
+        
+        {/* Pagination Controls */}
+        {!isLoading && (filteredPatients.length > 0 || page > 1) && (
+          <div className="flex justify-between items-center pt-4 mt-4 border-t border-slate-100">
+            <button 
+              disabled={page === 1} 
+              onClick={() => setPage(page - 1)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 font-semibold text-xs hover:bg-slate-50 transition shadow-sm cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <HugeiconsIcon icon={ArrowLeft01Icon} className="w-3.5 h-3.5 rtl:rotate-180" />
+              <span>{t('doctor.patients.previous')}</span>
+            </button>
+            <span className="text-xs text-slate-700 font-bold bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 select-none">
+              {t('doctor.patients.page')} {page}
+            </span>
+            <button 
+              onClick={() => setPage(page + 1)}
+              disabled={!hasNextPage || filteredPatients.length === 0}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 font-semibold text-xs hover:bg-slate-50 transition shadow-sm cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <span>{t('doctor.patients.next')}</span>
+              <HugeiconsIcon icon={ArrowRight01Icon} className="w-3.5 h-3.5 rtl:rotate-180" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
