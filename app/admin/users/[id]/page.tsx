@@ -164,7 +164,7 @@ export default function UserDetailsPage() {
           <div className="space-y-1">
             <h3 className="text-sm font-medium text-slate-500">{t('admin.users.verificationStatus')}</h3>
             <p className="font-semibold text-slate-900">
-              {currentUser.identityVerificationStatus}
+              {currentUser.identityVerificationStatus || "-"}
             </p>
           </div>
           

@@ -110,9 +110,6 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-screen w-full bg-slate-50 text-gray-900 font-sans relative p-4 lg:p-8">
-      <div className="absolute top-8 right-8 z-50">
-        <LanguageSwitcher />
-      </div>
       <AnimatePresence>
         {toast && (
           <Toast
@@ -172,6 +169,9 @@ export default function LoginPage() {
 
         {/* Right Side: Massive Form */}
         <section className="flex w-full lg:w-1/2 flex-col items-center justify-center p-8 sm:p-16 lg:p-24 relative">
+          <div className="absolute top-8 ltr:right-8 rtl:left-8 z-50">
+            <LanguageSwitcher />
+          </div>
           <div className="w-full max-w-lg space-y-10">
             <div className="text-left">
               <h2 className="text-5xl font-black tracking-tighter text-slate-900 font-heading">

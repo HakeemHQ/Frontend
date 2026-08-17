@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useLanguage } from "@/localization/LanguageContext";
 import { Input } from "@/components/ui/Input";
 import { Spinner } from "@/components/ui/Spinner";
 import { useAdminStore } from "@/store/useAdminStore";
@@ -97,6 +98,7 @@ export default function AuditLogsPage() {
             <div className="w-full xl:w-1/4">
               <span className="text-xs font-bold text-white/60 mb-2 uppercase tracking-wider pl-2 block">{t('admin.auditLogs.action')}</span>
               <input
+                dir="auto"
                 placeholder={t('admin.auditLogs.actionPlaceholder')}
                 className="w-full bg-white/20 border-none text-white rounded-[20px] px-6 py-4 text-lg font-bold focus:ring-2 focus:ring-white outline-none placeholder-white/50"
                 value={actionFilter}

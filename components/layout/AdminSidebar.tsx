@@ -51,19 +51,21 @@ const LogoutIcon = () => (
   </svg>
 );
 
-const navItems = [
-  { label: "Dashboard", href: "/admin/dashboard", icon: <DashboardIcon /> },
-  { label: "Doctors", href: "/admin/doctors", icon: <DoctorsIcon /> },
-  { label: "Users", href: "/admin/users", icon: <UsersIcon /> },
-  { label: "Audit Logs", href: "/admin/logs", icon: <LogsIcon /> },
-];
-
 import { useSidebarStore } from "@/store/useSidebarStore";
+import { useLanguage } from "@/localization/LanguageContext";
 
 export function AdminSidebar() {
+  const { t } = useLanguage();
   const pathname = usePathname();
   const { logout } = useAuth();
   const { isMobileMenuOpen, closeMobileMenu } = useSidebarStore();
+
+  const navItems = [
+    { label: t('nav.dashboard'), href: "/admin/dashboard", icon: <DashboardIcon /> },
+    { label: t('nav.doctors'), href: "/admin/doctors", icon: <DoctorsIcon /> },
+    { label: t('nav.users'), href: "/admin/users", icon: <UsersIcon /> },
+    { label: t('nav.auditLogs'), href: "/admin/logs", icon: <LogsIcon /> },
+  ];
 
   return (
     <>
@@ -128,7 +130,7 @@ export function AdminSidebar() {
               className="flex w-auto mx-2 items-center gap-3 rounded-[20px] px-6 py-4 text-[15px] font-bold text-rose-500 transition-all hover:bg-rose-50 hover:shadow-sm cursor-pointer"
             >
               <LogoutIcon />
-              <span>Logout</span>
+              <span>{t('nav.logout')}</span>
             </button>
           </div>
         </div>

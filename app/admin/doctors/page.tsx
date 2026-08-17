@@ -117,13 +117,14 @@ export default function DoctorsListPage() {
               <h1 className="text-5xl md:text-6xl font-black tracking-tighter mb-4 font-heading">
                 {t('admin.doctors.title')}
               </h1>
-              <p className="text-xl text-white/80 font-medium">Manage platform doctors and specialists</p>
+              <p className="text-xl text-white/80 font-medium">{t('admin.doctors.subtitle')}</p>
             </div>
-            <Link href="/admin/doctors/add">
-              <Button className="bg-white hover:bg-slate-50 text-primary font-black rounded-full h-14 px-8 shadow-xl shadow-white/20 transition-all hover:-translate-y-1 text-lg border-none">
-                <PlusIcon className="mr-2 h-5 w-5 font-black" />
-                {t('admin.doctors.addDoctor')}
-              </Button>
+            <Link 
+              href="/admin/doctors/add"
+              className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold backdrop-blur-md border border-white/20 transition-all hover:-translate-y-1 shadow-lg hover:shadow-xl shrink-0"
+            >
+              <PlusIcon className="h-5 w-5 font-black" />
+              {t('admin.doctors.addDoctor')}
             </Link>
           </div>
           

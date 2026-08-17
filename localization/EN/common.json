@@ -171,7 +171,8 @@
       "cardiology": "Cardiology",
       "neurology": "Neurology",
       "pediatrics": "Pediatrics",
-      "orthopedics": "Orthopedics"
+      "orthopedics": "Orthopedics",
+      "passwordHelpText": "The doctor will be required to change this password upon their first login."
     },
     "users": {
       "title": "Users",
@@ -206,7 +207,8 @@
       "confirmPassword": "Confirm Password",
       "passwordsDoNotMatch": "Passwords do not match",
       "createSuccess": "Admin created successfully",
-      "createFailed": "Failed to create admin"
+      "createFailed": "Failed to create admin",
+      "suspended": "Suspended"
     },
     "auditLogs": {
       "title": "Audit Logs",
@@ -216,7 +218,7 @@
       "searchLabel": "Search Actor ID",
       "searchPlaceholder": "Search by User ID",
       "filterByUser": "Filter by user ID",
-      "actionPlaceholder": "e.g. ExtractedItemReviewed",
+      "actionPlaceholder": "e.g. Login",
       "fromDate": "From Date",
       "toDate": "To Date",
       "auditId": "Audit ID",

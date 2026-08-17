@@ -88,7 +88,7 @@ export default function UsersListPage() {
             <h1 className="text-5xl md:text-6xl font-black tracking-tighter mb-4 font-heading">
               {t('admin.users.title')}
             </h1>
-            <p className="text-xl text-white/80 font-medium">Manage all platform users</p>
+            <p className="text-xl text-white/80 font-medium">{t('admin.users.subtitle')}</p>
           </div>
           
           {/* Filters inside Hero */}

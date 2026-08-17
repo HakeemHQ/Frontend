@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import LanguageSwitcher from "@/components/layout/LanguageSwitcher";

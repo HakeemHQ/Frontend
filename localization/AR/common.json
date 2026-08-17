@@ -171,7 +171,9 @@
       "cardiology": "أمراض القلب",
       "neurology": "الأعصاب",
       "pediatrics": "طب الأطفال",
-      "orthopedics": "العظام"
+      "orthopedics": "العظام",
+      "subtitle": "إدارة دكاترة النظام والمتخصصين",
+      "passwordHelpText": "سيُطلب من الدكتور تغيير كلمة السر دي لما يسجل دخول لأول مرة."
     },
     "users": {
       "title": "المستخدمين",
@@ -206,7 +208,14 @@
       "confirmPassword": "تأكيد كلمة السر",
       "passwordsDoNotMatch": "كلمات السر مش زي بعض",
       "createSuccess": "الأدمن اتعمل بنجاح",
-      "createFailed": "معرفناش نعمل حساب الأدمن"
+      "createFailed": "معرفناش نعمل حساب الأدمن",
+      "active": "نشط",
+      "userId": "رقم المستخدم",
+      "cancel": "إلغاء",
+      "confirm": "تأكيد",
+      "back": "رجوع",
+      "subtitle": "إدارة كل مستخدمين النظام",
+      "suspended": "موقوف"
     },
     "auditLogs": {
       "title": "سجلات المراجعة",
@@ -216,7 +225,7 @@
       "searchLabel": "دور برقم المستخدم",
       "searchPlaceholder": "دور برقم المستخدم",
       "filterByUser": "صفي برقم المستخدم",
-      "actionPlaceholder": "مثال: ExtractedItemReviewed",
+      "actionPlaceholder": "مثال: تسجيل الدخول",
       "fromDate": "من تاريخ",
       "toDate": "لحد تاريخ",
       "auditId": "رقم المراجعة",

@@ -158,9 +158,13 @@ export default function ApiTesterPage() {
               {t('admin.apiTester.description')}
             </p>
           </div>
-          <Button onClick={runTests} disabled={isRunning} className="bg-white hover:bg-slate-50 text-primary font-black rounded-full h-16 px-8 shadow-xl shadow-white/20 transition-all hover:-translate-y-1 text-xl border-none">
+          <button 
+            onClick={runTests} 
+            disabled={isRunning} 
+            className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold backdrop-blur-md border border-white/20 transition-all hover:-translate-y-1 shadow-lg hover:shadow-xl shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             {isRunning ? "Running Tests..." : "Run All API Tests"}
-          </Button>
+          </button>
         </div>
       </div>
 
