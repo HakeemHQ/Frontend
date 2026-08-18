@@ -6,12 +6,13 @@ import { useAdminStore } from "@/store/useAdminStore";
 import { useLanguage } from "@/localization/LanguageContext";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { 
-  Calendar01Icon, 
+  UserIcon,
   UserGroupIcon, 
   FileUploadIcon, 
   CheckmarkCircle02Icon, 
   DocumentCodeIcon 
 } from "@hugeicons/core-free-icons";
+import { DashboardCharts } from "@/components/admin/DashboardCharts";
 
 const StatCard = ({
   title,
@@ -24,18 +25,18 @@ const StatCard = ({
   isLoading: boolean;
   icon: any;
 }) => (
-  <div className="rounded-2xl border border-slate-100 bg-white p-5 sm:p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+  <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
     <div className="flex items-center justify-between">
-      <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{title}</span>
-      <div className="h-9 w-9 rounded-xl bg-primary/5 text-primary flex items-center justify-center">
-        <HugeiconsIcon icon={icon} className="w-5 h-5" />
+      <span className="text-xs font-bold uppercase tracking-wider text-slate-400 truncate pr-2">{title}</span>
+      <div className="h-8 w-8 rounded-xl bg-primary/5 text-primary flex items-center justify-center shrink-0">
+        <HugeiconsIcon icon={icon} className="w-4 h-4" />
       </div>
     </div>
-    <div className="mt-4">
+    <div className="mt-3">
       {isLoading ? (
-        <Spinner className="h-7 w-7 text-primary" />
+        <Spinner className="h-6 w-6 text-primary" />
       ) : (
-        <span className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight font-heading">
+        <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-heading">
           {typeof value === 'number' ? value.toLocaleString() : value}
         </span>
       )}
@@ -123,10 +124,16 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
           <StatCard 
-            title={t('admin.dashboard.activeUsers')} 
-            value={activitySummary?.activeUsers || 0} 
+            title={t('admin.dashboard.activePatients') || "Active Patients"} 
+            value={activitySummary?.activePatients ?? (activitySummary?.activeUsers ?? 0)} 
+            isLoading={isActivitySummaryLoading} 
+            icon={UserIcon}
+          />
+          <StatCard 
+            title={t('admin.dashboard.activeDoctors') || "Active Doctors"} 
+            value={activitySummary?.activeDoctors ?? 0} 
             isLoading={isActivitySummaryLoading} 
             icon={UserGroupIcon}
           />
@@ -149,6 +156,16 @@ export default function AdminDashboardPage() {
             icon={DocumentCodeIcon}
           />
         </div>
+
+        {/* Visual Charts & KPIs */}
+        <DashboardCharts
+          activePatients={activitySummary?.activePatients ?? (activitySummary?.activeUsers ?? 0)}
+          activeDoctors={activitySummary?.activeDoctors ?? 0}
+          documentsUploaded={activitySummary?.documentsUploaded || 0}
+          extractionsCompleted={activitySummary?.extractionsCompleted || 0}
+          medicalCvVersionsGenerated={activitySummary?.medicalCvVersionsGenerated || 0}
+          isLoading={isActivitySummaryLoading}
+        />
       </div>
     </div>
   );

@@ -29,10 +29,12 @@ export interface AuditLog {
 export interface ActivitySummary {
   fromDate: string;
   toDate: string;
-  activeUsers: number;
+  activePatients: number;
+  activeDoctors: number;
   documentsUploaded: number;
   extractionsCompleted: number;
   medicalCvVersionsGenerated: number;
+  activeUsers?: number;
 }
 
 export interface PaginatedResponse<T> {

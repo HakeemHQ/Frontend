@@ -115,6 +115,8 @@
       "subtitle": "ملخص النشاطات",
       "description": "نظرة سريعة على النظام.",
       "activeUsers": "المستخدمين النشطين",
+      "activePatients": "المرضى النشطين",
+      "activeDoctors": "الأطباء النشطين",
       "documentsUploaded": "الملفات المرفوعة",
       "extractionsCompleted": "البيانات اللي اتسحبت",
       "cvVersionsGenerated": "نسخ السير اللي اتعملت",

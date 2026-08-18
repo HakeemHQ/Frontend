@@ -115,6 +115,8 @@
       "subtitle": "Activity Summary Overview",
       "description": "System overview at a glance.",
       "activeUsers": "Active Users",
+      "activePatients": "Active Patients",
+      "activeDoctors": "Active Doctors",
       "documentsUploaded": "Documents Uploaded",
       "extractionsCompleted": "Extractions Completed",
       "cvVersionsGenerated": "CV Versions Generated",
