@@ -37,10 +37,39 @@ export default function MedicalCvListPage({ params }: { params: Promise<{ code: 
     const fetchCvs = async () => {
       try {
         setIsLoading(true);
-        const res = await getPatientMedicalCvs(code);
-        const items = Array.isArray(res) ? res : ((res as any)?.data || (res as any)?.items || []);
+        const dataStr = sessionStorage.getItem(`access_${code}`);
+        let patientId = "";
+        if (dataStr) {
+          try {
+            const accessData = JSON.parse(dataStr);
+            patientId = accessData?.patientId || accessData?.patient?.patientId;
+          } catch (e) {}
+        }
+        
+        if (!patientId) {
+          throw new Error("Patient ID not found in session.");
+        }
+
+        const res = await getPatientMedicalCvs(patientId);
+        
+        let items: any[] = [];
+        if (Array.isArray(res)) {
+          items = res;
+        } else if (res && typeof res === 'object') {
+          const resObj = res as any;
+          if (Array.isArray(resObj.data)) {
+            items = resObj.data;
+          } else if (Array.isArray(resObj.items)) {
+            items = resObj.items;
+          } else if (resObj.data && Array.isArray(resObj.data.items)) {
+            items = resObj.data.items;
+          } else if (resObj.items && Array.isArray(resObj.items.items)) {
+            items = resObj.items.items;
+          }
+        }
+        
         if (isMounted) {
-          setCvs(items);
+          setCvs(Array.isArray(items) ? items : []);
         }
       } catch (err: any) {
         if (isMounted) {
@@ -71,13 +100,21 @@ export default function MedicalCvListPage({ params }: { params: Promise<{ code: 
   });
 
   const getStatusBadge = (status: string) => {
-    switch (status.toLowerCase()) {
+    const normalizedStatus = status.toLowerCase();
+    
+    // Attempt to get translated status, fallback to original status text
+    let translatedStatus = t(`doctor.medicalCvs.${normalizedStatus}`);
+    if (!translatedStatus || translatedStatus.includes('doctor.medicalCvs.')) {
+      translatedStatus = status;
+    }
+
+    switch (normalizedStatus) {
       case 'ready':
       case 'approved':
         return (
           <span className="flex items-center gap-1 px-2.5 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-xs font-bold uppercase tracking-wide border border-emerald-200">
             <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-3 h-3" />
-            {t('doctor.medicalCvs.ready')}
+            {translatedStatus}
           </span>
         );
       case 'draft':
@@ -86,13 +123,13 @@ export default function MedicalCvListPage({ params }: { params: Promise<{ code: 
         return (
           <span className="flex items-center gap-1 px-2.5 py-0.5 bg-amber-50 text-amber-700 rounded-md text-xs font-bold uppercase tracking-wide border border-amber-200">
             <HugeiconsIcon icon={Time02Icon} className="w-3 h-3" />
-            {status}
+            {translatedStatus}
           </span>
         );
       default:
         return (
           <span className="px-2.5 py-0.5 bg-slate-100 text-slate-700 rounded-md text-xs font-bold uppercase tracking-wide border border-slate-200">
-            {status}
+            {translatedStatus}
           </span>
         );
     }

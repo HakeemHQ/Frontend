@@ -24,7 +24,11 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
   const router = useRouter();
   const { code } = use(params);
   
-  const { documents, isLoading, error, fetchDocuments, clearError } = usePatientDocumentsStore();
+  const { documents, isLoading, error, fetchDocuments, clearError, pageNumber, pageSize, totalCount, setPageNumber } = usePatientDocumentsStore();
+  
+  const totalPages = Math.ceil(totalCount / pageSize);
+  const startItem = totalCount === 0 ? 0 : (pageNumber - 1) * pageSize + 1;
+  const endItem = Math.min(pageNumber * pageSize, totalCount);
   
   const [searchQuery, setSearchQuery] = useState("");
   const [toastMessage, setToastMessage] = useState<{ message: string; type: 'success' | 'error' | 'warning' } | null>(null);
@@ -248,6 +252,35 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {totalCount > 0 && (
+          <div className="flex items-center justify-between mt-6 px-2">
+            <p className="text-xs text-slate-500 font-medium">
+              {t('common.showing') || 'Showing'} <span className="font-bold text-slate-700">{startItem}</span> {t('common.to') || 'to'} <span className="font-bold text-slate-700">{endItem}</span> {t('common.of') || 'of'} <span className="font-bold text-slate-700">{totalCount}</span>
+            </p>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setPageNumber(pageNumber - 1)}
+                disabled={pageNumber <= 1 || isLoading}
+                className="text-xs h-8 px-3"
+              >
+                {t('common.previous') || 'Previous'}
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setPageNumber(pageNumber + 1)}
+                disabled={pageNumber >= totalPages || isLoading}
+                className="text-xs h-8 px-3"
+              >
+                {t('common.next') || 'Next'}
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -131,7 +131,7 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
           <StatCard 
             title={t('admin.dashboard.activePatients') || "Active Patients"} 
             value={activitySummary?.activePatients ?? (activitySummary?.activeUsers ?? 0)} 

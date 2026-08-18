@@ -3,7 +3,7 @@ import { authStorage } from "../storage";
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "https://hakeem1.runasp.net",
-  timeout: 10000,
+  timeout: 60000,
 });
 
 api.interceptors.request.use(

@@ -31,7 +31,7 @@ export default function RegisterPage() {
         <LanguageSwitcher />
       </div>
 
-      <div className="flex w-full max-w-[1600px] mx-auto bg-white rounded-[48px] shadow-2xl shadow-slate-200/50 overflow-hidden min-h-[calc(100vh-4rem)] flex-row-reverse">
+      <div className="flex w-full max-w-[1600px] mx-auto bg-white rounded-[24px] lg:rounded-[48px] shadow-2xl shadow-slate-200/50 overflow-hidden min-h-[calc(100vh-4rem)] flex-col lg:flex-row-reverse">
         {/* Right Side: Massive Hero Panel */}
         <section className="hidden lg:flex relative w-1/2 flex-col justify-between bg-primary p-16 xl:p-24 overflow-hidden text-white">
           <div className="absolute left-0 top-0 h-full w-[1px] bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>

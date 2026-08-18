@@ -8,7 +8,12 @@ export type PatientDocumentsState = {
   error: string | null;
   patientId: string | null;
   
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  
   setPatientId: (patientId: string) => void;
+  setPageNumber: (pageNumber: number) => void;
   fetchDocuments: (patientId?: string, params?: { documentName?: string; pageNumber?: number; pageSize?: number }) => Promise<void>;
   uploadDocument: (patientId: string, params: { file: File; title: string; documentDate: string; patientProfileId?: string }) => Promise<MedicalDocument | false>;
   deleteDocument: (documentId: string) => Promise<boolean>;
@@ -22,16 +27,26 @@ export const usePatientDocumentsStore = create<PatientDocumentsState>((set, get)
   isLoading: false,
   error: null,
   patientId: null,
+  pageNumber: 1,
+  pageSize: 20,
+  totalCount: 0,
 
   clearError: () => set({ error: null }),
 
   setPatientId: (patientId) => {
-    set({ patientId });
+    set({ patientId, pageNumber: 1 });
     get().fetchDocuments(patientId);
+  },
+
+  setPageNumber: (pageNumber) => {
+    set({ pageNumber });
+    get().fetchDocuments(undefined, { pageNumber });
   },
 
   fetchDocuments: async (passedPatientId, params = {}) => {
     const patientId = passedPatientId || get().patientId;
+    const pageNumber = params.pageNumber || get().pageNumber;
+    const pageSize = params.pageSize || get().pageSize;
     
     if (!patientId) {
       set({ error: "Patient ID is required" });
@@ -40,7 +55,7 @@ export const usePatientDocumentsStore = create<PatientDocumentsState>((set, get)
 
     set({ isLoading: true, error: null });
     try {
-      const response = await getPatientDocuments(patientId, params);
+      const response = await getPatientDocuments(patientId, { ...params, pageNumber, pageSize });
 
       const isArray = Array.isArray(response);
       const isFailed = typeof response === 'object' && response !== null && 'success' in response && (response as any).success === false;
@@ -53,16 +68,23 @@ export const usePatientDocumentsStore = create<PatientDocumentsState>((set, get)
       const rawData: any = isArray ? response : ((response as any).data !== undefined ? (response as any).data : response);
 
       let docsArray: MedicalDocument[] = [];
+      let totalCount = 0;
+      
       if (Array.isArray(rawData)) {
         docsArray = rawData;
+        totalCount = rawData.length;
       } else if (rawData && Array.isArray(rawData.items)) {
         docsArray = rawData.items;
+        totalCount = rawData.totalCount || rawData.items.length;
       } else if (rawData && Array.isArray(rawData.data)) {
         docsArray = rawData.data;
+        totalCount = rawData.totalCount || rawData.data.length;
       }
 
       set({
         documents: docsArray,
+        totalCount,
+        pageNumber,
         isLoading: false,
       });
     } catch (error: any) {

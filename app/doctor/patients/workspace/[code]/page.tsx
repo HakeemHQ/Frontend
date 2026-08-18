@@ -160,7 +160,7 @@ export default function WorkspacePage({ params }: { params: Promise<{ code: stri
 
         {/* Tabs Bar */}
         <div className="px-6 bg-white border border-slate-100 border-t-0 rounded-b-3xl">
-          <nav className="flex space-x-8 rtl:space-x-reverse overflow-x-auto">
+          <nav className="flex gap-6 sm:gap-8 overflow-x-auto">
             {tabs.map((tab) => (
               <Link
                 key={tab.name}

@@ -7,7 +7,12 @@
     "loadingText": "Loading",
     "error": "Error",
     "success": "Success",
-    "warning": "Warning"
+    "warning": "Warning",
+    "showing": "Showing",
+    "to": "to",
+    "of": "of",
+    "next": "Next",
+    "previous": "Previous"
   },
   "language": {
     "label": "Language",
@@ -470,6 +475,8 @@
       "verified": "Verified",
       "ready": "Ready",
       "queued": "Queued",
+      "draft": "Draft",
+      "processing": "Processing",
       "version": "Version",
       "noResults": "No CVs Found",
       "noResultsDesc": "We couldn't find any Medical CVs matching your current filters.",
@@ -508,7 +515,13 @@
       "clearChat": "Clear Conversation",
       "noMessages": "No messages yet. Ask a question to begin.",
       "sources": "Sources",
-      "confidence": "Confidence"
+      "confidence": "Confidence",
+      "prompts": {
+        "analyzeLab": "Analyze recent lab results",
+        "checkInteractions": "Check drug interactions",
+        "summarizeHistory": "Summarize patient history",
+        "draftReferral": "Draft a referral letter"
+      }
     },
     "profile": {
       "title": "My Profile",

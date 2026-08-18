@@ -129,7 +129,7 @@ export default function PatientsPage() {
           </div>
 
           <Link 
-            href="/doctor/patients/verify-identity"
+            href="/doctor/verify-identity"
             className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-semibold backdrop-blur-md border border-white/20 transition-all hover:-translate-y-0.5 shadow-sm hover:shadow shrink-0"
           >
             <HugeiconsIcon icon={UserAdd01Icon} className="w-4 h-4" />

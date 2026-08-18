@@ -1,11 +1,14 @@
 "use client";
 
 import React, { useState, useRef, useEffect, use } from "react";
+import Link from "next/link";
+import ReactMarkdown from "react-markdown";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   AiMagicIcon,
   Chemistry01Icon,
   ArrowRight01Icon,
+  ArrowLeft01Icon,
   UserIcon,
 } from "@hugeicons/core-free-icons";
 import { askAiQuestion, AiSource } from "@/lib/api/ai";
@@ -96,19 +99,25 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
   };
 
   const suggestedPrompts = [
-    "Analyze recent lab results",
-    "Check drug interactions",
-    "Summarize patient history",
-    "Draft a referral letter"
+    t('doctor.askAi.prompts.analyzeLab'),
+    t('doctor.askAi.prompts.checkInteractions'),
+    t('doctor.askAi.prompts.summarizeHistory'),
+    t('doctor.askAi.prompts.draftReferral')
   ];
 
   return (
-    <div className="h-[calc(100vh-6rem)] flex flex-col max-w-6xl mx-auto bg-white border-0 rounded-[48px] shadow-2xl shadow-slate-200/50 overflow-hidden relative animate-in fade-in duration-300 mt-4">
+    <div className="h-[calc(100vh-4rem)] sm:h-[calc(100vh-6rem)] flex flex-col max-w-6xl mx-auto bg-white border-0 sm:rounded-[48px] shadow-2xl shadow-slate-200/50 overflow-hidden relative animate-in fade-in duration-300 mt-0 sm:mt-4">
       
       {/* Header */}
-      <div className="h-24 shrink-0 flex items-center justify-between px-8 bg-primary text-white z-10">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-[20px] bg-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-inner">
+      <div className="h-20 sm:h-24 shrink-0 flex items-center justify-between px-4 sm:px-8 bg-primary text-white z-10">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <Link 
+            href={`/doctor/patients/workspace/${code}`}
+            className="w-12 h-12 flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-all shrink-0"
+          >
+            <HugeiconsIcon icon={ArrowLeft01Icon} className="w-6 h-6 rtl:rotate-180" />
+          </Link>
+          <div className="w-14 h-14 rounded-[20px] bg-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-inner shrink-0">
             <HugeiconsIcon icon={AiMagicIcon} className="w-7 h-7" />
           </div>
           <div>
@@ -143,7 +152,7 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
                   onClick={() => {
                     handleSendMessage(undefined, prompt);
                   }}
-                  className="px-6 py-5 bg-white border-2 border-slate-100 hover:border-primary hover:shadow-xl hover:shadow-primary/10 rounded-[24px] text-base font-bold text-slate-700 transition-all text-left rtl:text-right flex items-center gap-3 hover:-translate-y-1"
+                  className="px-6 py-5 bg-white border-2 border-slate-100 hover:border-primary hover:shadow-xl hover:shadow-primary/10 rounded-[24px] text-base font-bold text-slate-700 transition-all text-left rtl:text-right flex items-center gap-3 hover:-translate-y-1 cursor-pointer"
                 >
                   <HugeiconsIcon icon={AiMagicIcon} className="w-5 h-5 text-primary" />
                   {prompt}
@@ -172,18 +181,52 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
                             : 'bg-white text-slate-800 rounded-[24px] rounded-tl-sm shadow-md'
                       }`}
                     >
-                      {msg.text}
+                      <div className="markdown-content space-y-2">
+                        <ReactMarkdown
+                          components={{
+                            p: ({node, ...props}) => <p className="mb-2 last:mb-0 leading-relaxed" {...props} />,
+                            strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
+                            ul: ({node, ...props}) => <ul className="list-disc pl-5 mb-2" {...props} />,
+                            ol: ({node, ...props}) => <ol className="list-decimal pl-5 mb-2" {...props} />,
+                            li: ({node, ...props}) => <li className="mb-1" {...props} />,
+                            h1: ({node, ...props}) => <h1 className="text-xl font-bold mb-2 mt-4" {...props} />,
+                            h2: ({node, ...props}) => <h2 className="text-lg font-bold mb-2 mt-3" {...props} />,
+                            h3: ({node, ...props}) => <h3 className="text-base font-bold mb-2 mt-2" {...props} />,
+                          }}
+                        >
+                          {msg.text}
+                        </ReactMarkdown>
+                      </div>
                       {msg.sources && msg.sources.length > 0 && (
                         <div className="mt-3 pt-3 border-t border-slate-100/60 flex flex-col gap-1.5">
                           <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
                             {t('doctor.askAi.sources')}
                           </span>
                           <div className="flex flex-wrap gap-1.5">
-                            {msg.sources.map((src, i) => (
-                              <span key={i} className="inline-flex items-center px-2 py-1 bg-slate-50 text-slate-600 text-[11px] rounded-md border border-slate-200" title={src.recordType}>
-                                {src.displayName}
-                              </span>
-                            ))}
+                            {msg.sources.map((src, i) => {
+                              const isDoc = src.recordType?.toLowerCase() === 'document' || src.recordType?.toLowerCase() === 'medicalcv';
+                              const linkPath = src.recordType?.toLowerCase() === 'medicalcv'
+                                ? `/doctor/patients/workspace/${code}/medical-cv/${src.medicalRecordId}`
+                                : `/doctor/patients/workspace/${code}/documents/${src.medicalRecordId}`;
+                              
+                              if (isDoc) {
+                                return (
+                                  <Link 
+                                    key={i} 
+                                    href={linkPath}
+                                    className="inline-flex items-center px-2 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 text-[11px] font-semibold rounded-md border border-blue-200 transition-colors cursor-pointer" 
+                                    title={src.recordType}
+                                  >
+                                    {src.displayName}
+                                  </Link>
+                                );
+                              }
+                              return (
+                                <span key={i} className="inline-flex items-center px-2 py-1 bg-slate-50 text-slate-600 text-[11px] rounded-md border border-slate-200" title={src.recordType}>
+                                  {src.displayName}
+                                </span>
+                              );
+                            })}
                           </div>
                         </div>
                       )}
@@ -222,7 +265,7 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
       </div>
 
       {/* Input Area */}
-      <div className="shrink-0 p-8 bg-white border-t border-slate-100 rounded-b-[48px]">
+      <div className="shrink-0 p-4 sm:p-8 bg-white border-t border-slate-100 sm:rounded-b-[48px]">
         <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto relative flex items-center">
           <input
             type="text"

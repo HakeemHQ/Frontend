@@ -7,7 +7,12 @@
     "loadingText": "جاري التحميل",
     "error": "غلطة",
     "success": "نجاح",
-    "warning": "تحذير"
+    "warning": "تحذير",
+    "showing": "عرض",
+    "to": "إلى",
+    "of": "من",
+    "next": "التالي",
+    "previous": "السابق"
   },
   "language": {
     "label": "اللغة",
@@ -128,7 +133,7 @@
     },
     "doctors": {
       "title": "الدكاترة",
-      "subtitle": "إدارة ومتابعة جميع الأطباء المسجلين",
+      "subtitle": "إدارة دكاترة النظام والمتخصصين",
       "addDoctor": "ضيف دكتور",
       "doctor": "الدكتور",
       "specialty": "التخصص",
@@ -176,7 +181,6 @@
       "neurology": "الأعصاب",
       "pediatrics": "طب الأطفال",
       "orthopedics": "العظام",
-      "subtitle": "إدارة دكاترة النظام والمتخصصين",
       "passwordHelpText": "سيُطلب من الدكتور تغيير كلمة السر دي لما يسجل دخول لأول مرة."
     },
     "users": {
@@ -475,6 +479,8 @@
       "verified": "موثق",
       "ready": "جاهز",
       "queued": "في الطابور",
+      "draft": "مسودة",
+      "processing": "بيتم التجهيز",
       "version": "النسخة",
       "noResults": "ملقيناش سير طبية",
       "noResultsDesc": "ملقيناش ولا سيرة طبية مطابقة للي بتدور عليه.",
@@ -513,7 +519,13 @@
       "clearChat": "امسح المحادثة",
       "noMessages": "لسه مفيش رسايل. اسأل سؤال عشان تبدأ.",
       "sources": "المصادر",
-      "confidence": "نسبة الثقة"
+      "confidence": "نسبة الثقة",
+      "prompts": {
+        "analyzeLab": "تحليل نتائج المختبر الأخيرة",
+        "checkInteractions": "التحقق من التفاعلات الدوائية",
+        "summarizeHistory": "تلخيص التاريخ الطبي للمريض",
+        "draftReferral": "صياغة رسالة إحالة"
+      }
     },
     "profile": {
       "title": "ملفي الشخصي",
