@@ -13,7 +13,9 @@ import {
   AiLockIcon,
   DocumentAttachmentIcon,
   ArrowLeft01Icon,
-  CheckmarkCircle02Icon
+  CheckmarkCircle02Icon,
+  Delete02Icon,
+  Exchange01Icon
 } from "@hugeicons/core-free-icons";
 import { usePatientDocumentsStore } from "@/store/usePatientDocumentsStore";
 import { Toast } from "@/components/ui/Toast";
@@ -29,12 +31,23 @@ export default function AddDocumentPage({ params }: { params: Promise<{ code: st
   const [selectedFile, setSelectedFile] = useState<{ id: string; file: File } | null>(null);
   const [title, setTitle] = useState("");
   const [documentDate, setDocumentDate] = useState("");
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   
   const [toastMessage, setToastMessage] = useState<{ message: string; type: 'success' | 'error' | 'warning' } | null>(null);
   const { uploadDocument, isLoading, error, clearError } = usePatientDocumentsStore();
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const today = new Date().toISOString().split("T")[0];
+
+  useEffect(() => {
+    if (selectedFile && selectedFile.file.type.startsWith("image/")) {
+      const url = URL.createObjectURL(selectedFile.file);
+      setPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    } else {
+      setPreviewUrl(null);
+    }
+  }, [selectedFile]);
 
   useEffect(() => {
     if (error) {
@@ -73,6 +86,20 @@ export default function AddDocumentPage({ params }: { params: Promise<{ code: st
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0 && selectedMethod) {
       setSelectedFile({ id: selectedMethod, file: e.target.files[0] });
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleChangeFile = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
 
@@ -197,6 +224,61 @@ export default function AddDocumentPage({ params }: { params: Promise<{ code: st
             );
           })}
         </div>
+
+        {/* Selected File Preview */}
+        {selectedFile && (
+          <div className="max-w-xl mx-auto mb-6 p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Document Preview
+              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-mono text-slate-400">
+                  {(selectedFile.file.size / (1024 * 1024)).toFixed(2)} MB
+                </span>
+                <button
+                  type="button"
+                  onClick={handleChangeFile}
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-600 hover:text-primary transition bg-white hover:bg-slate-100 px-2 py-0.5 rounded border border-slate-200 cursor-pointer"
+                  title="Choose another file"
+                >
+                  <HugeiconsIcon icon={Exchange01Icon} className="w-3 h-3" />
+                  <span>Change</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleRemoveFile}
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-600 hover:text-red-700 transition bg-red-50 hover:bg-red-100 px-2 py-0.5 rounded border border-red-200 cursor-pointer"
+                  title="Remove file"
+                >
+                  <HugeiconsIcon icon={Delete02Icon} className="w-3 h-3" />
+                  <span>Delete</span>
+                </button>
+              </div>
+            </div>
+
+            {previewUrl ? (
+              <div className="rounded-lg overflow-hidden border border-slate-200 bg-white flex items-center justify-center max-h-56">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
+                  src={previewUrl} 
+                  alt="Document Preview" 
+                  className="max-h-56 w-auto object-contain rounded"
+                />
+              </div>
+            ) : (
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-slate-100">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                  <HugeiconsIcon icon={Folder01Icon} className="w-4 h-4" />
+                </div>
+                <div className="truncate flex-1">
+                  <p className="text-xs font-bold text-slate-900 truncate">{selectedFile.file.name}</p>
+                  <p className="text-[10px] text-slate-400 uppercase">{selectedFile.file.type || "PDF Document"}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Form Fields */}
         <div className="space-y-4 max-w-xl mx-auto mb-8">

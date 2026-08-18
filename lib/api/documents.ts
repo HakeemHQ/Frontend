@@ -64,6 +64,45 @@ export async function getDocumentContent(documentId: string): Promise<Blob> {
   return data;
 }
 
+export async function detectDocumentMimeType(blob: Blob, fallbackName?: string): Promise<{ mimeType: string; blob: Blob }> {
+  let mimeType = blob.type;
+
+  if (mimeType && mimeType !== "application/octet-stream" && mimeType !== "binary/octet-stream") {
+    return { mimeType, blob };
+  }
+
+  try {
+    const buffer = await blob.slice(0, 8).arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+
+    if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) {
+      mimeType = "application/pdf";
+    } else if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) {
+      mimeType = "image/png";
+    } else if (bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF) {
+      mimeType = "image/jpeg";
+    } else if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) {
+      mimeType = "image/gif";
+    } else if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46) {
+      mimeType = "image/webp";
+    }
+  } catch (e) {
+    console.error("Failed to inspect file signature:", e);
+  }
+
+  if (!mimeType || mimeType === "application/octet-stream" || mimeType === "binary/octet-stream") {
+    const lower = (fallbackName || "").toLowerCase();
+    if (lower.endsWith(".pdf")) mimeType = "application/pdf";
+    else if (lower.endsWith(".png")) mimeType = "image/png";
+    else if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) mimeType = "image/jpeg";
+    else if (lower.endsWith(".webp")) mimeType = "image/webp";
+    else mimeType = "image/jpeg";
+  }
+
+  const correctedBlob = new Blob([blob], { type: mimeType });
+  return { mimeType, blob: correctedBlob };
+}
+
 export async function deleteDocument(documentId: string): Promise<ApiResponse<string>> {
   const { data } = await api.delete<ApiResponse<string>>(`/documents/${documentId}`);
   return data;

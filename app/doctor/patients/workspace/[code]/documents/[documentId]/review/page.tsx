@@ -13,7 +13,7 @@ import {
   Delete02Icon,
   Alert02Icon
 } from "@hugeicons/core-free-icons";
-import { getDocumentContent, getDocumentExtractedFields } from "@/lib/api/documents";
+import { getDocumentContent, getDocumentExtractedFields, detectDocumentMimeType } from "@/lib/api/documents";
 import { usePatientDocumentsStore } from "@/store/usePatientDocumentsStore";
 import { DocumentExtractedData, ExtractedField, ExtractedItem, ReviewFieldPayload, ReviewItemPayload } from "@/types/document";
 import { Toast } from "@/components/ui/Toast";
@@ -56,8 +56,9 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
     const fetchContent = async () => {
       try {
         setIsLoading(true);
-        const blob = await getDocumentContent(documentId);
-        setFileType(blob.type);
+        const rawBlob = await getDocumentContent(documentId);
+        const { mimeType, blob } = await detectDocumentMimeType(rawBlob);
+        setFileType(mimeType);
         url = URL.createObjectURL(blob);
         setBlobUrl(url);
       } catch (err) {
