@@ -123,7 +123,8 @@
       "from": "From",
       "to": "to",
       "toLabel": "To",
-      "dateError": "From Date cannot be after To Date"
+      "dateError": "From Date cannot be after To Date",
+      "futureDateError": "Selected dates cannot be in the future"
     },
     "doctors": {
       "title": "Doctors",
@@ -243,7 +244,9 @@
       "details": "Details",
       "from": "From",
       "to": "To",
-      "noResults": "No audit logs found."
+      "noResults": "No audit logs found.",
+      "dateError": "From Date cannot be after To Date",
+      "futureDateError": "Selected dates cannot be in the future"
     },
     "apiTester": {
       "title": "API Tester",

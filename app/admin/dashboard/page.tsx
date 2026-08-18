@@ -59,16 +59,21 @@ export default function AdminDashboardPage() {
     return new Date().toISOString().split("T")[0];
   });
 
+  const today = new Date().toISOString().split("T")[0];
   const [dateError, setDateError] = useState("");
 
   useEffect(() => {
+    if (fromDate > today || toDate > today) {
+      setDateError(t('admin.dashboard.futureDateError') || "Selected dates cannot be in the future");
+      return;
+    }
     if (fromDate > toDate) {
       setDateError(t('admin.dashboard.dateError'));
       return;
     }
     setDateError("");
     fetchActivitySummary({ fromDate, toDate });
-  }, [fromDate, toDate, fetchActivitySummary, t]);
+  }, [fromDate, toDate, fetchActivitySummary, t, today]);
 
   return (
     <div className="space-y-6 pb-12 max-w-7xl mx-auto px-4 sm:px-6">
@@ -89,6 +94,7 @@ export default function AdminDashboardPage() {
               <span className="text-xs font-bold text-white/70 uppercase tracking-wider pl-1">{t('admin.dashboard.from')}</span>
               <input 
                 type="date" 
+                max={today}
                 value={fromDate}
                 onChange={(e) => setFromDate(e.target.value)}
                 className="bg-white/20 border border-white/10 text-white rounded-lg px-3 py-1.5 text-xs sm:text-sm font-semibold outline-none focus:ring-2 focus:ring-white/40 cursor-pointer"
@@ -100,6 +106,7 @@ export default function AdminDashboardPage() {
               <span className="text-xs font-bold text-white/70 uppercase tracking-wider">{t('admin.dashboard.toLabel')}</span>
               <input 
                 type="date" 
+                max={today}
                 value={toDate}
                 onChange={(e) => setToDate(e.target.value)}
                 className="bg-white/20 border border-white/10 text-white rounded-lg px-3 py-1.5 text-xs sm:text-sm font-semibold outline-none focus:ring-2 focus:ring-white/40 cursor-pointer"

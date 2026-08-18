@@ -56,9 +56,15 @@ export default function AuditLogsPage() {
     setPage(1);
   };
 
+  const today = new Date().toISOString().split("T")[0];
+
   useEffect(() => {
+    if ((fromDate && fromDate > today) || (toDate && toDate > today)) {
+      setDateError(t('admin.auditLogs.futureDateError') || "Selected dates cannot be in the future");
+      return;
+    }
     if (fromDate && toDate && fromDate > toDate) {
-      setDateError("From Date cannot be after To Date");
+      setDateError(t('admin.auditLogs.dateError') || "From Date cannot be after To Date");
       return;
     }
     setDateError("");
@@ -71,7 +77,7 @@ export default function AuditLogsPage() {
       page,
       pageSize
     });
-  }, [debouncedAction, debouncedActor, fromDate, toDate, page, fetchAuditLogs]);
+  }, [debouncedAction, debouncedActor, fromDate, toDate, page, fetchAuditLogs, today, t]);
 
   const totalPages = auditLogs?.total ? Math.ceil(auditLogs.total / pageSize) : 1;
 
@@ -113,6 +119,7 @@ export default function AuditLogsPage() {
               <span className="text-xs font-bold text-white/70 mb-1 uppercase tracking-wider pl-1 block">{t('admin.auditLogs.fromDate')}</span>
               <input 
                 type="date" 
+                max={today}
                 value={fromDate}
                 onChange={handleFromDateChange}
                 className="w-full bg-white/20 border border-white/10 text-white rounded-lg px-3 py-2 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-white outline-none cursor-pointer"
@@ -123,6 +130,7 @@ export default function AuditLogsPage() {
               <span className="text-xs font-bold text-white/70 mb-1 uppercase tracking-wider pl-1 block">{t('admin.auditLogs.toDate')}</span>
               <input 
                 type="date" 
+                max={today}
                 value={toDate}
                 onChange={handleToDateChange}
                 className="w-full bg-white/20 border border-white/10 text-white rounded-lg px-3 py-2 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-white outline-none cursor-pointer"
