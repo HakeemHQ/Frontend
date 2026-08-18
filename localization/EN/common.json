@@ -417,6 +417,7 @@
       "uploadButton": "Upload Document",
       "uploadSuccess": "Document uploaded successfully",
       "uploadFailed": "Failed to upload document",
+      "futureDateError": "Document date cannot be in the future",
       "breadcrumbWorkspace": "Workspace",
       "breadcrumbDocuments": "Documents",
       "breadcrumbUpload": "Upload",

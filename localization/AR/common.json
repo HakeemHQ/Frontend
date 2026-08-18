@@ -422,6 +422,7 @@
       "uploadButton": "ارفع الملف",
       "uploadSuccess": "الملف اترفع بنجاح",
       "uploadFailed": "حصل مشكلة والملف مترفعش",
+      "futureDateError": "تاريخ المستند لا يمكن أن يكون في المستقبل",
       "breadcrumbWorkspace": "البيانات",
       "breadcrumbDocuments": "الملفات",
       "breadcrumbUpload": "ارفع",
