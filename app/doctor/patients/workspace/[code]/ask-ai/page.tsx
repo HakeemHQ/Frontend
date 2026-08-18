@@ -12,7 +12,7 @@ import {
   UserIcon,
   DocumentValidationIcon,
 } from "@hugeicons/core-free-icons";
-import { askAiQuestion, AiSource } from "@/lib/api/ai";
+import { askAiQuestion, AiSource, AiQuestionResponse } from "@/lib/api/ai";
 import { useLanguage } from "@/localization/LanguageContext";
 
 type Message = {
