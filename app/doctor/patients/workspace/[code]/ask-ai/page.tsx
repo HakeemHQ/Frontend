@@ -10,6 +10,7 @@ import {
   ArrowRight01Icon,
   ArrowLeft01Icon,
   UserIcon,
+  DocumentValidationIcon,
 } from "@hugeicons/core-free-icons";
 import { askAiQuestion, AiSource } from "@/lib/api/ai";
 import { useLanguage } from "@/localization/LanguageContext";
@@ -20,6 +21,7 @@ type Message = {
   text: string;
   timestamp: Date;
   sources?: AiSource[];
+  generatedCv?: AiQuestionResponse["generatedCv"];
   isError?: boolean;
 };
 
@@ -78,6 +80,7 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
           role: "bot",
           text: responseData.message,
           sources: responseData.ragResults,
+          generatedCv: responseData.generatedCv,
           timestamp: new Date(),
         };
         setMessages((prev) => [...prev, newBotMsg]);
@@ -197,6 +200,46 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
                           {msg.text}
                         </ReactMarkdown>
                       </div>
+                      
+                      {msg.generatedCv && (
+                        <div className="mt-4 p-4 sm:p-5 bg-white/60 backdrop-blur-sm border border-emerald-200/60 rounded-2xl flex flex-col gap-3 shadow-sm hover:shadow-md hover:border-emerald-300 transition-all">
+                           <div className="flex items-start gap-3">
+                             <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
+                               <HugeiconsIcon icon={DocumentValidationIcon} className="w-5 h-5 text-emerald-600" />
+                             </div>
+                             <div>
+                               <h4 className="font-bold text-slate-800 text-sm sm:text-base leading-snug">{msg.generatedCv.title}</h4>
+                               <p className="text-xs text-slate-500 font-medium mt-0.5 max-w-sm line-clamp-1">{msg.generatedCv.focus}</p>
+                             </div>
+                           </div>
+                           
+                           <div className="flex gap-2 items-center mt-1">
+                             <span className="text-[10px] bg-white px-2 py-0.5 rounded border border-emerald-100 text-emerald-600 font-bold uppercase tracking-wide">v{msg.generatedCv.versionNumber}</span>
+                             <span className="text-[10px] bg-white px-2 py-0.5 rounded border border-slate-100 text-slate-600 font-bold uppercase tracking-wide">
+                               {t(`doctor.medicalCvs.${msg.generatedCv.status?.toLowerCase()}`) || msg.generatedCv.status}
+                             </span>
+                           </div>
+                           
+                           <div className="mt-2 pt-3 border-t border-emerald-100/50 flex flex-col sm:flex-row gap-2">
+                             {msg.generatedCv.previewUrl && (
+                               <a 
+                                 href={msg.generatedCv.previewUrl} 
+                                 target="_blank" 
+                                 rel="noopener noreferrer" 
+                                 className="flex-1 text-center text-xs bg-emerald-600 text-white px-3 py-2 rounded-xl font-bold hover:bg-emerald-700 transition shadow-sm"
+                               >
+                                 {t('doctor.medicalCvs.previewPdf')}
+                               </a>
+                             )}
+                             <Link 
+                               href={`/doctor/patients/workspace/${code}/medical-cv/${msg.generatedCv.medicalCvId}`} 
+                               className="flex-1 text-center text-xs bg-white text-emerald-700 border border-emerald-200 px-3 py-2 rounded-xl font-bold hover:bg-emerald-50 transition shadow-sm"
+                             >
+                               {t('doctor.medicalCvs.title')}
+                             </Link>
+                           </div>
+                        </div>
+                      )}
                       {msg.sources && msg.sources.length > 0 && (
                         <div className="mt-3 pt-3 border-t border-slate-100/60 flex flex-col gap-1.5">
                           <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">

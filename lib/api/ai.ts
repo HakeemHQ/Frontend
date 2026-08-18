@@ -9,6 +9,17 @@ export interface AiSource {
 export interface AiQuestionResponse {
   message: string;
   ragResults: AiSource[];
+  generatedCv?: {
+    medicalCvId: string;
+    medicalCvVersionId: string;
+    title: string;
+    focus: string;
+    status: string;
+    versionNumber: number;
+    previewUrl: string;
+    previewExpiresAt: string;
+    createdAt: string;
+  };
 }
 
 export interface ApiResponse<T> {
