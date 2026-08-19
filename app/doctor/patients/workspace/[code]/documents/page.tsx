@@ -262,7 +262,6 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
             <div className="flex gap-2">
               <Button 
                 variant="outline" 
-                size="sm" 
                 onClick={() => setPageNumber(pageNumber - 1)}
                 disabled={pageNumber <= 1 || isLoading}
                 className="text-xs h-8 px-3"
@@ -271,7 +270,6 @@ export default function DocumentsPage({ params }: { params: Promise<{ code: stri
               </Button>
               <Button 
                 variant="outline" 
-                size="sm" 
                 onClick={() => setPageNumber(pageNumber + 1)}
                 disabled={pageNumber >= totalPages || isLoading}
                 className="text-xs h-8 px-3"

@@ -14,7 +14,7 @@ export type PatientMedicalCvsState = {
   setPatientId: (patientId: string) => void;
   fetchCvs: (patientId?: string) => Promise<void>;
   fetchCvDetails: (cvId: string) => Promise<void>;
-  createCv: (title: string, patientId?: string) => Promise<boolean>;
+  createCv: (title: string, patientId?: string, language?: string) => Promise<boolean>;
   generatePreviewLink: (versionId: string) => Promise<string | null>;
   fetchVersionPdf: (versionId: string) => Promise<string | null>;
   approveVersion: (versionId: string, cvId: string) => Promise<boolean>;
@@ -91,7 +91,7 @@ export const usePatientMedicalCvsStore = create<PatientMedicalCvsState>((set, ge
     }
   },
 
-  createCv: async (title: string, passedPatientId?: string) => {
+  createCv: async (title: string, passedPatientId?: string, language?: string) => {
     const patientId = passedPatientId || get().patientId;
     if (!patientId) {
       set({ error: "Patient ID is required to create a CV" });
@@ -100,7 +100,7 @@ export const usePatientMedicalCvsStore = create<PatientMedicalCvsState>((set, ge
 
     set({ isCreating: true, error: null });
     try {
-      const response = await createPatientMedicalCv(patientId, { title });
+      const response = await createPatientMedicalCv(patientId, { title }, language);
       // The backend might return the object directly or wrap it in an ApiResponse
       const isSuccess = 'success' in response ? response.success : true;
       const actualData = 'success' in response ? response.data : response;

@@ -14,11 +14,11 @@ import {
   Tick02Icon,
   DocumentValidationIcon
 } from "@hugeicons/core-free-icons";
-import { getDocumentContent, getDocumentExtractedFields, detectDocumentMimeType } from "@/lib/api/documents";
+import { getDocumentContent, getDocumentMedicalRecords, detectDocumentMimeType, GetMedicalRecordsResponse } from "@/lib/api/documents";
 import { usePatientDocumentsStore } from "@/store/usePatientDocumentsStore";
 import { Toast } from "@/components/ui/Toast";
 import { AnimatePresence, motion } from "framer-motion";
-import { DocumentExtractedData } from "@/types/document";
+// removed DocumentExtractedData
 
 import { useLanguage } from "@/localization/LanguageContext";
 
@@ -33,8 +33,10 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
-  const [extractedData, setExtractedData] = useState<DocumentExtractedData | null>(null);
+  const [medicalRecords, setMedicalRecords] = useState<GetMedicalRecordsResponse | null>(null);
   const [isExtracting, setIsExtracting] = useState(true);
+  const [pageNumber, setPageNumber] = useState(1);
+  const pageSize = 20;
 
   // Find document title from store
   const documentInfo = documents.find(d => d.documentId === documentId);
@@ -59,25 +61,9 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
         setIsLoading(false);
       }
     };
-    
-    const fetchExtracted = async () => {
-      try {
-        setIsExtracting(true);
-        const res = await getDocumentExtractedFields(documentId);
-        
-        // Handle ApiResponse wrapper or raw data
-        const data = ('success' in res && 'data' in res) ? res.data : res;
-        setExtractedData(data as unknown as DocumentExtractedData);
-      } catch (err) {
-        console.error("Failed to load extracted data", err);
-      } finally {
-        setIsExtracting(false);
-      }
-    };
 
     if (documentId) {
       fetchContent();
-      fetchExtracted();
     }
     
     // Cleanup URL object to avoid memory leaks
@@ -86,7 +72,58 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
         URL.revokeObjectURL(url);
       }
     };
-  }, [documentId]);
+  }, [documentId, documentName]);
+
+  useEffect(() => {
+    const fetchMedicalRecords = async () => {
+      try {
+        setIsExtracting(true);
+        const res = await getDocumentMedicalRecords(documentId, { pageNumber, pageSize });
+        
+        // Handle ApiResponse wrapper or raw data
+        const data = ('success' in res && 'data' in res) ? res.data : res;
+        setMedicalRecords(data as unknown as GetMedicalRecordsResponse);
+      } catch (err) {
+        console.error("Failed to load medical records", err);
+      } finally {
+        setIsExtracting(false);
+      }
+    };
+
+    if (documentId) {
+      fetchMedicalRecords();
+    }
+  }, [documentId, pageNumber]);
+
+  const parseRecordData = (displayName: string) => {
+    if (!displayName) return { title: 'Record', primaryValue: null, details: [] };
+    
+    const pairs = displayName.split(',').map(pair => {
+      const [key, ...valueParts] = pair.split(':');
+      return {
+        key: key?.trim(),
+        value: valueParts.join(':')?.trim()
+      };
+    }).filter(item => item.key && item.value);
+
+    // Try to find a title field
+    const titleKeys = ['LabTestName', 'DrugName', 'ObservationName', 'Name', 'TestName', 'DocumentType'];
+    let titleItem = pairs.find(p => titleKeys.includes(p.key));
+    
+    // Try to find a primary value
+    const valueKeys = ['LabValue', 'Value', 'Result', 'Dosage'];
+    let valueItem = pairs.find(p => valueKeys.includes(p.key));
+
+    // Remove title and value from details
+    const details = pairs.filter(p => p !== titleItem && p !== valueItem);
+
+    return {
+      title: titleItem ? titleItem.value : 'Medical Record',
+      primaryValue: valueItem ? valueItem.value : null,
+      primaryValueKey: valueItem ? valueItem.key : null,
+      details
+    };
+  };
 
   const handleDownload = () => {
     if (blobUrl) {
@@ -210,71 +247,99 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
           <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-6"></div>
           <p className="font-bold text-lg text-slate-500">{t('doctor.documents.processing')}</p>
         </div>
-      ) : extractedData && extractedData.items && extractedData.items.length > 0 ? (
+      ) : medicalRecords && medicalRecords.items && medicalRecords.items.length > 0 ? (
         <div className="w-full border-0 rounded-[40px] bg-white shadow-xl shadow-slate-200/50 overflow-hidden mt-8">
           <div className="bg-slate-50 px-10 py-8 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-3xl font-black text-slate-900 font-heading tracking-tight mb-2">{t('doctor.documents.extractedData')}</h2>
-              <p className="text-base font-medium text-slate-500">{t('doctor.documents.extractedDataSubtitle')}</p>
+              <h2 className="text-3xl font-black text-slate-900 font-heading tracking-tight mb-2">Medical Records</h2>
+              <p className="text-base font-medium text-slate-500">Medical records extracted from this document</p>
             </div>
           </div>
           
-          <div className="p-8 md:p-12 space-y-12">
-            {extractedData.items.map((item, itemIdx) => (
-              <div key={item.extractedItemId || itemIdx} className="space-y-4">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="h-px bg-slate-200 flex-1"></div>
-                  <span className="text-xs font-semibold text-slate-400 tracking-wider uppercase px-2">
-                    {item.itemType} ({t('doctor.documents.item')} {item.sequenceNumber})
-                  </span>
-                  <div className="h-px bg-slate-200 flex-1"></div>
-                </div>
+          <div className="p-8 md:p-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {medicalRecords.items.map((record) => {
+                const { title, primaryValue, details } = parseRecordData(record.displayName);
+                const unitItem = details.find(d => d.key.toLowerCase() === 'unit');
+                const filteredDetails = details.filter(d => d.key.toLowerCase() !== 'unit');
+                
+                return (
+                <div key={record.medicalRecordId} className="bg-white rounded-[24px] p-6 border border-slate-100 shadow-md shadow-slate-200/40 relative overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full text-left rtl:text-right">
+                  <div className="flex items-start justify-between mb-5">
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest bg-indigo-50 text-indigo-600 border border-indigo-100">
+                      {record.recordType}
+                    </span>
+                    <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest border ${
+                      record.status?.toLowerCase() === 'confirmed' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-50 text-slate-600 border-slate-200'
+                    }`}>
+                      {record.status}
+                    </span>
+                  </div>
+                  
+                  <div className="mb-5 pb-5 border-b border-slate-100">
+                    <h4 className="font-black text-slate-900 text-xl mb-1 leading-tight">{title}</h4>
+                    {primaryValue && (
+                       <div className="flex items-baseline gap-1.5 mt-3">
+                         <span className="text-4xl font-black text-primary tracking-tighter">{primaryValue}</span>
+                         {unitItem && (
+                           <span className="text-sm font-bold text-slate-400">
+                             {unitItem.value}
+                           </span>
+                         )}
+                       </div>
+                    )}
+                  </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {item.fields.map((field, fieldIdx) => {
-                    // Determine confidence color
-                    let confidenceColor = "bg-green-100 text-green-700";
-                    if (field.confidence < 0.5) {
-                      confidenceColor = "bg-red-100 text-red-700";
-                    } else if (field.confidence < 0.8) {
-                      confidenceColor = "bg-amber-100 text-amber-700";
-                    }
-
-                    return (
-                      <div key={field.extractedFieldId || fieldIdx} className="bg-slate-50 rounded-[24px] p-6 border-0 shadow-sm relative overflow-hidden group hover:bg-white hover:shadow-lg transition-all duration-300">
-                        <div className="flex items-start justify-between mb-4">
-                          <h4 className="font-black text-slate-900 text-lg">{field.fieldName}</h4>
-                          <span className={`text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest ${confidenceColor}`}>
-                            {Math.round(field.confidence * 100)}% {t('doctor.documents.match')}
-                          </span>
-                        </div>
-                        <p className="text-slate-700 font-medium break-words text-lg">
-                          {field.confirmedValue || field.correctedValue || field.extractedValue || field.originalExtractedValue || <span className="text-slate-400 italic">{t('doctor.documents.notFound')}</span>}
-                        </p>
-                        
-                        {field.issues && field.issues.length > 0 && (
-                          <div className="mt-3 pt-3 border-t border-slate-200">
-                            <p className="text-xs font-semibold text-red-600 flex items-center gap-1 mb-1">
-                              {t('doctor.documents.aiFlaggedIssue')}:
-                            </p>
-                            <ul className="list-disc list-inside text-xs text-slate-600 space-y-1">
-                              {field.issues.map((issue, i) => (
-                                <li key={i}>{issue}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
+                  <div className="space-y-3 flex-1">
+                    {filteredDetails.length > 0 ? filteredDetails.map((item, i) => (
+                      <div key={i} className="bg-slate-50 rounded-xl p-3 border border-slate-100/50">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{item.key}</span>
+                        <span className="text-slate-800 text-sm font-semibold block leading-snug">{item.value}</span>
                       </div>
-                    );
-                  })}
+                    )) : (
+                      <div className="flex items-center justify-center h-full opacity-50">
+                        <span className="text-xs text-slate-400 italic">No additional details</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center">
+                    <span className="text-slate-400 font-semibold text-[11px] uppercase tracking-wider">
+                      {new Date(record.clinicalDate).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+              )})}
+            </div>
+
+            {medicalRecords.totalCount > pageSize && (
+              <div className="flex items-center justify-between mt-8 pt-6 border-t border-slate-100">
+                <p className="text-sm text-slate-500">
+                  {t('common.showing') || 'Showing'} <span className="font-bold text-slate-900">{(pageNumber - 1) * pageSize + 1}</span> {t('common.to') || 'to'} <span className="font-bold text-slate-900">{Math.min(pageNumber * pageSize, medicalRecords.totalCount)}</span> {t('common.of') || 'of'} <span className="font-bold text-slate-900">{medicalRecords.totalCount}</span>
+                </p>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline"
+                    onClick={() => setPageNumber(prev => Math.max(1, prev - 1))}
+                    disabled={pageNumber === 1 || isExtracting}
+                  >
+                    {t('common.previous') || 'Previous'}
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => setPageNumber(prev => prev + 1)}
+                    disabled={pageNumber * pageSize >= medicalRecords.totalCount || isExtracting}
+                  >
+                    {t('common.next') || 'Next'}
+                  </Button>
                 </div>
               </div>
-            ))}
+            )}
           </div>
         </div>
-      ) : extractedData ? (
+      ) : medicalRecords ? (
         <div className="w-full border border-slate-100 rounded-2xl bg-surface shadow-sm overflow-hidden p-6 md:p-8 flex flex-col items-center justify-center min-h-[200px] mt-6">
-          <p className="font-medium text-slate-500">{t('doctor.documents.noResultsDesc')}</p>
+          <p className="font-medium text-slate-500">{t('doctor.documents.noResultsDesc') || 'No records found.'}</p>
         </div>
       ) : null}
 

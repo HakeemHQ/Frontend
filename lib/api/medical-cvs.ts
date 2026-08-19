@@ -18,8 +18,12 @@ export interface CreatePatientMedicalCvParams {
   title: string;
 }
 
-export async function createPatientMedicalCv(patientId: string, params: CreatePatientMedicalCvParams): Promise<ApiResponse<PatientMedicalCv> | PatientMedicalCv> {
-  const { data } = await api.post<ApiResponse<PatientMedicalCv> | PatientMedicalCv>(`/doctor/patients/${patientId}/medical-cvs`, params);
+export async function createPatientMedicalCv(patientId: string, params: CreatePatientMedicalCvParams, language: string = 'en'): Promise<ApiResponse<PatientMedicalCv> | PatientMedicalCv> {
+  const { data } = await api.post<ApiResponse<PatientMedicalCv> | PatientMedicalCv>(`/doctor/patients/${patientId}/medical-cvs`, params, {
+    headers: {
+      'Accept-Language': language === 'ar' ? 'ar' : 'en'
+    }
+  });
   return data;
 }
 

@@ -20,7 +20,7 @@ import { AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/localization/LanguageContext";
 
 export default function NewMedicalCVPage({ params }: { params: Promise<{ code: string }> }) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const router = useRouter();
   const { code } = use(params);
 
@@ -55,8 +55,8 @@ export default function NewMedicalCVPage({ params }: { params: Promise<{ code: s
       return;
     }
 
-    // Create CV with just the title as requested by the backend for now
-    const success = await createCv(title, patientId);
+    // Create CV with the title and pass the current locale for localization
+    const success = await createCv(title, patientId, locale);
     
     if (success) {
       setShowSuccess(true);

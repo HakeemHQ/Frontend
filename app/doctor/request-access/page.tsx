@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Toast } from "@/components/ui/Toast";
@@ -9,38 +10,24 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { requestPatientAccess, verifyPatientIdentity } from "@/lib/api/patients";
+import { requestPatientAccess } from "@/lib/api/patients";
 import {
   ArrowLeft01Icon,
   Search01Icon,
-  UserIdVerificationIcon,
+  Shield01Icon,
 } from "@hugeicons/core-free-icons";
 import { AnimatePresence } from "framer-motion";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "@/localization/LanguageContext";
-import { Suspense } from "react";
 
-const getVerifySchema = (t: any) => z.object({
-  patientCode: z.string().min(1, t('doctor.verifyIdentity.invalidCode')),
-  nationalId: z.string().min(1, t('doctor.verifyIdentity.formatMismatch')),
+const getRequestAccessSchema = (t: any) => z.object({
+  patientCode: z.string().min(1, t('doctor.requestAccess.invalidFormat') || "Patient code is required"),
 });
 
-type VerifyFormValues = z.infer<ReturnType<typeof getVerifySchema>>;
+type RequestAccessFormValues = z.infer<ReturnType<typeof getRequestAccessSchema>>;
 
-export default function VerifyIdentityPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <VerifyIdentityContent />
-    </Suspense>
-  );
-}
-
-function VerifyIdentityContent() {
+export default function RequestAccessPage() {
   const { t } = useLanguage();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const initialCode = searchParams.get("code") || "";
-  
   const [status, setStatus] = useState<"idle" | "loading">("idle");
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "warning" } | null>(null);
 
@@ -48,46 +35,41 @@ function VerifyIdentityContent() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<VerifyFormValues>({
-    resolver: zodResolver(getVerifySchema(t)),
+  } = useForm<RequestAccessFormValues>({
+    resolver: zodResolver(getRequestAccessSchema(t)),
     defaultValues: {
-      patientCode: initialCode,
-      nationalId: "",
+      patientCode: "",
     },
   });
 
-  const onSubmit = async (data: VerifyFormValues) => {
+  const onSubmit = async (data: RequestAccessFormValues) => {
     setStatus("loading");
     setToast(null);
 
     try {
-      await verifyPatientIdentity(data);
+      await requestPatientAccess({ patientCode: data.patientCode });
       
-      try {
-        await requestPatientAccess({ patientCode: data.patientCode });
-      } catch (reqErr: any) {
-        const reqStatus = reqErr.response?.status;
-        if (reqStatus !== 409) {
-          throw reqErr;
-        }
-      }
-      
-      setToast({ message: t('doctor.verifyIdentity.successMessage'), type: "success" });
+      setToast({ message: t('doctor.requestAccess.successMessage'), type: "success" });
       setTimeout(() => {
         router.push(`/doctor/patients/redeem-access/${data.patientCode}`);
       }, 500);
 
     } catch (err: any) {
       setStatus("idle");
-      let errorMessage = t('doctor.verifyIdentity.failedMessage');
+      let errorMessage = t('doctor.requestAccess.failedMessage');
       
       const statusCode = err.response?.status;
       if (statusCode === 404) {
-        errorMessage = t('doctor.verifyIdentity.invalidCode');
+        // Not verified, navigate to verify-identity
+        setToast({ message: t('doctor.requestAccess.patientNotFound') || "Patient not found. Please verify the patient first.", type: "warning" });
+        setTimeout(() => {
+          router.push(`/doctor/verify-identity?code=${data.patientCode}`);
+        }, 1500);
+        return;
       } else if (statusCode === 409) {
-        errorMessage = t('doctor.verifyIdentity.alreadyVerified');
+        errorMessage = t('doctor.requestAccess.alreadyPending');
       } else if (statusCode === 422) {
-        errorMessage = t('doctor.verifyIdentity.formatMismatch');
+        errorMessage = t('doctor.requestAccess.invalidFormat');
       } else if (err.response?.data?.message) {
         errorMessage = err.response.data.message;
       }
@@ -112,24 +94,24 @@ function VerifyIdentityContent() {
       <nav className="flex items-center gap-2 text-xs font-semibold text-slate-400">
         <Link href="/doctor/patients" className="inline-flex items-center gap-1 transition hover:text-primary">
           <HugeiconsIcon icon={ArrowLeft01Icon} className="w-3.5 h-3.5 rtl:rotate-180" />
-          <span>{t('doctor.verifyIdentity.breadcrumbPatients')}</span>
+          <span>{t('doctor.requestAccess.breadcrumbPatients')}</span>
         </Link>
         <span>/</span>
-        <span className="text-slate-800 font-bold">{t('doctor.verifyIdentity.title')}</span>
+        <span className="text-slate-800 font-bold">{t('doctor.requestAccess.title')}</span>
       </nav>
 
       {/* Form Card */}
       <div className="w-full bg-white border border-slate-100 rounded-2xl shadow-sm p-6 sm:p-8">
         <div className="flex items-start gap-3.5 pb-5 mb-5 border-b border-slate-100">
           <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-            <HugeiconsIcon icon={UserIdVerificationIcon} className="w-5 h-5" />
+            <HugeiconsIcon icon={Shield01Icon} className="w-5 h-5" />
           </div>
           <div>
             <h1 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 font-heading">
-              {t('doctor.verifyIdentity.title')}
+              {t('doctor.requestAccess.title')}
             </h1>
             <p className="mt-0.5 text-xs sm:text-sm text-slate-500">
-              {t('doctor.verifyIdentity.subtitle')}
+              {t('doctor.requestAccess.subtitle')}
             </p>
           </div>
         </div>
@@ -137,27 +119,14 @@ function VerifyIdentityContent() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-slate-700" htmlFor="patientCode">
-              {t('doctor.verifyIdentity.patientCode')}
+              {t('doctor.verifyIdentity.patientCode') || "Patient Code"}
             </label>
             <Input
-              placeholder={t('doctor.verifyIdentity.patientCodePlaceholder')}
+              placeholder={t('doctor.verifyIdentity.patientCodePlaceholder') || "Enter patient code"}
               iconLeft={<HugeiconsIcon icon={Search01Icon} className="h-4 w-4 text-slate-400" />}
               id="patientCode"
               {...register("patientCode")}
               error={errors.patientCode?.message}
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-700" htmlFor="nationalId">
-              {t('doctor.verifyIdentity.nationalId')}
-            </label>
-            <Input
-              placeholder={t('doctor.verifyIdentity.nationalIdPlaceholder')}
-              iconLeft={<HugeiconsIcon icon={UserIdVerificationIcon} className="h-4 w-4 text-slate-400" />}
-              id="nationalId"
-              {...register("nationalId")}
-              error={errors.nationalId?.message}
             />
           </div>
 
@@ -168,7 +137,7 @@ function VerifyIdentityContent() {
               fullWidth 
               className="py-2.5 text-sm font-semibold"
             >
-              {status === "loading" ? t('doctor.verifyIdentity.processing') : t('doctor.verifyIdentity.submitButton')}
+              {status === "loading" ? t('doctor.requestAccess.sending') : t('doctor.requestAccess.sendRequest')}
             </Button>
           </div>
         </form>

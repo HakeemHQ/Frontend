@@ -55,7 +55,7 @@ export function DoctorSidebar() {
 
   const navItems = [
     { label: t('nav.patients'), href: "/doctor/patients", icon: <PatientsIcon /> },
-    { label: t('doctor.patients.verifyNewPatient') || 'Verify New Patient', href: "/doctor/verify-identity", icon: <HugeiconsIcon icon={UserAdd01Icon} className="w-[18px] h-[18px]" /> },
+    { label: t('doctor.requestAccess.title') || 'Request Access', href: "/doctor/request-access", icon: <HugeiconsIcon icon={UserAdd01Icon} className="w-[18px] h-[18px]" /> },
     { label: t('nav.myProfile'), href: "/doctor/profile", icon: <ProfileIcon /> },
   ];
 

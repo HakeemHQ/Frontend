@@ -122,3 +122,38 @@ export async function reviewExtractedItem(extractedItemId: string, payload: any)
   const { data } = await api.put<ApiResponse<any>>(`/extracted-items/${extractedItemId}/review`, payload);
   return data;
 }
+
+export interface MedicalRecordItem {
+  medicalRecordId: string;
+  recordType: string;
+  displayName: string;
+  clinicalDate: string;
+  status: string;
+}
+
+export interface GetMedicalRecordsResponse {
+  items: MedicalRecordItem[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+}
+
+export interface GetMedicalRecordsParams {
+  search?: string;
+  recordType?: string;
+  fromDate?: string;
+  toDate?: string;
+  pageNumber?: number;
+  pageSize?: number;
+}
+
+export async function getDocumentMedicalRecords(
+  documentId: string,
+  params: GetMedicalRecordsParams = {}
+): Promise<ApiResponse<GetMedicalRecordsResponse> | GetMedicalRecordsResponse> {
+  const { data } = await api.get<ApiResponse<GetMedicalRecordsResponse> | GetMedicalRecordsResponse>(
+    `/doctor/patients/medical-records/${documentId}`,
+    { params }
+  );
+  return data;
+}
