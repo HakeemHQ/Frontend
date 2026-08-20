@@ -2,9 +2,7 @@ import axios, { AxiosError } from "axios";
 import { authStorage } from "../storage";
 import { useAppStore } from "@/store/useAppStore";
 
-const BASE_URL = (
-  process.env.NEXT_PUBLIC_API_URL || "https://hakeem1.runasp.net"
-).replace(/\/+$/, "");
+const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "");
 
 export const api = axios.create({
   baseURL: BASE_URL,
