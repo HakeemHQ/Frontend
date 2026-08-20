@@ -1,9 +1,18 @@
 import axios, { AxiosError } from "axios";
 import { authStorage } from "../storage";
+import { useAppStore } from "@/store/useAppStore";
+
+const BASE_URL = (
+  process.env.NEXT_PUBLIC_API_URL || "https://hakeem1.runasp.net"
+).replace(/\/+$/, "");
 
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://hakeem1.runasp.net",
+  baseURL: BASE_URL,
   timeout: 60000,
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
 });
 
 api.interceptors.request.use(
@@ -38,7 +47,12 @@ api.interceptors.response.use(
   (response) => {
     // The backend wraps all responses in GenericResponseModel: { success, data, message, errorList, globalErrorCode }
     // Unwrap automatically so consumers get the inner payload directly
-    if (response.data && typeof response.data === "object" && "success" in response.data && "data" in response.data) {
+    if (
+      response.data &&
+      typeof response.data === "object" &&
+      "success" in response.data &&
+      "data" in response.data
+    ) {
       response.data = response.data.data;
     }
     return response;
@@ -46,13 +60,16 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as any;
 
-    if (originalRequest?.url?.includes('/auth/login') || originalRequest?.url?.includes('/refresh')) {
+    if (
+      !originalRequest ||
+      originalRequest.url?.includes("/auth/login") ||
+      originalRequest.url?.includes("/refresh")
+    ) {
       return Promise.reject(error);
     }
 
     if (
       error.response?.status === 401 &&
-      originalRequest &&
       !originalRequest._retry
     ) {
       if (isRefreshing) {
@@ -60,6 +77,7 @@ api.interceptors.response.use(
           failedQueue.push({ resolve, reject });
         })
           .then((token) => {
+            originalRequest._retry = true;
             if (originalRequest.headers) {
               originalRequest.headers.Authorization = `Bearer ${token}`;
             }
@@ -70,26 +88,49 @@ api.interceptors.response.use(
           });
       }
 
-      originalRequest._retry = true;
-      isRefreshing = true;
-
       const refreshToken = authStorage.getRefreshToken();
       if (!refreshToken) {
         authStorage.clearTokens();
+        useAppStore.getState().setAccessToken(null);
         if (typeof window !== "undefined") window.location.href = "/login";
         return Promise.reject(error);
       }
 
-      try {
-        const { data } = await axios.post<{
-          data: { accessToken: string; refreshToken: string };
-        }>(`${api.defaults.baseURL}/refresh`, { refreshToken });
+      originalRequest._retry = true;
+      isRefreshing = true;
 
-        const newAccessToken = data.data.accessToken;
-        const newRefreshToken = data.data.refreshToken;
+      try {
+        const response = await axios.post(
+          `${BASE_URL}/refresh`,
+          { refreshToken },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          },
+        );
+
+        let resBody: any = response.data;
+        if (typeof resBody === "string") {
+          try {
+            resBody = JSON.parse(resBody);
+          } catch {
+            // keep as-is if parsing fails
+          }
+        }
+
+        const payload = resBody?.data || resBody;
+        const newAccessToken = payload?.accessToken;
+        const newRefreshToken = payload?.refreshToken || refreshToken;
+
+        if (!newAccessToken) {
+          throw new Error("No accessToken found in refresh response");
+        }
 
         authStorage.setAccessToken(newAccessToken);
         authStorage.setRefreshToken(newRefreshToken);
+        useAppStore.getState().setAccessToken(newAccessToken);
 
         api.defaults.headers.common["Authorization"] =
           `Bearer ${newAccessToken}`;
@@ -102,6 +143,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         authStorage.clearTokens();
+        useAppStore.getState().setAccessToken(null);
         if (typeof window !== "undefined") window.location.href = "/login";
         return Promise.reject(refreshError);
       } finally {
