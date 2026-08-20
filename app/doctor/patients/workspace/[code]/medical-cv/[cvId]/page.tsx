@@ -202,7 +202,7 @@ export default function MedicalCVDetailsPage({ params }: { params: Promise<{ cod
       </div>
 
       <div className="mb-8 pl-4">
-        <h2 className="text-4xl md:text-5xl font-black text-slate-900 font-heading tracking-tighter mb-4">{t('doctor.medicalCvs.version')} History</h2>
+        <h2 className="text-4xl md:text-5xl font-black text-slate-900 font-heading tracking-tighter mb-4">{t('doctor.medicalCvs.versionHistory')}</h2>
         <p className="text-slate-500 text-lg font-medium">{t('doctor.medicalCvs.description')}</p>
       </div>
 

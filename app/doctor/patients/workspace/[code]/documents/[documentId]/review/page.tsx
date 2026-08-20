@@ -553,7 +553,7 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
                           </div>
                           
                           {/* Issues */}
-                          {field.issues && field.issues.length > 0 && (
+                          {field.issues && field.issues.length > 0 && !isCorrected && (
                             <div className="mt-3 text-xs text-red-700 bg-red-50 p-2.5 rounded-lg border border-red-100">
                               <span className="font-bold block mb-1">{t('doctor.documents.aiFlaggedIssue')}:</span>
                               <ul className="list-disc list-inside space-y-0.5">

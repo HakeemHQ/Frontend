@@ -482,6 +482,7 @@
       "draft": "مسودة",
       "processing": "جاري التجهيز",
       "version": "النسخة",
+      "versionHistory": "تاريخ النسخ",
       "noResults": "لم يتم العثور على سير طبية",
       "noResultsDesc": "لم يتم العثور على أية سيرة طبية مطابقة لبحثك.",
       "clearFilters": "مسح الفلاتر",

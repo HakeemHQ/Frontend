@@ -478,6 +478,7 @@
       "draft": "Draft",
       "processing": "Processing",
       "version": "Version",
+      "versionHistory": "Version History",
       "noResults": "No CVs Found",
       "noResultsDesc": "We couldn't find any Medical CVs matching your current filters.",
       "clearFilters": "Clear Filters",
