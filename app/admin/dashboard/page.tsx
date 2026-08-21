@@ -25,9 +25,9 @@ const StatCard = ({
   isLoading: boolean;
   icon: any;
 }) => (
-  <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
-    <div className="flex items-center justify-between">
-      <span className="text-xs font-bold uppercase tracking-wider text-slate-400 truncate pr-2">{title}</span>
+  <div className="rounded-2xl border border-slate-100 bg-white p-4 sm:p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-w-0">
+    <div className="flex items-center justify-between gap-2">
+      <span className="text-xs font-bold uppercase tracking-wider text-slate-400 truncate">{title}</span>
       <div className="h-8 w-8 rounded-xl bg-primary/5 text-primary flex items-center justify-center shrink-0">
         <HugeiconsIcon icon={icon} className="w-4 h-4" />
       </div>
@@ -36,7 +36,7 @@ const StatCard = ({
       {isLoading ? (
         <Spinner className="h-6 w-6 text-primary" />
       ) : (
-        <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-heading">
+        <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-heading truncate block">
           {typeof value === 'number' ? value.toLocaleString() : value}
         </span>
       )}
@@ -76,7 +76,7 @@ export default function AdminDashboardPage() {
   }, [fromDate, toDate, fetchActivitySummary, t, today]);
 
   return (
-    <div className="space-y-6 pb-12 max-w-7xl mx-auto px-4 sm:px-6">
+    <div className="space-y-6 pb-12 max-w-7xl mx-auto w-full">
       {/* Hero Header */}
       <div className="bg-primary rounded-2xl p-6 sm:p-8 text-white shadow-sm mb-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
