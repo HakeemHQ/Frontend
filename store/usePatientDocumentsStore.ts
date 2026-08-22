@@ -123,7 +123,7 @@ export const usePatientDocumentsStore = create<PatientDocumentsState>((set, get)
       }
     } catch (error: any) {
       set({ 
-        error: error?.response?.data?.message || "An unexpected error occurred while uploading", 
+        error: error?.response?.data?.message || "doctor.documents.uploadFailed", 
         isLoading: false 
       });
       return false;

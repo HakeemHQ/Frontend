@@ -89,6 +89,9 @@ export default function PatientsPage() {
       if (urlParams.get("expired") === "true") {
         setError(t('doctor.workspace.expiredMessage'));
         window.history.replaceState({}, '', '/doctor/patients');
+      } else if (urlParams.get("access_denied") === "true") {
+        setError(t('doctor.patients.sessionClosedOrExpired'));
+        window.history.replaceState({}, '', '/doctor/patients');
       }
     }
   }, [setError, t]);

@@ -8,6 +8,7 @@ import {
   Alert01Icon
 } from '@hugeicons/core-free-icons';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/localization/LanguageContext';
 
 export interface ToastProps {
   message: string;
@@ -17,6 +18,8 @@ export interface ToastProps {
 }
 
 export const Toast: React.FC<ToastProps> = ({ message, type, onClose, duration = 4000 }) => {
+  const { t } = useLanguage();
+
   useEffect(() => {
     if (duration > 0) {
       const timer = setTimeout(() => {
@@ -56,7 +59,7 @@ export const Toast: React.FC<ToastProps> = ({ message, type, onClose, duration =
             type === 'success' ? 'text-green-800' :
             'text-amber-900'
           }`}>
-            {type === 'error' ? 'Error' : type === 'success' ? 'Success' : 'Warning'}
+            {type === 'error' ? t('common.error') : type === 'success' ? t('common.success') : t('common.warning')}
           </h3>
           <p className={`text-sm mt-1 ${
             type === 'error' ? 'text-red-700' :

@@ -345,7 +345,8 @@
       "addSuccess": "تمت إضافة المريض بنجاح",
       "addFailed": "فشل إضافة المريض",
       "searchByNameOrId": "البحث بالاسم أو الرقم القومي…",
-      "notFound": "المريض غير موجود."
+      "notFound": "المريض غير موجود.",
+      "sessionClosedOrExpired": "قد يكون المريض قد أغلق الجلسة أو انتهى وقت الجلسة."
     },
     "verifyIdentity": {
       "title": "التحقق من هوية المريض",
@@ -539,7 +540,8 @@
       "approved": "تمت الموافقة",
       "latestVersion": "أحدث نسخة",
       "breadcrumbMedicalCv": "السيرة الطبية",
-      "breadcrumbNew": "سيرة طبية جديدة"
+      "breadcrumbNew": "سيرة طبية جديدة",
+      "fetchError": "حدث خطأ أثناء جلب السيرة الطبية."
     },
     "askAi": {
       "title": "المساعد الطبي الذكي",

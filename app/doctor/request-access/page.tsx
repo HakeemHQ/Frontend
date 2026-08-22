@@ -47,7 +47,14 @@ export default function RequestAccessPage() {
     setToast(null);
 
     try {
-      await requestPatientAccess({ patientCode: data.patientCode });
+      try {
+        await requestPatientAccess({ patientCode: data.patientCode });
+      } catch (reqErr: any) {
+        const reqStatus = reqErr.response?.status;
+        if (reqStatus !== 409) {
+          throw reqErr;
+        }
+      }
       
       setToast({ message: t('doctor.requestAccess.successMessage'), type: "success" });
       setTimeout(() => {
@@ -66,8 +73,6 @@ export default function RequestAccessPage() {
           router.push(`/doctor/verify-identity?code=${data.patientCode}`);
         }, 1500);
         return;
-      } else if (statusCode === 409) {
-        errorMessage = t('doctor.requestAccess.alreadyPending');
       } else if (statusCode === 422) {
         errorMessage = t('doctor.requestAccess.invalidFormat');
       } else if (err.response?.data?.message) {

@@ -51,12 +51,12 @@ export default function AddDocumentPage({ params }: { params: Promise<{ code: st
 
   useEffect(() => {
     if (error) {
-      setToastMessage({ message: error, type: 'error' });
+      setToastMessage({ message: t(error), type: 'error' });
     }
     return () => {
       clearError();
     };
-  }, [error, clearError]);
+  }, [error, clearError, t]);
 
   const uploadMethods = [
     {

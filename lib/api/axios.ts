@@ -19,6 +19,13 @@ api.interceptors.request.use(
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Add Accept-Language header based on current locale
+    if (typeof window !== "undefined" && config.headers) {
+      const locale = localStorage.getItem("hakeem_locale") || "en";
+      config.headers["Accept-Language"] = locale;
+    }
+    
     return config;
   },
   (error) => Promise.reject(error),
@@ -146,6 +153,15 @@ api.interceptors.response.use(
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
+      }
+    }
+    
+    // Handle 403 Forbidden globally
+    if (error.response?.status === 403) {
+      if (typeof window !== "undefined") {
+        if (window.location.pathname.includes('/doctor/patients/workspace/')) {
+          window.location.href = "/doctor/patients?access_denied=true";
+        }
       }
     }
 

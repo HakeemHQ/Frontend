@@ -28,7 +28,15 @@ export default function RequestAccessPage({ params }: { params: Promise<{ code: 
     setToast(null);
     
     try {
-      await requestPatientAccess({ patientCode: code });
+      try {
+        await requestPatientAccess({ patientCode: code });
+      } catch (reqErr: any) {
+        const reqStatus = reqErr.response?.status;
+        if (reqStatus !== 409) {
+          throw reqErr;
+        }
+      }
+      
       setToast({ message: t('doctor.requestAccess.successMessage'), type: "success" });
       
       setTimeout(() => {
@@ -40,8 +48,6 @@ export default function RequestAccessPage({ params }: { params: Promise<{ code: 
       const statusCode = err.response?.status;
       if (statusCode === 404) {
         errorMessage = t('doctor.requestAccess.patientNotFound');
-      } else if (statusCode === 409) {
-        errorMessage = t('doctor.requestAccess.alreadyPending');
       } else if (statusCode === 422) {
         errorMessage = t('doctor.requestAccess.invalidFormat');
       } else if (err.response?.data?.message) {
