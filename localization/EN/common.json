@@ -638,6 +638,7 @@
     "loading": "Loading…",
     "approved": "Approved",
     "pending": "Pending",
-    "name": "Name"
+    "name": "Name",
+    "pageSize": "Items per page"
   }
 }

@@ -91,10 +91,10 @@ export function AdminSidebar() {
             </div>
             <div>
               <div className="text-base font-bold font-heading tracking-tight text-primary">
-                Hakeem
+                {t('common.brandName')}
               </div>
               <div className="text-[10px] uppercase font-bold text-slate-400">
-                Premium Medical SaaS
+                {t('common.brandTagline')}
               </div>
             </div>
           </div>

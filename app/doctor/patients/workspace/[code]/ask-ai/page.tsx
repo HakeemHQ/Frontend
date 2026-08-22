@@ -88,10 +88,15 @@ export default function WorkspaceAskAIPage({ params }: { params: Promise<{ code:
         throw new Error((response as any).message || t('ui.somethingWentWrong'));
       }
     } catch (err: any) {
+      let errorText = err?.response?.data?.message || err.message || t('ui.somethingWentWrong');
+      if (err?.response?.status === 403 || err.message?.includes('403')) {
+        errorText = t('doctor.workspace.expiredMessage') || "Patient session ended or access revoked.";
+      }
+
       const errorMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: "bot",
-        text: err.message || t('ui.somethingWentWrong'),
+        text: errorText,
         isError: true,
         timestamp: new Date(),
       };
