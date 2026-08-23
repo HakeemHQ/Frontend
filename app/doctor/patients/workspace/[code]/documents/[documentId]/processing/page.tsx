@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { BrainIcon, File02Icon } from "@hugeicons/core-free-icons";
 import { getDocumentExtractedFields } from "@/lib/api/documents";
+import { useLanguage } from "@/localization/LanguageContext";
 
 export default function DocumentProcessingPage({ params }: { params: Promise<{ code: string, documentId: string }> }) {
+  const { t } = useLanguage();
   const router = useRouter();
   const { code, documentId } = use(params);
   
@@ -69,10 +71,10 @@ export default function DocumentProcessingPage({ params }: { params: Promise<{ c
         </div>
 
         <h1 className="text-3xl font-bold text-slate-900 font-heading mb-4">
-          AI is analyzing your document
+          {t('doctor.documents.analyzingDocument')}
         </h1>
         <p className="text-slate-500 text-lg max-w-md">
-          Please wait a moment while our system extracts the medical fields and verifies the information{dots}
+          {t('doctor.documents.analyzingDocumentDesc')}{dots}
         </p>
       </div>
 

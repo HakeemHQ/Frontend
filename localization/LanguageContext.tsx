@@ -17,6 +17,7 @@ interface LanguageContextType {
   t: (key: string, fallback?: string) => string;
   dir: "ltr" | "rtl";
   isRTL: boolean;
+  isLoaded: boolean;
 }
 
 const LanguageContext = createContext<LanguageContextType | null>(null);
@@ -41,6 +42,7 @@ function resolveKey(obj: Record<string, unknown>, key: string): string | undefin
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<SupportedLocale>("en");
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Load saved locale on mount
   useEffect(() => {
@@ -49,6 +51,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       if (saved === "ar" || saved === "en") {
         setLocaleState(saved);
       }
+      setIsLoaded(true);
     }
   }, []);
 
@@ -85,7 +88,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const isRTL = locale === "ar";
 
   return (
-    <LanguageContext.Provider value={{ locale, setLocale, t, dir, isRTL }}>
+    <LanguageContext.Provider value={{ locale, setLocale, t, dir, isRTL, isLoaded }}>
       {children}
     </LanguageContext.Provider>
   );

@@ -356,7 +356,9 @@
       "addFailed": "Failed to add patient",
       "searchByNameOrId": "Search by name or national ID…",
       "notFound": "Patient not found.",
-      "sessionClosedOrExpired": "The patient may have closed the session or the session time ended."
+      "sessionClosedOrExpired": "The patient may have closed the session or the session time ended.",
+      "accessDeniedExpired": "You cannot access files for an expired patient. Please request access again.",
+      "accessDeniedRevoked": "You cannot access files for a revoked patient. Please request access again."
     },
     "verifyIdentity": {
       "title": "Verify Patient Identity",
@@ -511,7 +513,11 @@
       "approveField": "Approve Field",
       "correctManually": "Correct manually",
       "rejectCompletely": "Reject completely",
-      "notFound": "Not found"
+      "notFound": "Not found",
+      "analyzingDocument": "AI is analyzing your document",
+      "analyzingDocumentDesc": "Please wait a moment while our system extracts the medical fields and verifies the information",
+      "medicalRecordsTitle": "Medical Records",
+      "medicalRecordsDesc": "Medical records extracted from this document"
     },
     "medicalCvs": {
       "title": "Medical CV",
@@ -619,6 +625,17 @@
       "addSuccess": "Medical CV added successfully",
       "addFailed": "Failed to add medical CV",
       "loadFailed": "Failed to load patient details"
+    },
+    "itemTypes": {
+      "Medication": "Medication",
+      "LabResult": "Lab Result",
+      "Condition": "Condition",
+      "Allergy": "Allergy",
+      "Procedure": "Procedure",
+      "Visit": "Visit",
+      "Facility": "Facility",
+      "PatientInformation": "Patient Information",
+      "Chronic Disease": "Chronic Disease"
     }
   },
   "notFound": {
@@ -660,6 +677,7 @@
     "loading": "Loading…",
     "approved": "Approved",
     "pending": "Pending",
+    "confirmed": "Confirmed",
     "name": "Name",
     "pageSize": "Items per page"
   }

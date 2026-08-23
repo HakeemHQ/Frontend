@@ -356,7 +356,9 @@
       "addFailed": "فشل إضافة المريض",
       "searchByNameOrId": "البحث بالاسم أو الرقم القومي…",
       "notFound": "المريض غير موجود.",
-      "sessionClosedOrExpired": "قد يكون المريض قد أغلق الجلسة أو انتهى وقت الجلسة."
+      "sessionClosedOrExpired": "قد يكون المريض قد أغلق الجلسة أو انتهى وقت الجلسة.",
+      "accessDeniedExpired": "لا يمكنك الوصول إلى ملفات مريض انتهت صلاحية إذن الوصول إليه. يرجى طلب الوصول مرة أخرى.",
+      "accessDeniedRevoked": "لا يمكنك الوصول إلى ملفات مريض تم إلغاء إذن الوصول إليه. يرجى طلب الوصول مرة أخرى."
     },
     "verifyIdentity": {
       "title": "التحقق من هوية المريض",
@@ -511,7 +513,11 @@
       "approveField": "الموافقة على هذا الحقل",
       "correctManually": "تصحيح يدوي",
       "rejectCompletely": "رفض تام",
-      "notFound": "غير موجود"
+      "notFound": "غير موجود",
+      "analyzingDocument": "الذكاء الاصطناعي يحلل مستندك",
+      "analyzingDocumentDesc": "يرجى الانتظار لحظة بينما يقوم نظامنا باستخراج الحقول الطبية والتحقق من المعلومات",
+      "medicalRecordsTitle": "السجلات الطبية",
+      "medicalRecordsDesc": "السجلات الطبية المستخرجة من هذا المستند"
     },
     "medicalCvs": {
       "title": "السيرة الطبية",
@@ -619,6 +625,17 @@
       "addSuccess": "تمت إضافة السيرة الطبية بنجاح",
       "addFailed": "فشل إضافة السيرة الطبية",
       "loadFailed": "لم نتمكن من جلب بيانات المريض"
+    },
+    "itemTypes": {
+      "Medication": "دواء",
+      "LabResult": "نتيجة مختبر",
+      "Condition": "حالة صحية",
+      "Allergy": "حساسية",
+      "Procedure": "إجراء طبي",
+      "Visit": "زيارة",
+      "Facility": "مرفق طبي",
+      "PatientInformation": "معلومات المريض",
+      "Chronic Disease": "مرض مزمن"
     }
   },
   "notFound": {
@@ -660,6 +677,7 @@
     "loading": "جاري التحميل…",
     "approved": "تمت الموافقة",
     "pending": "قيد الانتظار",
+    "confirmed": "مؤكد",
     "name": "الاسم",
     "pageSize": "عناصر بالصفحة"
   }
