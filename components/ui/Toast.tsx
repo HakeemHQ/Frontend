@@ -20,14 +20,20 @@ export interface ToastProps {
 export const Toast: React.FC<ToastProps> = ({ message, type, onClose, duration = 4000 }) => {
   const { t } = useLanguage();
 
+  const onCloseRef = React.useRef(onClose);
+  
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
   useEffect(() => {
     if (duration > 0) {
       const timer = setTimeout(() => {
-        onClose();
+        onCloseRef.current();
       }, duration);
       return () => clearTimeout(timer);
     }
-  }, [duration, onClose]);
+  }, [duration]);
 
   return (
     <motion.div 

@@ -172,7 +172,7 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
       if (res) {
         setSavedItems(prev => ({ ...prev, [item.extractedItemId]: true }));
         setToastMessage({
-          message: `${item.itemType} ${t('doctor.documents.approvedAndSaved')}`,
+          message: `${t(`doctor.itemTypes.${item.itemType}`, item.itemType)} ${t('doctor.documents.approvedAndSaved')}`,
           type: "success"
         });
       }
@@ -433,7 +433,7 @@ export default function DocumentReviewPage({ params }: { params: Promise<{ code:
                   }`}>
                     <div className="flex items-center gap-3">
                       <h2 className="text-base font-bold text-slate-900 font-heading uppercase">
-                        {item.itemType} <span className="text-slate-400 text-sm font-normal normal-case">({t('doctor.documents.item')} {item.sequenceNumber || itemIdx + 1})</span>
+                        {t(`doctor.itemTypes.${item.itemType}`, item.itemType)} <span className="text-slate-400 text-sm font-normal normal-case">({t('doctor.documents.item')} {item.sequenceNumber || itemIdx + 1})</span>
                       </h2>
                     </div>
                     {isItemSaved ? (

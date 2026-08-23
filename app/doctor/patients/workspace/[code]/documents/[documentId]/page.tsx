@@ -251,8 +251,8 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
         <div className="w-full border-0 rounded-[40px] bg-white shadow-xl shadow-slate-200/50 overflow-hidden mt-8">
           <div className="bg-slate-50 px-10 py-8 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-3xl font-black text-slate-900 font-heading tracking-tight mb-2">Medical Records</h2>
-              <p className="text-base font-medium text-slate-500">Medical records extracted from this document</p>
+              <h2 className="text-3xl font-black text-slate-900 font-heading tracking-tight mb-2">{t('doctor.documents.medicalRecordsTitle')}</h2>
+              <p className="text-base font-medium text-slate-500">{t('doctor.documents.medicalRecordsDesc')}</p>
             </div>
           </div>
           
@@ -267,12 +267,12 @@ export default function DocumentPreviewPage({ params }: { params: Promise<{ code
                 <div key={record.medicalRecordId} className="bg-white rounded-[24px] p-6 border border-slate-100 shadow-md shadow-slate-200/40 relative overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full text-left rtl:text-right">
                   <div className="flex items-start justify-between mb-5">
                     <span className="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest bg-indigo-50 text-indigo-600 border border-indigo-100">
-                      {record.recordType}
+                      {t(`doctor.itemTypes.${record.recordType}`, record.recordType)}
                     </span>
                     <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest border ${
                       record.status?.toLowerCase() === 'confirmed' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-50 text-slate-600 border-slate-200'
                     }`}>
-                      {record.status}
+                      {t(`ui.${record.status?.toLowerCase()}`, record.status)}
                     </span>
                   </div>
                   

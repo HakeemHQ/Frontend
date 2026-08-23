@@ -24,7 +24,7 @@ import { useLanguage } from "@/localization/LanguageContext";
 const STATUS_FILTERS = ["Active", "Expired", "Revoked"];
 
 export default function PatientsPage() {
-  const { t } = useLanguage();
+  const { t, isLoaded } = useLanguage();
   const { 
     patients, 
     setPatients, 
@@ -84,6 +84,7 @@ export default function PatientsPage() {
   }, [page, statusFilter]);
 
   useEffect(() => {
+    if (!isLoaded) return;
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get("expired") === "true") {
@@ -94,7 +95,7 @@ export default function PatientsPage() {
         window.history.replaceState({}, '', '/doctor/patients');
       }
     }
-  }, [setError, t]);
+  }, [setError, t, isLoaded]);
 
   const filteredPatients = (patients || []).filter(
     (p) => 
@@ -233,7 +234,7 @@ export default function PatientsPage() {
                       onClick={(e) => {
                         if (itemStatus === "Expired" || itemStatus === "Revoked") {
                           e.preventDefault();
-                          setError(`You cannot access files for a${itemStatus === "Expired" ? "n expired" : " revoked"} patient. Please request access again.`);
+                          setError(itemStatus === "Expired" ? t('doctor.patients.accessDeniedExpired') : t('doctor.patients.accessDeniedRevoked'));
                           return;
                         }
                         
