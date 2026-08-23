@@ -301,7 +301,11 @@ export default function UsersListPage() {
                                 ? 'bg-amber-500'
                                 : 'bg-slate-300'
                             }`}></span>
-                            {user.identityVerificationStatus || "Unverified"}
+                            {user.identityVerificationStatus?.toLowerCase() === 'verified'
+                              ? t('admin.users.verified')
+                              : user.identityVerificationStatus?.toLowerCase() === 'pending'
+                              ? t('admin.users.pending')
+                              : t('admin.users.unverified')}
                           </span>
                         </td>
                         <td className="whitespace-nowrap px-5 py-3.5">

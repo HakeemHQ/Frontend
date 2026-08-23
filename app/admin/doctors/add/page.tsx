@@ -173,7 +173,7 @@ export default function AddDoctorPage() {
           </div>
           
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-700">{t('admin.doctors.temporaryPassword')}</label>
+            <label className="text-xs font-semibold text-slate-700">{t('admin.doctors.password')}</label>
             <Input 
               {...register("temporaryPassword")}
               type={showPassword ? "text" : "password"} 
