@@ -164,14 +164,11 @@ export default function UserDetailsPage() {
           <div className="space-y-1">
             <h3 className="text-sm font-medium text-slate-500">{t('admin.users.verificationStatus')}</h3>
             <p className="font-semibold text-slate-900">
-              {currentUser.identityVerificationStatus || "-"}
-            </p>
-          </div>
-          
-          <div className="space-y-1">
-            <h3 className="text-sm font-medium text-slate-500">{t('admin.users.userId')}</h3>
-            <p className="font-mono text-sm font-medium text-slate-400 select-none">
-              {currentUser.userId}
+              {currentUser.identityVerificationStatus?.toLowerCase() === 'verified'
+                ? t('admin.users.verified')
+                : currentUser.identityVerificationStatus?.toLowerCase() === 'pending'
+                ? t('admin.users.pending')
+                : t('admin.users.unverified')}
             </p>
           </div>
         </div>

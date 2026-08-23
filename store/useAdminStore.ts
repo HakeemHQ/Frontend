@@ -63,11 +63,13 @@ export const useAdminStore = create<AdminState>((set, get) => ({
 
       const normalizedDoctors: Doctor[] = doctorList.map((doc: any) => ({
         id: doc.id || doc.doctorId || doc.userId || String(Math.random()),
+        userId: doc.userId || doc.user_id || doc.doctorUserId || doc.id || doc.doctorId || undefined,
         name: doc.name || doc.fullName || `${doc.firstName || ""} ${doc.lastName || ""}`.trim() || doc.email || "Doctor",
         email: doc.email || "",
         specialty: doc.specialty || "General",
-        licenseNumber: doc.licenseNumber || "N/A",
+        licenseNumber: doc.licenseNumber || doc.license_number || "N/A",
         status: doc.status || "Active",
+        createdAt: doc.createdAt || doc.created_at || doc.createdDate || doc.creationDate || doc.createdOn || doc.timestamp || undefined,
         ...doc,
       }));
 
@@ -90,12 +92,14 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     try {
       const data: any = await adminApi.getDoctor(id);
       const normalizedDoctor: Doctor = {
-        id: data?.id || data?.doctorId || data?.userId || id,
+        id: data?.id || data?.doctorId || id,
+        userId: data?.userId || data?.user_id || data?.doctorUserId || data?.id || data?.doctorId || undefined,
         name: data?.name || data?.fullName || `${data?.firstName || ""} ${data?.lastName || ""}`.trim() || data?.email || "Doctor",
         email: data?.email || "",
         specialty: data?.specialty || "General",
-        licenseNumber: data?.licenseNumber || "N/A",
+        licenseNumber: data?.licenseNumber || data?.license_number || "N/A",
         status: data?.status || "Active",
+        createdAt: data?.createdAt || data?.created_at || data?.createdDate || data?.creationDate || data?.createdOn || data?.timestamp || undefined,
         ...data,
       };
       set({ currentDoctor: normalizedDoctor, isDoctorLoading: false });
@@ -140,14 +144,21 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       } else if (data && Array.isArray(data.users)) {
         items = data.users;
       }
-      const normalizedUsers = items.map((u: any) => ({
-        userId: u.userId || u.id || "",
-        email: u.email || "",
-        userType: u.userType || u.role || "User",
-        status: u.status || "Active",
-        identityVerificationStatus: u.identityVerificationStatus || "Unverified",
-        ...u,
-      }));
+      const normalizedUsers = items.map((u: any) => {
+        const rawVerification = u.identityVerificationStatus || u.identity_verification_status || u.verificationStatus || u.verification_status || u.identityVerification || u.verification;
+        const normalizedVerification = (typeof rawVerification === "string" && rawVerification.trim())
+          ? rawVerification.trim()
+          : "Unverified";
+
+        return {
+          ...u,
+          userId: u.userId || u.id || u.user_id || "",
+          email: u.email || "",
+          userType: u.userType || u.role || u.user_type || "User",
+          status: u.status || "Active",
+          identityVerificationStatus: normalizedVerification,
+        };
+      });
       const pageSize = params?.pageSize || 10;
       const currentPage = params?.page || 1;
       

@@ -23,7 +23,7 @@ const UserAvatarPlaceholder = () => (
 );
 
 export default function DoctorDetailsPage() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const { id } = useParams() as { id: string };
   const { currentDoctor, isDoctorLoading, doctorError, fetchDoctor, updateDoctorStatus } = useAdminStore();
   
@@ -47,7 +47,10 @@ export default function DoctorDetailsPage() {
     
     try {
       await updateDoctorStatus(currentDoctor.id, newStatus);
-      setToast({ message: t('admin.doctors.statusUpdateSuccess'), type: "success" });
+      const successMessage = newStatus === "Active"
+        ? t('admin.doctors.activateSuccess')
+        : t('admin.doctors.suspendSuccess');
+      setToast({ message: successMessage || t('admin.doctors.statusUpdateSuccess'), type: "success" });
       setIsConfirming(false);
     } catch (error: any) {
       let message = t('admin.doctors.updateError');
@@ -59,6 +62,20 @@ export default function DoctorDetailsPage() {
       setIsUpdating(false);
     }
   };
+
+  const formatCreatedDate = (dateVal?: any) => {
+    if (!dateVal) return "N/A";
+    const date = new Date(dateVal);
+    if (isNaN(date.getTime())) return String(dateVal);
+    return date.toLocaleDateString(locale === "ar" ? "ar-EG" : "en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const doctorUserId = currentDoctor?.userId || currentDoctor?.user_id || currentDoctor?.doctorUserId || currentDoctor?.id || "N/A";
+  const doctorCreatedAt = currentDoctor?.createdAt || currentDoctor?.created_at || currentDoctor?.createdDate || currentDoctor?.creationDate || currentDoctor?.createdOn || currentDoctor?.timestamp;
 
   if (isDoctorLoading) {
     return (
@@ -142,21 +159,7 @@ export default function DoctorDetailsPage() {
           <div className="space-y-1">
             <h3 className="text-sm font-medium text-slate-500">{t('admin.doctors.createdAt')}</h3>
             <p className="font-semibold text-slate-900">
-              N/A
-            </p>
-          </div>
-          
-          <div className="space-y-1">
-            <h3 className="text-sm font-medium text-slate-500">{t('admin.doctors.userId')}</h3>
-            <p className="font-mono text-sm font-medium text-slate-400 select-none">
-              N/A
-            </p>
-          </div>
-          
-          <div className="space-y-1">
-            <h3 className="text-sm font-medium text-slate-500">{t('admin.doctors.doctorId')}</h3>
-            <p className="font-mono text-sm font-medium text-slate-400 select-none">
-              {currentDoctor.id}
+              {formatCreatedDate(doctorCreatedAt)}
             </p>
           </div>
         </div>

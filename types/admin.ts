@@ -1,10 +1,19 @@
 export interface Doctor {
   id: string;
+  userId?: string;
+  user_id?: string;
+  doctorUserId?: string;
   name: string;
   email: string;
   specialty: string;
   licenseNumber: string;
   status: string;
+  createdAt?: string;
+  created_at?: string;
+  creationDate?: string;
+  createdDate?: string;
+  createdOn?: string;
+  [key: string]: any;
 }
 
 export interface User {
